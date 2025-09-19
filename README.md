@@ -53,3 +53,10 @@ Para melhor organização e estética do GitHub, será utilizado o seguinte padr
 	- :books: docs: título do documento ou descriçaõ da atualização realizada no documento
 	- :recycle: refactor: descrição da refatoração
 	- :bug: fix: bug corrigido
+
+## Versionamento
+
+- O incremento de versões do projeto na main segue o seguinte padrão: (Para o exemplo v0.0.1)
+	- O primeiro número indica que o sistema tem mudanças que o torna incompatível com versões anteriores.
+	- O segundo número indica que o sistema tem mudanças compatíveis com versões anteriores, dentro do primeiro número.
+	- O terceiro número indica que o sistema tem mudanças menores, como correções de bugs e funcionalidades que não prejudicam a compatibilidade com versões anteriores.
