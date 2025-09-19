@@ -42,3 +42,14 @@ Para melhor organização do projeto, será utilizado o seguinte GitFlow:
 ## Feature
 - São criadas para o desenvolvimento das tarefas do projeto.
 - Padrão lexico: feature/[nome_da_feature]
+
+# Padrões de Uso do GitHub
+
+Para melhor organização e estética do GitHub, será utilizado o seguinte padrão de uso:
+
+## Commit
+- Os commit serão feitos seguindo os modelos abaixo:
+	- :sparkles: feat: título da feature
+	- :books: docs: título do documento
+	- :recycle: refactor: descrição da refatoração
+	- :bug: fix: bug corrigido
