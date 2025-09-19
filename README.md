@@ -50,6 +50,6 @@ Para melhor organização e estética do GitHub, será utilizado o seguinte padr
 ## Commit
 - Os commit serão feitos seguindo os modelos abaixo:
 	- :sparkles: feat: título da feature
-	- :books: docs: título do documento
+	- :books: docs: título do documento ou descriçaõ da atualização realizada no documento
 	- :recycle: refactor: descrição da refatoração
 	- :bug: fix: bug corrigido
