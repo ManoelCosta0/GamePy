@@ -1,0 +1,25 @@
+################################################################################
+#                                                                              #
+#                             REQUIREMENTS DO PROJETO                            #
+#                                                                              #
+#      Este arquivo lista todas as dependências Python necessárias para        #
+#      executar o jogo. Ele garante que qualquer pessoa que clone o            #
+#      projeto possa instalar exatamente as mesmas versões das bibliotecas     #
+#      que você usou, garantindo a consistência do ambiente.                   #
+#                                                                              #
+#      Para instalar todas as dependências listadas aqui, execute o comando:   #
+#      pip install -r requirements.txt                                         #
+#                                                                              #
+################################################################################
+
+# --- Versão de Python Recomendada ---
+#
+# O projeto é desenvolvido e testado com Python 3.9 ou superior.
+# A biblioteca Arcade requer no mínimo Python 3.9.
+
+# --- Motor do Jogo (Game Engine) ---
+#
+# A biblioteca Arcade é o coração do projeto, usada para renderização,
+# gerenciamento de sprites, física e entrada do usuário.
+# A versão é "fixada" para evitar que atualizações automáticas quebrem o código.
+arcade==3.3.2
