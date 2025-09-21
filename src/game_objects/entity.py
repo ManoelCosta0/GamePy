@@ -6,3 +6,4 @@ class Entity(arcade.Sprite):
         self.max_hp = max_hp
         self.current_hp = max_hp
         self.attack_damage = 0 # Valor padrão, será sobrescrito
+    
