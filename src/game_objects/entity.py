@@ -6,4 +6,11 @@ class Entity(arcade.Sprite):
         self.max_hp = max_hp
         self.current_hp = max_hp
         self.attack_damage = 0 # Valor padrão, será sobrescrito
+    def die(self):
+        return super().kill()
+    def update(self, *args, **kwargs):
+        # Lógica de atualização da entidade
+        if self.current_hp <= 0:
+            self.die()  # Remove a entidade se a vida chegar a zero
+        pass
     
