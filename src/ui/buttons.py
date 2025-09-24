@@ -1,23 +1,23 @@
 # src/ui/buttons.py
 import arcade
+import src.constants as const
 
 class SpriteButton(arcade.Sprite):
     """
     Um sprite que funciona como um botão, com texturas para estado
     normal e quando o mouse está sobre ele (hover).
     """
-    def __init__(self, normal_texture_path, hover_texture_path, scale=1):
-        # 1. Chame o construtor pai (arcade.Sprite) com o CAMINHO da textura normal.
-        #    Isso vai carregar a imagem e criar a textura inicial automaticamente.
-        super().__init__(normal_texture_path, scale)
+    def __init__(self, name, normal_texture_path, hover_texture_path):
+        super().__init__(normal_texture_path, const.BUTTON_SCALE)
         
-        # 2. Guarde uma referência à textura normal que o super() acabou de criar.
         self.normal_texture = self.texture
-        
-        # 3. Agora, carregue a textura de hover separadamente.
         self.hover_texture = arcade.load_texture(hover_texture_path)
         
+        self.name = name
         self.is_hovered = False
+
+        self.center_x = const.BUTTONS_POSITION_X[name]
+        self.center_y = const.BUTTONS_POSITION_Y[name]
 
     def on_hover(self):
         """ Chamado quando o mouse entra na área do botão. """
