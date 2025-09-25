@@ -1,0 +1,21 @@
+{
+  "Espada Velha": {
+    "description": "Uma espada simples para iniciantes... e bem velha.",
+    "type": "Sword",
+    "sprite_path": "assets/sprites/items/sword.png",
+    "scale": 0.2,
+    "stack_limit": 1,
+    "stats": {
+      "damage": 5,
+      "attack_speed": 0.8,
+      "range": 60
+    }
+  },
+  "wpn_002": {
+    "name": "Minério Fodasi",
+    "description": "Um minério completamente fodasi.",
+    "type": "craft_component",
+    "sprite_path": "",
+    "stack_limit": 1
+  }
+}

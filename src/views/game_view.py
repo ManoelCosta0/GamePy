@@ -23,7 +23,7 @@ class GameView(View):
     def setup(self):
         """ Configura os componentes do jogo para esta View. """
         self.player = Player("assets/sprites/player.png", scale=0.5, center_x=400, center_y=450)
-        self.enemy = Entity("assets/sprites/bat.png", scale=0.03, center_x=800, center_y=450, max_hp=50)
+        self.enemy = Entity("assets/sprites/enemies/bat.png", scale=0.03, center_x=800, center_y=450, max_hp=50)
         
         self.general_sprite_list.append(self.player)
         self.general_sprite_list.append(self.enemy)
@@ -48,10 +48,9 @@ class GameView(View):
             self.player.is_moving = True
             self.player.velocity_x = const.MOVEMENT_SPEED
         elif key == arcade.key.E:
-            if not self.weapon: # Evita criar várias armas
-                self.weapon = arcade.Sprite("assets/sprites/sword.png", scale=0.2)
-                self.general_sprite_list.append(self.weapon)
-                self.player.weapon = self.weapon
+            if not self.player.equipped_weapon: # Evita criar várias armas
+                self.player.equipped_weapon = arcade.Sprite("assets/sprites/items/sword.png", scale=0.2)
+                self.general_sprite_list.append(self.player.equipped_weapon)
         elif key == arcade.key.ESCAPE:
             self.window.show_view(self.pause_view)
 
@@ -66,9 +65,9 @@ class GameView(View):
 
     def on_mouse_release(self, x, y, button, modifiers):
         """ Chamado quando o botão do mouse é liberado. """
-        if button == arcade.MOUSE_BUTTON_LEFT and self.player.weapon:
+        if button == arcade.MOUSE_BUTTON_LEFT and self.player.equipped_weapon:
             print("Ataque")
-            check = arcade.check_for_collision(self.player.weapon, self.enemy)
+            check = arcade.check_for_collision(self.player.equipped_weapon, self.enemy)
             if check:
                 print("Acertou")
                 self.enemy.current_hp -= 10
@@ -79,6 +78,6 @@ class GameView(View):
         self.general_sprite_list.update()
         
         # Atualiza a posição da arma para seguir o jogador
-        if self.player.weapon:
-            self.player.weapon.center_x = self.player.center_x
-            self.player.weapon.center_y = self.player.center_y
+        if self.player.equipped_weapon:
+            self.player.equipped_weapon.center_x = self.player.center_x
+            self.player.equipped_weapon.center_y = self.player.center_y
