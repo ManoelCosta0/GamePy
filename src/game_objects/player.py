@@ -19,4 +19,11 @@ class Player(Entity):
                 self.equipped_weapon.center_x += self.velocity_x
                 self.equipped_weapon.center_y += self.velocity_y
             self.center_y += self.velocity_y
-        pass
+    
+    def equip_item(self, item):
+        """Equipa um item do inventário."""
+        if item in self.inventory.slot_items:
+            self.equipped_weapon = item
+            print(f"{item.name} equipado!")
+        else:
+            print(f"{item.name} não está no inventário!")

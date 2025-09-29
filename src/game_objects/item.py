@@ -12,8 +12,7 @@ class Item(arcade.Sprite):
         
         self.name = name
         self.image_file = item_json[name]["sprite_path"]
-        self.scale = item_json[name]["scale"]
-        super().__init__(self.image_file, self.scale)
+        super().__init__(self.image_file, item_json[name]["scale"])
 
         self.description = item_json[name]["description"]
         self.type = item_json[name]["type"]

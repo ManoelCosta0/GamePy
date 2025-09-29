@@ -51,6 +51,6 @@ class PauseView(View):
                     case "continue":
                         self.window.show_view(self.game_view)
                     case "inventory":
-                        print("Inventário")
+                        self.window.show_view(self.inventory_view)
                     case "exit":
                         self.window.show_view(self.menu_view)
