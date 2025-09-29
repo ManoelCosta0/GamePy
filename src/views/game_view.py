@@ -16,7 +16,6 @@ class GameView(View):
         self.background_color = arcade.csscolor.CORNFLOWER_BLUE
         self.player = None
         self.enemy = None
-        self.weapon = None
 
         # Chama o método setup para configurar a cena
         self.setup()
@@ -50,8 +49,7 @@ class GameView(View):
             self.player.velocity_x = const.MOVEMENT_SPEED
         elif key == arcade.key.E:
             if not self.player.equipped_weapon: # Evita criar várias armas
-                self.weapon = Item("Espada Velha")
-                self.player.inventory.add_item(self.inventory_view, self.weapon)
+                self.player.inventory.add_item(self.inventory_view, Item("Espada Velha"))
         elif key == arcade.key.ESCAPE:
             self.window.show_view(self.pause_view)
         elif key == arcade.key.I:

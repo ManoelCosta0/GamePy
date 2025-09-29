@@ -18,7 +18,7 @@ class ItemDetailView():
 
     def setup(self):
         # Configura os elementos da tela de detalhes do item
-        self.slot = Slot("assets/UI/inventory_usable_slot.png", self.background_sprite.center_x, self.background_sprite.center_y+90, 0.12, "normal")
+        self.slot = Slot("assets/UI/inventory_unavailable_slot.png", self.background_sprite.center_x, self.background_sprite.center_y+90, 0.12, "normal")
         self.item_sprite = arcade.Sprite(self.item.image_file, center_x=self.slot.center_x, center_y=self.slot.center_y, scale=self.item.scale)
         self.detail_elements.append(self.slot)
         self.detail_elements.append(self.item_sprite)
@@ -46,7 +46,8 @@ class ItemDetailView():
             multiline=True
         )
 
-        self.equip_button = arcade.Sprite("assets/UI/equip_button.png", center_x=self.background_sprite.center_x - 56, center_y=self.background_sprite.center_y - 137, scale=0.14)
+        self.button = "equip" if self.index < 12 else "unequip"
+        self.equip_button = arcade.Sprite(f"assets/UI/{self.button}_button.png", center_x=self.background_sprite.center_x - 56, center_y=self.background_sprite.center_y - 137, scale=0.14)
         self.discard_button = arcade.Sprite("assets/UI/discard_button.png", center_x=self.background_sprite.center_x + 62, center_y=self.background_sprite.center_y - 137, scale=0.14)
 
         self.detail_elements.append(self.equip_button)
@@ -78,6 +79,6 @@ class ItemDetailView():
         elements_colliding = arcade.get_sprites_at_point((x, y), self.detail_elements)
         if elements_colliding:
             if elements_colliding[0] == self.equip_button:
-                return "equip"
+                return self.button
             elif elements_colliding[0] == self.discard_button:
                 return "discard"

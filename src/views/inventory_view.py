@@ -24,8 +24,8 @@ class InventoryView(View):
         self.weapon_slot = Slot("assets/UI/inventory_weapon_slot.png", 800 - 140, 400 + 84, 0.4, "weapon")
         self.armor_slot = Slot("assets/UI/inventory_armor_slot.png", 800 - 140, 400 - 47, 0.4, "armor")
         self.accessory_slot = Slot("assets/UI/inventory_accessory_slot.png", 800 - 140, 400 - 153, 0.25, "accessory")
-        self.uslot = arcade.load_texture("assets/UI/inventory_usable_slot.png")
-        self.normal_slot = arcade.load_texture("assets/UI/inventory_slot.png")
+        self.uslot = arcade.load_texture("assets/UI/inventory_unavailable_slot.png")
+        self.normal_slot = arcade.load_texture("assets/UI/inventory_available_slot.png")
 
         self.create_slots() # Cria os slots do inventário
 
@@ -96,10 +96,19 @@ class InventoryView(View):
                 action = self.item_detail_view.on_mouse_press(x, y)
 
                 if action == "equip":
-                    self.game_view.player.equip_item(self, self.item_detail_view.item)
+                    self.game_view.player.equipped_weapon = self.item_detail_view.item
+                    self.game_view.player.inventory.equip_item(self, self.item_detail_view.item, self.item_detail_view.index)
+                    item_sprite = self.weapon_slot.add_item_on_slot(self.item_detail_view.item)
+                    self.item_sprites.append(item_sprite)
+                    self.item_sprites.swap(len(self.item_sprites) - 1, 0)  # Move o sprite do item equipado para o início da lista
                 elif action == "discard":
-                    print(f"Descartar {self.item_detail_view.item.name}")
                     self.game_view.player.inventory.remove_item(self, self.item_detail_view.index)
+                elif action == "unequip":
+                    print(f"Desequipando {self.item_detail_view.item.name}")
+                    self.game_view.player.equipped_weapon = None
+                    self.game_view.player.inventory.unequip_item(self, self.item_detail_view.item)
+                    self.weapon_slot.remove_item_from_slot()
+                    self.item_sprites.pop(0)
 
                 self.item_detail_view = None
             elif self.item_detail_view and not self.item_detail_view.background_sprite.collides_with_point((x, y)):
@@ -110,31 +119,24 @@ class InventoryView(View):
         """Cria os slots do inventário."""
         for j in range(4):
             for i in range(3):
-                slot = Slot("assets/UI/inventory_slot.png", 
+                slot = Slot("assets/UI/inventory_available_slot.png", 
                             self.inventory_box.center_x - 20 + i * 95, 
                             self.inventory_box.center_y + 80 - j * 90, 
                             0.12, "normal")
                 self.inventory_elements.append(slot)
 
-    def restructure_slots(self, index: int, length: int):
-        """Reestrutura os slots do inventário."""
-        
+    def restructure_slots(self):
+        """ Reestrutura os slots do inventário após a remoção de um item. """
+        self.item_sprites.clear()
+        for slot in self.inventory_elements:
+            if slot.slot_type == "normal":
+                slot.remove_item_from_slot()
+
+        remaining_items = self.game_view.player.inventory.slot_items
+        for index, item in enumerate(remaining_items):
+            self.add_item_on_display(item, index)
 
     def add_item_on_display(self, item: Item, index: int):
         """Adiciona um item à tela do inventário."""
         item_sprite = self.inventory_elements[index].add_item_on_slot(item)
         self.item_sprites.append(item_sprite)
-
-    def remove_item_from_display(self, index: int):
-        """Remove um item da tela do inventário."""
-        self.inventory_elements[index].remove_item_from_slot()
-        self.item_sprites.pop(index)
-
-
-# Organizar funções
-# Função de add item ao inventário na classe slot ao invés de na InventoryView
-# Função de remover item do inventário na classe slot ao invés de na InventoryView
-
-# Implementar:
-    # equipar
-    # desequipar
