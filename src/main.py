@@ -4,6 +4,7 @@ from src import constants as const
 from src.views.menu_view import MenuView
 from src.views.game_view import GameView
 from src.views.pause_view import PauseView
+from src.views.inventory_view import InventoryView
 
 class MyGame(arcade.Window):
     """
@@ -16,11 +17,19 @@ class MyGame(arcade.Window):
         self.menu_view = MenuView()
         self.game_view = GameView()
         self.pause_view = PauseView()
+        self.inventory_view = InventoryView()
 
         self.menu_view.game_view = self.game_view
+
         self.game_view.pause_view = self.pause_view
+        self.game_view.inventory_view = self.inventory_view
+
         self.pause_view.game_view = self.game_view
+        self.pause_view.inventory_view = self.inventory_view
         self.pause_view.menu_view = self.menu_view
+
+        self.inventory_view.game_view = self.game_view
+        self.inventory_view.pause_view = self.pause_view
 
         arcade.get_window().maximize()
 

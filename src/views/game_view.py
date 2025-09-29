@@ -3,6 +3,7 @@ import arcade
 from src import constants as const
 from src.game_objects.player import Player
 from src.game_objects.entity import Entity
+from src.game_objects.item import Item
 from src.views.view import View
 
 class GameView(View):
@@ -15,7 +16,6 @@ class GameView(View):
         self.background_color = arcade.csscolor.CORNFLOWER_BLUE
         self.player = None
         self.enemy = None
-        self.weapon = None
 
         # Chama o método setup para configurar a cena
         self.setup()
@@ -49,10 +49,11 @@ class GameView(View):
             self.player.velocity_x = const.MOVEMENT_SPEED
         elif key == arcade.key.E:
             if not self.player.equipped_weapon: # Evita criar várias armas
-                self.player.equipped_weapon = arcade.Sprite("assets/sprites/items/sword.png", scale=0.2)
-                self.general_sprite_list.append(self.player.equipped_weapon)
+                self.player.inventory.add_item(self.inventory_view, Item("Espada Velha"))
         elif key == arcade.key.ESCAPE:
             self.window.show_view(self.pause_view)
+        elif key == arcade.key.I:
+            self.window.show_view(self.inventory_view)
 
     def on_key_release(self, key, modifiers):
         """ Chamado quando uma tecla é liberada. """

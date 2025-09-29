@@ -10,12 +10,5 @@
       "attack_speed": 0.8,
       "range": 60
     }
-  },
-  "wpn_002": {
-    "name": "Minério Fodasi",
-    "description": "Um minério completamente fodasi.",
-    "type": "craft_component",
-    "sprite_path": "",
-    "stack_limit": 1
   }
 }

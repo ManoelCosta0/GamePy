@@ -19,4 +19,3 @@ class Player(Entity):
                 self.equipped_weapon.center_x += self.velocity_x
                 self.equipped_weapon.center_y += self.velocity_y
             self.center_y += self.velocity_y
-        pass

@@ -1,27 +1,41 @@
 import arcade
 from src.game_objects.item import Item
+from src.views.inventory_view import InventoryView
 
 class Inventory():
     """Classe para gerenciar o inventário do jogador."""
     def __init__(self):
-        self.items = []
+        self.slot_items = []
+        self.equipped_items = []
 
-    def add_item(self, item: Item):
+    def add_item(self, inventory_view: InventoryView, item: Item):
         """Adiciona um item ao inventário."""
-        self.items.append(item)
+        self.slot_items.append(item)
+        inventory_view.add_item_on_display(item, len(self.slot_items) - 1)
 
-    def remove_item(self, item: Item):
+    def remove_item(self, inventory_view: InventoryView, index: int):
         """Remove um item do inventário."""
-        if item in self.items:
-            self.items.remove(item)
-    
-    def remove_item(self, item: Item, length: int):
-        """Remove um item empilhado do inventário."""
-        if item in self.items:
-            item.length -= length
-            if item.length <= 0:
-                self.items.remove(item)
+        self.slot_items.pop(index)
+        inventory_view.restructure_slots()
 
     def is_on_inventory(self, item: Item) -> bool:
         """Verifica se um item está no inventário."""
-        return item in self.items
+        return item in self.slot_items
+
+    def equip_item(self, inventory_view: InventoryView, item: Item, index: int):
+        """Equipa um item do inventário."""
+        if item in self.slot_items:
+            self.equipped_items.append(item)
+            self.remove_item(inventory_view, index)
+            print(f"{item.name} equipado!")
+        else:
+            print(f"{item.name} não está no inventário!")
+    
+    def unequip_item(self, inventory_view: InventoryView, item: Item):
+        """Desequipa um item."""
+        if item in self.equipped_items:
+            self.equipped_items.remove(item)
+            self.add_item(inventory_view, item)
+            print(f"{item.name} desequipado!")
+        else:
+            print(f"{item.name} não está equipado!")
