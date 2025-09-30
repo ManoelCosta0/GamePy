@@ -1,7 +1,7 @@
 import arcade
 
 class Slot(arcade.Sprite):
-    def __init__(self, image_file: str, position_x: float, position_y: float, scale: float, slot_type: str):
+    def __init__(self, image_file: str, position_x: float, position_y: float, scale: float, slot_type: str, index: int):
         super().__init__(image_file, scale=scale)
         self.center_x = position_x
         self.center_y = position_y
@@ -12,7 +12,8 @@ class Slot(arcade.Sprite):
             self.uslot = arcade.load_texture("assets/UI/inventory_unavailable_slot.png")
         elif slot_type == "weapon":
             self.uslot = arcade.load_texture("assets/UI/inventory_weapon_slot.png")
-
+        self.index = index  # Índice do slot no inventário
+        
     def add_item_on_slot(self, item) -> arcade.Sprite:
         """Adiciona um item ao slot."""
         item_sprite = arcade.Sprite(
@@ -22,6 +23,7 @@ class Slot(arcade.Sprite):
             center_y=self.center_y)
         self.texture = self.uslot
         self.item = item
+        print(f"{item.name} adicionado ao slot de {self.slot_type}.")
         return item_sprite
 
     def remove_item_from_slot(self):

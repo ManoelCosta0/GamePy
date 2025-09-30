@@ -6,9 +6,6 @@ class Entity(arcade.Sprite):
         self.max_hp = max_hp
         self.current_hp = max_hp
         self.attack_damage = 0 # Valor padrão, será sobrescrito
-
-    def die(self):
-        return super().kill()
     
     def take_damage(self, damage: int):
         self.current_hp -= damage

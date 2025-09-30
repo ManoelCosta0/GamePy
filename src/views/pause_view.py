@@ -10,6 +10,10 @@ class PauseView(View):
     def __init__(self):
         super().__init__()
 
+        self.setup()
+
+    def setup(self):
+        """ Configura os componentes da View de Pausa. """
         self.background_sprite = arcade.Sprite("assets/UI/pause_background.png", scale=1)
         self.background_sprite.center_x = self.window.width / 2
         self.background_sprite.center_y = self.window.height / 2
@@ -33,6 +37,7 @@ class PauseView(View):
         self.button_list.append(resume_button)
         self.button_list.append(inventory_button)
         self.button_list.append(exit_button)
+
 
     def on_show_view(self):
         """ Chamado quando esta View é mostrada. """

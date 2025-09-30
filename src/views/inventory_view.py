@@ -15,15 +15,16 @@ class InventoryView(View):
         self.general_sprite_list.append(self.background_sprite)
         self.inventory_elements = arcade.SpriteList()
         self.item_sprites = arcade.SpriteList()
+        self.equipped_item_sprites = arcade.SpriteList()
         self.item_detail_view = None
         self.setup()
 
     def setup(self):
         # Instâncias dos sprites do inventário
         self.inventory_box = arcade.Sprite("assets/UI/inventory_box.png", center_x=800, center_y=400, scale=0.8)
-        self.weapon_slot = Slot("assets/UI/inventory_weapon_slot.png", 800 - 140, 400 + 84, 0.4, "weapon")
-        self.armor_slot = Slot("assets/UI/inventory_armor_slot.png", 800 - 140, 400 - 47, 0.4, "armor")
-        self.accessory_slot = Slot("assets/UI/inventory_accessory_slot.png", 800 - 140, 400 - 153, 0.25, "accessory")
+        self.weapon_slot = Slot("assets/UI/inventory_weapon_slot.png", 800 - 140, 400 + 84, 0.4, "weapon", 9)
+        self.armor_slot = Slot("assets/UI/inventory_armor_slot.png", 800 - 140, 400 - 47, 0.4, "armor", 10)
+        self.accessory_slot = Slot("assets/UI/inventory_accessory_slot.png", 800 - 140, 400 - 153, 0.25, "accessory", 11)
         self.uslot = arcade.load_texture("assets/UI/inventory_unavailable_slot.png")
         self.normal_slot = arcade.load_texture("assets/UI/inventory_available_slot.png")
 
@@ -45,6 +46,7 @@ class InventoryView(View):
         self.general_sprite_list.draw()
         self.inventory_elements.draw()
         self.item_sprites.draw()
+        self.equipped_item_sprites.draw()
         if self.item_detail_view:
             self.item_detail_view.on_draw()
 
@@ -94,24 +96,24 @@ class InventoryView(View):
             elif self.item_detail_view:
                 # Se clicar em algo dentro da tela de detalhes
                 action = self.item_detail_view.on_mouse_press(x, y)
+                player = self.window.game_view.player
 
                 if action == "equip":
-                    self.window.game_view.player.equip_weapon(self.item_detail_view.item)
-                    self.window.game_view.player.inventory.equip_item(self, self.item_detail_view.item, self.item_detail_view.index)
-                    self.window.game_view.general_sprite_list.append(self.window.game_view.player.equipped_weapon)
-                    item_sprite = self.weapon_slot.add_item_on_slot(self.item_detail_view.item)
-                    self.item_sprites.append(item_sprite)
-                    self.item_sprites.swap(len(self.item_sprites) - 1, 0)  # Move o sprite do item equipado para o início da lista
+                    player.equip_weapon(self.item_detail_view.item, self.item_detail_view.index)
+                    self.equip_item_on_display(player.equipped_weapon)
+                    self.window.game_view.equip_item_on_game(player.equipped_weapon)
                     self.window.log_box.add_message(f"Você equipou {self.item_detail_view.item.name}.")
                 elif action == "discard":
-                    self.window.game_view.player.inventory.remove_item(self, self.item_detail_view.index)
+                    player.inventory.remove_item(self.item_detail_view.index)
+                    self.restructure_slots()
                     self.window.log_box.add_message(f"Você descartou {self.item_detail_view.item.name}.")
                 elif action == "unequip":
-                    print(f"Desequipando {self.item_detail_view.item.name}")
-                    self.window.game_view.player.equipped_weapon = None
-                    self.window.game_view.player.inventory.unequip_item(self, self.item_detail_view.item)
+                    player.unequip_weapon()
                     self.weapon_slot.remove_item_from_slot()
-                    self.item_sprites.pop(0)
+                    self.equipped_item_sprites.pop(0)
+                    self.window.game_view.unequip_item_on_game(self.item_detail_view.item)
+                    self.window.log_box.add_message(f"Você desequipou {self.item_detail_view.item.name}.")
+                    self.add_item_on_display(self.item_detail_view.item)
 
                 self.item_detail_view = None
             elif self.item_detail_view and not self.item_detail_view.background_sprite.collides_with_point((x, y)):
@@ -120,13 +122,22 @@ class InventoryView(View):
 
     def create_slots(self):
         """Cria os slots do inventário."""
+        count = 0
         for j in range(4):
             for i in range(3):
                 slot = Slot("assets/UI/inventory_available_slot.png", 
                             self.inventory_box.center_x - 20 + i * 95, 
                             self.inventory_box.center_y + 80 - j * 90, 
-                            0.12, "normal")
+                            0.12, "normal", count)
                 self.inventory_elements.append(slot)
+                count += 1
+
+    def get_free_slot_index(self) -> int:
+        """ Retorna o índice do primeiro slot livre. """
+        for index, slot in enumerate(self.inventory_elements):
+            if slot.slot_type == "normal" and slot.item is None:
+                return index
+        raise Exception("Nenhum slot livre disponível!")
 
     def restructure_slots(self):
         """ Reestrutura os slots do inventário após a remoção de um item. """
@@ -134,12 +145,20 @@ class InventoryView(View):
         for slot in self.inventory_elements:
             if slot.slot_type == "normal":
                 slot.remove_item_from_slot()
+                
 
-        remaining_items = self.window.game_view.player.inventory.slot_items
-        for index, item in enumerate(remaining_items):
-            self.add_item_on_display(item, index)
+        remaining_items = self.window.game_view.player.get_items()
+        for item in remaining_items:
+            self.add_item_on_display(item)
 
-    def add_item_on_display(self, item: Item, index: int):
+    def add_item_on_display(self, item: Item):
         """Adiciona um item à tela do inventário."""
-        item_sprite = self.inventory_elements[index].add_item_on_slot(item)
+        free_slot_index = self.window.inventory_view.get_free_slot_index()
+        item_sprite = self.inventory_elements[free_slot_index].add_item_on_slot(item)
         self.item_sprites.append(item_sprite)
+
+    def equip_item_on_display(self, item: Item):
+        """Equipa um item na tela do inventário."""
+        self.restructure_slots()
+        item_sprite = self.weapon_slot.add_item_on_slot(item)
+        self.equipped_item_sprites.append(item_sprite)

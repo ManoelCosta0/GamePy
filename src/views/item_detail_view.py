@@ -18,7 +18,7 @@ class ItemDetailView():
 
     def setup(self):
         # Configura os elementos da tela de detalhes do item
-        self.slot = Slot("assets/UI/inventory_unavailable_slot.png", self.background_sprite.center_x, self.background_sprite.center_y+90, 0.12, "normal")
+        self.slot = Slot("assets/UI/inventory_unavailable_slot.png", self.background_sprite.center_x, self.background_sprite.center_y+90, 0.12, "normal", 12)
         self.item_sprite = arcade.Sprite(self.item.image_file, center_x=self.slot.center_x, center_y=self.slot.center_y, scale=self.item.scale)
         self.detail_elements.append(self.slot)
         self.detail_elements.append(self.item_sprite)

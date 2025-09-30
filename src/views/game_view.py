@@ -13,17 +13,15 @@ class GameView(View):
     def __init__(self):
         super().__init__()
 
-        self.background_color = arcade.csscolor.CORNFLOWER_BLUE
         self.player = None
         self.enemy = None
-
-        # Chama o método setup para configurar a cena
         self.setup()
 
     def setup(self):
         """ Configura os componentes do jogo para esta View. """
-        self.player = Player("assets/sprites/player.png", scale=0.5, center_x=400, center_y=450)
-        self.enemy = Enemy("assets/sprites/enemies/bat.png", scale=0.03, center_x=800, center_y=450, max_hp=50, name="Bat")
+        self.background_color = arcade.csscolor.CORNFLOWER_BLUE
+        self.player = Player()
+        self.enemy = Enemy(name="Bat", x=800, y=450)
         
         self.general_sprite_list.append(self.player)
         self.general_sprite_list.append(self.enemy)
@@ -48,7 +46,9 @@ class GameView(View):
             self.player.is_moving = True
             self.player.velocity_x = const.MOVEMENT_SPEED
         elif key == arcade.key.E:
-            self.player.inventory.add_item(self.window.inventory_view, Item("Espada Velha"))
+            item = Item("Espada Velha")
+            self.player.inventory.add_item(item)
+            self.window.inventory_view.add_item_on_display(item)
             self.window.log_box.add_message("Você pegou uma Espada Velha!")
         elif key == arcade.key.ESCAPE:
             self.window.show_view(self.window.pause_view)
@@ -57,7 +57,6 @@ class GameView(View):
         elif key == arcade.key.TAB:
             self.developer_mode = not self.developer_mode
             print(f"Developer Mode {'ON' if self.developer_mode else 'OFF'}")
-            
 
     def on_key_release(self, key, modifiers):
         """ Chamado quando uma tecla é liberada. """
@@ -71,7 +70,7 @@ class GameView(View):
     def on_mouse_release(self, x, y, button, modifiers):
         """ Chamado quando o botão do mouse é liberado. """
         if button == arcade.MOUSE_BUTTON_LEFT and self.player.equipped_weapon:
-            print("Ataque")
+            if self.enemy is None: return
             check = arcade.check_for_collision(self.player.equipped_weapon, self.enemy)
             if check:
                 self.player.attack(self.enemy)
@@ -87,8 +86,20 @@ class GameView(View):
         
         if self.enemy:
             if self.enemy.current_hp <= 0:
-                self.enemy.die()
                 drop = self.enemy.on_die()
                 if drop:
-                    self.player.inventory.add_item(self.window.inventory_view, drop)
+                    self.player.inventory.add_item(drop)
+                    self.window.inventory_view.add_item_on_display(drop)
+                    self.window.log_box.add_message(f"{self.enemy.name} dropou {drop.name}!")
                 self.enemy = None
+    
+    def equip_item_on_game(self, item: Item):
+        """Equipa um item na tela do jogo."""
+        self.window.log_box.add_message(f"Exibindo {item.name}...")
+        self.general_sprite_list.append(item)
+    
+    def unequip_item_on_game(self, item: Item):
+        """Remove o item equipado da tela do jogo."""
+        if item in self.general_sprite_list:
+            self.general_sprite_list.remove(item)
+            self.window.log_box.add_message(f"Removendo {item.name}...")
