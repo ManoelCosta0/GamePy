@@ -11,7 +11,7 @@
       "range": 60
     }
   },
-  "Minério Estranho": {
+  "Minerio Estranho": {
     "description": "Um minério com propriedades desconhecidas. Pode ser valioso.",
     "type": "Material",
     "sprite_path": "assets/sprites/items/strange_ore.png",

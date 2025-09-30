@@ -96,7 +96,6 @@ class GameView(View):
     
     def equip_item_on_game(self, item: Item):
         """Equipa um item na tela do jogo."""
-        self.window.log_box.add_message(f"Exibindo {item.name}...")
         self.general_sprite_list.append(item)
     
     def unequip_item_on_game(self, item: Item):

@@ -23,7 +23,6 @@ class Slot(arcade.Sprite):
             center_y=self.center_y)
         self.texture = self.uslot
         self.item = item
-        print(f"{item.name} adicionado ao slot de {self.slot_type}.")
         return item_sprite
 
     def remove_item_from_slot(self):

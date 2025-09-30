@@ -18,7 +18,7 @@ class MyGame(arcade.Window):
         self.game_view = GameView()
         self.pause_view = PauseView()
         self.inventory_view = InventoryView()
-        self.log_box = LogBox(x=10, y=const.WINDOW_HEIGHT - 500, width=300, height=200)
+        self.log_box = LogBox(x=10, y=const.WINDOW_HEIGHT - 450, width=300, height=230)
 
         arcade.get_window().maximize()
 

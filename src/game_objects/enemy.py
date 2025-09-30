@@ -21,5 +21,4 @@ class Enemy(Entity):
             item = Item(item)
             drop_chance = item.get_drop_chance()
             if random.random() <= drop_chance:
-                print(f"{self.name} dropou {item.name}!")
                 return item
