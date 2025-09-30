@@ -1,0 +1,11 @@
+{
+    "Bat": {
+        "max_hp": 50,
+        "attack": 10,
+        "speed": 2,
+        "exp_reward": 20,
+        "loot_table": [
+            "Minério Estranho"
+        ]
+    }
+}

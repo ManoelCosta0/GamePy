@@ -2,7 +2,7 @@
 import arcade
 from src import constants as const
 from src.game_objects.player import Player
-from src.game_objects.entity import Entity
+from src.game_objects.enemy import Enemy
 from src.game_objects.item import Item
 from src.views.view import View
 
@@ -23,7 +23,7 @@ class GameView(View):
     def setup(self):
         """ Configura os componentes do jogo para esta View. """
         self.player = Player("assets/sprites/player.png", scale=0.5, center_x=400, center_y=450)
-        self.enemy = Entity("assets/sprites/enemies/bat.png", scale=0.03, center_x=800, center_y=450, max_hp=50)
+        self.enemy = Enemy("assets/sprites/enemies/bat.png", scale=0.03, center_x=800, center_y=450, max_hp=50, name="Bat")
         
         self.general_sprite_list.append(self.player)
         self.general_sprite_list.append(self.enemy)
@@ -48,12 +48,16 @@ class GameView(View):
             self.player.is_moving = True
             self.player.velocity_x = const.MOVEMENT_SPEED
         elif key == arcade.key.E:
-            if not self.player.equipped_weapon: # Evita criar várias armas
-                self.player.inventory.add_item(self.inventory_view, Item("Espada Velha"))
+            self.player.inventory.add_item(self.inventory_view, Item("Espada Velha"))
+            self.window.log_box.add_message("Você pegou uma Espada Velha!")
         elif key == arcade.key.ESCAPE:
             self.window.show_view(self.pause_view)
         elif key == arcade.key.I:
             self.window.show_view(self.inventory_view)
+        elif key == arcade.key.TAB:
+            self.developer_mode = not self.developer_mode
+            print(f"Developer Mode {'ON' if self.developer_mode else 'OFF'}")
+            
 
     def on_key_release(self, key, modifiers):
         """ Chamado quando uma tecla é liberada. """
@@ -70,9 +74,7 @@ class GameView(View):
             print("Ataque")
             check = arcade.check_for_collision(self.player.equipped_weapon, self.enemy)
             if check:
-                print("Acertou")
-                self.enemy.current_hp -= 10
-                print(f"Vida do inimigo: {self.enemy.current_hp}")
+                self.player.attack(self.enemy)
 
     def on_update(self, delta_time):
         """ Lógica de atualização da View. """
@@ -82,3 +84,11 @@ class GameView(View):
         if self.player.equipped_weapon:
             self.player.equipped_weapon.center_x = self.player.center_x
             self.player.equipped_weapon.center_y = self.player.center_y
+        
+        if self.enemy:
+            if self.enemy.current_hp <= 0:
+                self.enemy.die()
+                drop = self.enemy.on_die()
+                if drop:
+                    self.player.inventory.add_item(self.inventory_view, drop)
+                self.enemy = None

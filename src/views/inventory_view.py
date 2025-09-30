@@ -96,13 +96,16 @@ class InventoryView(View):
                 action = self.item_detail_view.on_mouse_press(x, y)
 
                 if action == "equip":
-                    self.game_view.player.equipped_weapon = self.item_detail_view.item
+                    self.game_view.player.equip_weapon(self.item_detail_view.item)
                     self.game_view.player.inventory.equip_item(self, self.item_detail_view.item, self.item_detail_view.index)
+                    self.game_view.general_sprite_list.append(self.game_view.player.equipped_weapon)
                     item_sprite = self.weapon_slot.add_item_on_slot(self.item_detail_view.item)
                     self.item_sprites.append(item_sprite)
                     self.item_sprites.swap(len(self.item_sprites) - 1, 0)  # Move o sprite do item equipado para o início da lista
+                    self.window.log_box.add_message(f"Você equipou {self.item_detail_view.item.name}.")
                 elif action == "discard":
                     self.game_view.player.inventory.remove_item(self, self.item_detail_view.index)
+                    self.window.log_box.add_message(f"Você descartou {self.item_detail_view.item.name}.")
                 elif action == "unequip":
                     print(f"Desequipando {self.item_detail_view.item.name}")
                     self.game_view.player.equipped_weapon = None

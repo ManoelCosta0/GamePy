@@ -5,6 +5,7 @@ from src.views.menu_view import MenuView
 from src.views.game_view import GameView
 from src.views.pause_view import PauseView
 from src.views.inventory_view import InventoryView
+from src.ui.log_box import LogBox
 
 class MyGame(arcade.Window):
     """
@@ -13,11 +14,11 @@ class MyGame(arcade.Window):
     def __init__(self):
         super().__init__(const.WINDOW_WIDTH, const.WINDOW_HEIGHT, const.WINDOW_TITLE, resizable=True)
 
-
         self.menu_view = MenuView()
         self.game_view = GameView()
         self.pause_view = PauseView()
         self.inventory_view = InventoryView()
+        self.log_box = LogBox(x=10, y=const.WINDOW_HEIGHT - 500, width=300, height=200)
 
         self.menu_view.game_view = self.game_view
 
