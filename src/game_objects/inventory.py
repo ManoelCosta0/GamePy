@@ -10,8 +10,12 @@ class Inventory():
 
     def add_item(self, inventory_view: InventoryView, item: Item):
         """Adiciona um item ao inventário."""
-        self.slot_items.append(item)
-        inventory_view.add_item_on_display(item, len(self.slot_items) - 1)
+        if self.is_on_inventory(item) and item.stack_limit > 1:
+            self.slot_items[self.find_item_index(item)].stack += 1
+            print(f"Adicionou mais uma unidade de {item.name}. Total: {self.slot_items[self.find_item_index(item)].stack}")
+        else:
+            self.slot_items.append(item)
+            inventory_view.add_item_on_display(item, len(self.slot_items) - 1)
 
     def remove_item(self, inventory_view: InventoryView, index: int):
         """Remove um item do inventário."""
@@ -20,7 +24,16 @@ class Inventory():
 
     def is_on_inventory(self, item: Item) -> bool:
         """Verifica se um item está no inventário."""
-        return item in self.slot_items
+        for items in self.slot_items:
+            if items.name == item.name:
+                return True 
+        return False
+
+    def find_item_index(self, item: Item) -> int:
+        for index, current_item in enumerate(self.slot_items):
+            if current_item.name == item.name:
+                return index
+        return -1
 
     def equip_item(self, inventory_view: InventoryView, item: Item, index: int):
         """Equipa um item do inventário."""

@@ -19,3 +19,15 @@ class Player(Entity):
                 self.equipped_weapon.center_x += self.velocity_x
                 self.equipped_weapon.center_y += self.velocity_y
             self.center_y += self.velocity_y
+    
+    def equip_weapon(self, weapon):
+        self.equipped_weapon = weapon
+        weapon.center_x = self.center_x
+        weapon.center_y = self.center_y
+        print(f"Dano da arma: {weapon.get_damage()}")
+        self.attack_damage = weapon.get_damage()
+    
+    def attack(self, target):
+        if self.equipped_weapon:
+            print(f"Atacando {target.name} causando {self.attack_damage} de dano.")
+            target.take_damage(self.attack_damage)

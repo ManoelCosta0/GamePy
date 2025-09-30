@@ -6,9 +6,17 @@
     "scale": 0.2,
     "stack_limit": 1,
     "stats": {
-      "damage": 5,
+      "damage": 10,
       "attack_speed": 0.8,
       "range": 60
     }
+  },
+  "Minério Estranho": {
+    "description": "Um minério com propriedades desconhecidas. Pode ser valioso.",
+    "type": "Material",
+    "sprite_path": "assets/sprites/items/strange_ore.png",
+    "scale": 0.08,
+    "stack_limit": 20,
+    "drop_chance": 1
   }
 }

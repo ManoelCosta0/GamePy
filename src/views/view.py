@@ -57,3 +57,5 @@ class View(arcade.View):
         self.clear()
         self.general_sprite_list.draw()
         self.button_list.draw()
+        if self.developer_mode:
+            self.window.log_box.on_draw()
