@@ -49,8 +49,8 @@ class PauseView(View):
             if button_colliding and not self.developer_mode:
                 match button_colliding[0].name:
                     case "continue":
-                        self.window.show_view(self.game_view)
+                        self.window.show_view(self.window.game_view)
                     case "inventory":
-                        self.window.show_view(self.inventory_view)
+                        self.window.show_view(self.window.inventory_view)
                     case "exit":
-                        self.window.show_view(self.menu_view)
+                        self.window.show_view(self.window.menu_view)

@@ -36,4 +36,4 @@ class MenuView(View):
             buttons_colliding = arcade.get_sprites_at_point((x, y), self.button_list)
             
             if buttons_colliding and not self.developer_mode:
-                self.window.show_view(self.game_view)
+                self.window.show_view(self.window.game_view)

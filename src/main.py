@@ -20,18 +20,6 @@ class MyGame(arcade.Window):
         self.inventory_view = InventoryView()
         self.log_box = LogBox(x=10, y=const.WINDOW_HEIGHT - 500, width=300, height=200)
 
-        self.menu_view.game_view = self.game_view
-
-        self.game_view.pause_view = self.pause_view
-        self.game_view.inventory_view = self.inventory_view
-
-        self.pause_view.game_view = self.game_view
-        self.pause_view.inventory_view = self.inventory_view
-        self.pause_view.menu_view = self.menu_view
-
-        self.inventory_view.game_view = self.game_view
-        self.inventory_view.pause_view = self.pause_view
-
         arcade.get_window().maximize()
 
         self.show_view(self.menu_view)

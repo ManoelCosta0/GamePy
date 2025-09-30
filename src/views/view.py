@@ -8,12 +8,6 @@ class View(arcade.View):
     """
     def __init__(self):
         super().__init__()
-
-        self.game_view = None
-        self.menu_view = None
-        self.pause_view = None
-        self.inventory_view = None
-
         self.background_sprite = None
         self.general_sprite_list = arcade.SpriteList()
         self.button_list = arcade.SpriteList()

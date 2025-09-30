@@ -48,12 +48,12 @@ class GameView(View):
             self.player.is_moving = True
             self.player.velocity_x = const.MOVEMENT_SPEED
         elif key == arcade.key.E:
-            self.player.inventory.add_item(self.inventory_view, Item("Espada Velha"))
+            self.player.inventory.add_item(self.window.inventory_view, Item("Espada Velha"))
             self.window.log_box.add_message("Você pegou uma Espada Velha!")
         elif key == arcade.key.ESCAPE:
-            self.window.show_view(self.pause_view)
+            self.window.show_view(self.window.pause_view)
         elif key == arcade.key.I:
-            self.window.show_view(self.inventory_view)
+            self.window.show_view(self.window.inventory_view)
         elif key == arcade.key.TAB:
             self.developer_mode = not self.developer_mode
             print(f"Developer Mode {'ON' if self.developer_mode else 'OFF'}")
@@ -90,5 +90,5 @@ class GameView(View):
                 self.enemy.die()
                 drop = self.enemy.on_die()
                 if drop:
-                    self.player.inventory.add_item(self.inventory_view, drop)
+                    self.player.inventory.add_item(self.window.inventory_view, drop)
                 self.enemy = None
