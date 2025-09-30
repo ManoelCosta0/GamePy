@@ -86,6 +86,7 @@ class GameView(View):
         
         if self.enemy:
             if self.enemy.current_hp <= 0:
+                self.window.log_box.add_message(f"Você matou o {self.enemy.name}!")
                 drop = self.enemy.on_die()
                 if drop:
                     self.player.inventory.add_item(drop)

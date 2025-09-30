@@ -25,7 +25,6 @@ class Player(Entity):
         self.inventory.equip_item(weapon, index)
         weapon.center_x = self.center_x
         weapon.center_y = self.center_y
-        print(f"Dano da arma: {weapon.get_damage()}")
         self.attack_damage = weapon.get_damage()
     
     def unequip_weapon(self):
@@ -38,7 +37,6 @@ class Player(Entity):
     
     def attack(self, target):
         if self.equipped_weapon:
-            print(f"Atacando {target.name} causando {self.attack_damage} de dano.")
             target.take_damage(self.attack_damage)
     
     def get_items(self):
