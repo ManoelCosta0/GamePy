@@ -1,0 +1,53 @@
+# ##############################################################################
+# ## Arquivo .gitignore para Projetos Python                                ##
+# ## ---------------------------------------------------------------------- ##
+# ## Este arquivo especifica arquivos e pastas que o Git deve ignorar       ##
+# ## intencionalmente. Isso evita que arquivos temporários, de configuração   ##
+# ## local ou segredos sejam enviados para o repositório remoto.            ##
+# ##############################################################################
+
+
+# --- Ambientes Virtuais ---
+# Ignora a pasta do ambiente virtual para não enviar centenas de arquivos
+# de bibliotecas para o repositório. Cada desenvolvedor deve criar o seu.
+venv/
+env/
+.venv/
+.env/
+
+
+# --- Cache e Bytecode do Python ---
+# Ignora as pastas de cache que o Python cria automaticamente para acelerar
+# a execução dos módulos. Elas são geradas a cada execução.
+__pycache__/
+*.py[cod]
+*$py.class
+
+
+# --- Configurações de IDEs e Editores ---
+# Impede que arquivos de configuração pessoal do seu editor de código sejam
+# enviados. Cada membro da equipe pode ter sua própria configuração.
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+
+# --- Arquivos de Testes ---
+# Ignora arquivos gerados por ferramentas de teste.
+.pytest_cache/
+.tox/
+htmlcov/
+
+
+# --- Arquivos Específicos do Sistema Operacional ---
+# Ignora arquivos de metadados criados pelo macOS e Windows.
+.DS_Store
+Thumbs.db
+
+
+# --- Arquivos de Build e Distribuição ---
+# Ignora os pacotes gerados quando você "builda" o projeto para distribuição.
+build/
+dist/
+*.egg-info/
