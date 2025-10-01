@@ -3,8 +3,7 @@ import collections
 
 class LogBox:
     """
-    Uma caixa de Log que exibe mensagens de jogo com um fundo translúcido.
-    As mensagens mais recentes aparecem no topo.
+    Classe para log de mensagens do jogo. (Modo desenvolvedor)
     """
     def __init__(self, x: float, y: float, width: int, height: int, max_lines: int = 7):
         self.x = x

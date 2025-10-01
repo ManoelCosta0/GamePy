@@ -4,7 +4,7 @@ from src.ui.buttons import SpriteButton
 
 class View(arcade.View):
     """
-    Classe base para  todas as Views do jogo.
+    Classe base para todas as Views do jogo.
     """
     def __init__(self):
         super().__init__()

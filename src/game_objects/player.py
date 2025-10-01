@@ -3,6 +3,9 @@ from src.game_objects.inventory import Inventory
 from src import constants as const
 
 class Player(Entity):
+    """
+    Classe para o jogador no jogo.
+    """
     def __init__(self):
         super().__init__(const.PLAYER_IMAGE, const.PLAYER_SCALE, const.PLAYER_INITIAL_X, const.PLAYER_INITIAL_Y, max_hp=100)
         self.velocity_x = 0

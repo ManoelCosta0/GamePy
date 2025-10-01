@@ -4,8 +4,7 @@ import src.constants as const
 
 class SpriteButton(arcade.Sprite):
     """
-    Um sprite que funciona como um botão, com texturas para estado
-    normal e quando o mouse está sobre ele (hover).
+    Classe para botões do jogo
     """
     def __init__(self, name, normal_texture_path, hover_texture_path):
         super().__init__(normal_texture_path, const.BUTTON_SCALE)

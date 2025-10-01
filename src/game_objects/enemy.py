@@ -9,6 +9,9 @@ with open("data/enemies.json") as f:
     enemy_json = json.load(f)
 
 class Enemy(Entity):
+    """
+    Classe para inimigos no jogo.
+    """
     def __init__(self, name: str, x: float, y: float):
         info  = enemy_json[name]
         super().__init__(info["image_path"], info["scale"], x, y, max_hp=info["max_hp"])

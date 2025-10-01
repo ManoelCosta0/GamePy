@@ -1,6 +1,9 @@
 import arcade
 
 class Slot(arcade.Sprite):
+    """
+    Classe auxiliar para slots de inventário.
+    """
     def __init__(self, image_file: str, position_x: float, position_y: float, scale: float, slot_type: str, index: int):
         super().__init__(image_file, scale=scale)
         self.center_x = position_x

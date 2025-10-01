@@ -4,7 +4,7 @@ from src.ui.slot import Slot
 
 class ItemDetailView():
     """
-    Tela de Detalhes do Item.
+    Classe auxiliar para tela de detalhes do item.
     """
     def __init__(self, item: Item, center_x: float, center_y: float, index: int):
         super().__init__()
