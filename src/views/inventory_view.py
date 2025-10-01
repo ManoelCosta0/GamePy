@@ -21,10 +21,11 @@ class InventoryView(View):
 
     def setup(self):
         # Instâncias dos sprites do inventário
-        self.inventory_box = arcade.Sprite("assets/UI/inventory_box.png", center_x=800, center_y=400, scale=0.8)
-        self.weapon_slot = Slot("assets/UI/inventory_weapon_slot.png", 800 - 140, 400 + 84, 0.4, "weapon", 9)
-        self.armor_slot = Slot("assets/UI/inventory_armor_slot.png", 800 - 140, 400 - 47, 0.4, "armor", 10)
-        self.accessory_slot = Slot("assets/UI/inventory_accessory_slot.png", 800 - 140, 400 - 153, 0.25, "accessory", 11)
+        x,y = self.window.width / 2, self.window.height / 2
+        self.inventory_box = arcade.Sprite("assets/UI/inventory_box.png", center_x=x, center_y=y, scale=0.8)
+        self.weapon_slot = Slot("assets/UI/inventory_weapon_slot.png", x - 140, y + 84, 0.4, "weapon", 9)
+        self.armor_slot = Slot("assets/UI/inventory_armor_slot.png", x - 140, y - 47, 0.4, "armor", 10)
+        self.accessory_slot = Slot("assets/UI/inventory_accessory_slot.png", x - 140, y - 153, 0.25, "accessory", 11)
         self.uslot = arcade.load_texture("assets/UI/inventory_unavailable_slot.png")
         self.normal_slot = arcade.load_texture("assets/UI/inventory_available_slot.png")
 
@@ -37,8 +38,7 @@ class InventoryView(View):
         self.inventory_elements.append(self.accessory_slot)
 
     def on_show_view(self):
-        self.background_sprite.center_x = self.window.width / 2
-        self.background_sprite.center_y = self.window.height / 2
+        self.background_sprite.center_x, self.background_sprite.center_y = self.window.width / 2, self.window.height / 2
 
     def on_draw(self):
         """ Desenha todos os elementos da View. """
@@ -75,8 +75,8 @@ class InventoryView(View):
         self.is_dragging = False
         elements_colliding = arcade.get_sprites_at_point((x, y), self.inventory_elements)
         if elements_colliding and self.item_detail_view is None and self.developer_mode:
-            pos_x = 800 - elements_colliding[0].center_x
-            pos_y = 400 - elements_colliding[0].center_y
+            pos_x = self.window.width / 2 - elements_colliding[0].center_x
+            pos_y = self.window.height / 2 - elements_colliding[0].center_y
             print(f"Elemento {elements_colliding[0]} solto na posição ({pos_x}, {pos_y}) relativa ao centro")
         elif self.item_detail_view and self.developer_mode:
             self.item_detail_view.on_mouse_release(x, y)
