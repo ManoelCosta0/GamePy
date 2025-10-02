@@ -6,7 +6,7 @@ Projeto de criação de um RPG em python
 - Gênero: RPG Clássico
 - Tema: Fantasia
 - Loop de Gameplay: explorar o mapa -> lutar com inimigos -> coletar itens -> evoluir o personagem
-- Ambientação: [Floresta corrompida](./assets/ambiente_1.png)
+- Ambientação: [Floresta corrompida](./pre-production/images/ambiente_1.png)
 - Sistema de luta de acordo com as classes:
 	- Guerreiro: Espada
 	- Arqueiro: Arco
@@ -20,10 +20,45 @@ Projeto de criação de um RPG em python
 	- 5 Níveis
 	- Itens melhores são craftáveis com os drops
 - Esboço de elementos visuais:
-	- [Inventário](./assets/Inventario.png)
+	- [Inventário](./pre-production/images/Inventario_1.png)
 	- Craft
 	- HUD
 
+# Instalação e Execução
+
+Para rodar o jogo, é altamente recomendado usar um ambiente virtual para gerenciar as dependências corretamente.
+
+### Passo 1: Clonar e Configurar
+
+Execute os comandos abaixo na ordem:
+
+1.  Clone o repositório e depois abra-o:
+    ```bash
+    git clone https://github.com/ManoelCosta0/GamePy.git
+    cd GamePy
+    ```
+
+2.  **Configuração Rápida (Recomendado):**
+    * **Windows:** Execute `setup.bat`
+    * **Linux/macOS:** Execute `./setup.sh` (Pode ser necessário rodar `chmod +x setup.sh` antes)
+
+**OU**
+
+2.  **Configuração Manual:**
+    * Crie e ative o ambiente virtual:
+        * `python -m venv venv`
+        * *Windows:* `venv\Scripts\activate.bat`
+        * *Linux/macOS:* `source venv/bin/activate`
+    * Instale as dependências:
+        * `pip install -r requirements.txt`
+
+### Passo 2: Executar o Jogo
+
+Com o ambiente virtual ativado, rode:
+
+```bash
+python src/main.py
+```
 # GitFlow
 
 Para melhor organização do projeto, será utilizado o seguinte GitFlow:
