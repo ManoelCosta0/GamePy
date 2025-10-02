@@ -59,6 +59,13 @@ Com o ambiente virtual ativado, rode:
 ```bash
 python src/main.py
 ```
+# Controles
+
+- [ESC] Pause
+- [I] Inventário
+- [TAB] Abrir logbox
+- [W], [S], [A], [D] movimentação do personagem
+
 # GitFlow
 
 Para melhor organização do projeto, será utilizado o seguinte GitFlow:
