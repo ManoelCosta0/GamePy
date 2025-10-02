@@ -1,0 +1,13 @@
+{
+    "Bat": {
+        "image_path": "assets/sprites/enemies/bat.png",
+        "scale": 0.03,
+        "max_hp": 50,
+        "attack": 10,
+        "speed": 2,
+        "exp_reward": 20,
+        "loot_table": [
+            "Minerio Estranho"
+        ]
+    }
+}
