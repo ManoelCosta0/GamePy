@@ -80,8 +80,8 @@ Para melhor organização do projeto, será utilizado o seguinte GitFlow:
 
 ## Feature
 - São criadas para o desenvolvimento das tarefas do projeto.
-- Padrão lexico: branch-origem/feature/[nome_da_feature]
-- Ex.: main/feature/nome_da_feature
+- Padrão lexico: versao_alterada/tipo_de_mudança/[nome_da_mudança]
+- Ex.: pre-alpha/refact/tela_inicial ou alpha/feature/HUD
 
 # Padrões de Uso do GitHub
 
@@ -91,7 +91,7 @@ Para melhor organização e estética do GitHub, será utilizado o seguinte padr
 - Os commit serão feitos seguindo os modelos abaixo:
 	- :sparkles: feat: título da feature
 	- :books: docs: título do documento ou descriçaõ da atualização realizada no documento
-	- :recycle: refactor: descrição da refatoração
+	- :recycle: refact: descrição da refatoração
 	- :bug: fix: bug corrigido
 
 ## Versionamento
