@@ -73,17 +73,15 @@ Para melhor organização do projeto, será utilizado o seguinte GitFlow:
 ![Diagrama do Fluxo de Trabalho GitFlow](./pre-production/docs/GitFlow_v3.jpg)
 
 ## Main
-- A main será branch principal em que o código mais estável e devidamente versionado estará. A partir dela serão criadas as branchs develop e documents.
+- A main será a branch em que estará a versão mais estável da fase de desenvolvimento atual (pre-alpha)
 
 ## Develop 
-- A develop é a branch base de desenvolvimento e integração das features.
-
-## Documents
-- A documents é a branch em que tudo que não faz parte da codificação diretamente estará, como padrões de uso e esboços do projeto.
+- A develop é a branch em que estará a versão mais estável da próxima fase de desenvolvimento (alpha)
 
 ## Feature
 - São criadas para o desenvolvimento das tarefas do projeto.
-- Padrão lexico: feature/[nome_da_feature]
+- Padrão lexico: branch-origem/feature/[nome_da_feature]
+- Ex.: main/feature/nome_da_feature
 
 # Padrões de Uso do GitHub
 
