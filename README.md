@@ -70,7 +70,7 @@ python src/main.py
 
 Para melhor organização do projeto, será utilizado o seguinte GitFlow:
 
-![Diagrama do Fluxo de Trabalho GitFlow](./pre-production/docs/GitFlow_v2.jpg)
+![Diagrama do Fluxo de Trabalho GitFlow](./pre-production/docs/GitFlow_v3.jpg)
 
 ## Main
 - A main será branch principal em que o código mais estável e devidamente versionado estará. A partir dela serão criadas as branchs develop e documents.
