@@ -29,7 +29,6 @@ class View(arcade.View):
     def on_key_press(self, key, modifiers):
         if key == arcade.key.TAB:
             self.developer_mode = not self.developer_mode
-            print(f"Developer Mode {'ON' if self.developer_mode else 'OFF'}")
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         """ Chamado quando o mouse é arrastado. """

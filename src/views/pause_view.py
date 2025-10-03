@@ -14,30 +14,35 @@ class PauseView(View):
 
     def setup(self):
         """ Configura os componentes da View de Pausa. """
-        self.background_sprite = arcade.Sprite("assets/UI/pause_background.png", scale=1)
+        self.background_sprite = arcade.Sprite(const.BACKGROUND_IMAGE)
         self.background_sprite.center_x = self.window.width / 2
         self.background_sprite.center_y = self.window.height / 2
 
         resume_button = SpriteButton(
-            name="continue",
-            normal_texture_path="assets/UI/continue_button_normal.png",
-            hover_texture_path="assets/UI/continue_button_hover.png")
+            name="resume",
+            normal_texture_path=const.BUTTONS_TEXTURE["resume"],
+            hover_texture_path=const.BUTTONS_HOVERED_TEXTURE["resume"])
+        
+        controls_button = SpriteButton(
+            name="controls",
+            normal_texture_path=const.BUTTONS_TEXTURE["controls"],
+            hover_texture_path=const.BUTTONS_HOVERED_TEXTURE["controls"])
 
         inventory_button = SpriteButton(
             name="inventory",
-            normal_texture_path="assets/UI/inventory_button_normal.png",
-            hover_texture_path="assets/UI/inventory_button_hover.png")
+            normal_texture_path=const.BUTTONS_TEXTURE["inventory"],
+            hover_texture_path=const.BUTTONS_HOVERED_TEXTURE["inventory"])
 
         exit_button = SpriteButton(
             name="exit",
-            normal_texture_path="assets/UI/sair_button_normal.png",
-            hover_texture_path="assets/UI/sair_button_hover.png")
+            normal_texture_path=const.BUTTONS_TEXTURE["exit"],
+            hover_texture_path=const.BUTTONS_HOVERED_TEXTURE["exit"])
 
         self.general_sprite_list.append(self.background_sprite)
         self.button_list.append(resume_button)
         self.button_list.append(inventory_button)
         self.button_list.append(exit_button)
-
+        self.button_list.append(controls_button)
 
     def on_show_view(self):
         """ Chamado quando esta View é mostrada. """
@@ -53,9 +58,11 @@ class PauseView(View):
 
             if button_colliding and not self.developer_mode:
                 match button_colliding[0].name:
-                    case "continue":
+                    case "resume":
                         self.window.show_view(self.window.game_view)
                     case "inventory":
                         self.window.show_view(self.window.inventory_view)
                     case "exit":
                         self.window.show_view(self.window.menu_view)
+                    case "controls":
+                        self.window.log_box.add_message("Funcionalidade por vir")

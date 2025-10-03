@@ -8,7 +8,7 @@ class ItemDetailView():
     """
     def __init__(self, item: Item, center_x: float, center_y: float, index: int):
         super().__init__()
-        self.background_sprite = arcade.Sprite("assets/UI/item_box.png", center_x=center_x + 400, center_y=center_y-20, scale=0.4)
+        self.background_sprite = arcade.Sprite("assets/ui/item_box.png", center_x=center_x + 400, center_y=center_y-20, scale=0.4)
         self.item = item
         self.index = index
         self.general_sprite_list = arcade.SpriteList()
@@ -18,7 +18,7 @@ class ItemDetailView():
 
     def setup(self):
         # Configura os elementos da tela de detalhes do item
-        self.slot = Slot("assets/UI/inventory_unavailable_slot.png", self.background_sprite.center_x, self.background_sprite.center_y+90, 0.12, "normal", 12)
+        self.slot = Slot("assets/ui/inventory_unavailable_slot.png", self.background_sprite.center_x, self.background_sprite.center_y+90, 0.12, "normal", 12)
         self.item_sprite = arcade.Sprite(self.item.image_file, center_x=self.slot.center_x, center_y=self.slot.center_y, scale=self.item.scale)
         self.detail_elements.append(self.slot)
         self.detail_elements.append(self.item_sprite)
@@ -47,8 +47,8 @@ class ItemDetailView():
         )
 
         self.button = "equip" if self.index < 12 else "unequip"
-        self.equip_button = arcade.Sprite(f"assets/UI/{self.button}_button.png", center_x=self.background_sprite.center_x - 56, center_y=self.background_sprite.center_y - 137, scale=0.14)
-        self.discard_button = arcade.Sprite("assets/UI/discard_button.png", center_x=self.background_sprite.center_x + 62, center_y=self.background_sprite.center_y - 137, scale=0.14)
+        self.equip_button = arcade.Sprite(f"assets/ui/{self.button}_button.png", center_x=self.background_sprite.center_x - 56, center_y=self.background_sprite.center_y - 137, scale=0.14)
+        self.discard_button = arcade.Sprite("assets/ui/discard_button.png", center_x=self.background_sprite.center_x + 62, center_y=self.background_sprite.center_y - 137, scale=0.14)
 
         self.detail_elements.append(self.equip_button)
         self.detail_elements.append(self.discard_button)

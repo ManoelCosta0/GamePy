@@ -12,9 +12,9 @@ class Slot(arcade.Sprite):
         self.item = None 
         self.normal_slot = arcade.load_texture(image_file)
         if slot_type == "normal":
-            self.uslot = arcade.load_texture("assets/UI/inventory_unavailable_slot.png")
+            self.uslot = arcade.load_texture("assets/ui/inventory_unavailable_slot.png")
         elif slot_type == "weapon":
-            self.uslot = arcade.load_texture("assets/UI/inventory_weapon_slot.png")
+            self.uslot = arcade.load_texture("assets/ui/inventory_weapon_slot.png")
         self.index = index  # Índice do slot no inventário
         
     def add_item_on_slot(self, item) -> arcade.Sprite:

@@ -11,7 +11,7 @@ class InventoryView(View):
     def __init__(self):
         super().__init__()
         
-        self.background_sprite = arcade.Sprite("assets/UI/background.png", scale=1.15, center_x=self.window.width / 2, center_y=self.window.height / 2)
+        self.background_sprite = arcade.Sprite("assets/ui/background.png", scale=1.15, center_x=self.window.width / 2, center_y=self.window.height / 2)
         self.general_sprite_list.append(self.background_sprite)
         self.inventory_elements = arcade.SpriteList()
         self.item_sprites = arcade.SpriteList()
@@ -22,12 +22,12 @@ class InventoryView(View):
     def setup(self):
         # Instâncias dos sprites do inventário
         x,y = self.window.width / 2, self.window.height / 2
-        self.inventory_box = arcade.Sprite("assets/UI/inventory_box.png", center_x=x, center_y=y, scale=0.8)
-        self.weapon_slot = Slot("assets/UI/inventory_weapon_slot.png", x - 140, y + 84, 0.4, "weapon", 9)
-        self.armor_slot = Slot("assets/UI/inventory_armor_slot.png", x - 140, y - 47, 0.4, "armor", 10)
-        self.accessory_slot = Slot("assets/UI/inventory_accessory_slot.png", x - 140, y - 153, 0.25, "accessory", 11)
-        self.uslot = arcade.load_texture("assets/UI/inventory_unavailable_slot.png")
-        self.normal_slot = arcade.load_texture("assets/UI/inventory_available_slot.png")
+        self.inventory_box = arcade.Sprite("assets/ui/inventory_box.png", center_x=x, center_y=y, scale=0.8)
+        self.weapon_slot = Slot("assets/ui/inventory_weapon_slot.png", x - 140, y + 84, 0.4, "weapon", 9)
+        self.armor_slot = Slot("assets/ui/inventory_armor_slot.png", x - 140, y - 47, 0.4, "armor", 10)
+        self.accessory_slot = Slot("assets/ui/inventory_accessory_slot.png", x - 140, y - 153, 0.25, "accessory", 11)
+        self.uslot = arcade.load_texture("assets/ui/inventory_unavailable_slot.png")
+        self.normal_slot = arcade.load_texture("assets/ui/inventory_available_slot.png")
 
         self.create_slots() # Cria os slots do inventário
 
@@ -125,7 +125,7 @@ class InventoryView(View):
         count = 0
         for j in range(4):
             for i in range(3):
-                slot = Slot("assets/UI/inventory_available_slot.png", 
+                slot = Slot("assets/ui/inventory_available_slot.png", 
                             self.inventory_box.center_x - 20 + i * 95, 
                             self.inventory_box.center_y + 80 - j * 90, 
                             0.12, "normal", count)
