@@ -10,7 +10,7 @@ class MenuView(View):
     def __init__(self):
         super().__init__()
 
-        self.background_sprite = arcade.Sprite(const.BACKGROUND_IMAGE)
+        self.background_sprite = arcade.Sprite("assets/ui/home_background.png")
         
         new_game_button = SpriteButton(
             name="new_game",

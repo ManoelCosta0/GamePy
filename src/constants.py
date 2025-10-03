@@ -25,8 +25,8 @@ BUTTONS_HOVERED_TEXTURE = {
 }
 
 BUTTONS_POSITION_X = {
-    "new_game": WINDOW_WIDTH/2,
-    "continue": WINDOW_WIDTH/2,
+    "new_game": 395,
+    "continue": 395,
     "resume": WINDOW_WIDTH/2,
     "controls": WINDOW_WIDTH/2,
     "exit": WINDOW_WIDTH/2,
@@ -34,8 +34,8 @@ BUTTONS_POSITION_X = {
     }
 
 BUTTONS_POSITION_Y = {
-    "new_game": 400,
-    "continue": 310,
+    "new_game": 445,
+    "continue": 345,
     "resume": 400,
     "controls": 310,
     "inventory": 220,

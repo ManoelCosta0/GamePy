@@ -11,7 +11,7 @@ class InventoryView(View):
     def __init__(self):
         super().__init__()
         
-        self.background_sprite = arcade.Sprite("assets/ui/background.png", scale=1.15, center_x=self.window.width / 2, center_y=self.window.height / 2)
+        self.background_sprite = arcade.Sprite("assets/ui/background.jpg", center_x=self.window.width / 2, center_y=self.window.height / 2)
         self.general_sprite_list.append(self.background_sprite)
         self.inventory_elements = arcade.SpriteList()
         self.item_sprites = arcade.SpriteList()

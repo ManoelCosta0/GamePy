@@ -2,6 +2,7 @@ import arcade
 from src import constants as const
 from src.views.view import View
 from src.ui.buttons import SpriteButton
+from src.views.controls_view import ControlsView
 
 class PauseView(View):
     """
@@ -14,9 +15,7 @@ class PauseView(View):
 
     def setup(self):
         """ Configura os componentes da View de Pausa. """
-        self.background_sprite = arcade.Sprite(const.BACKGROUND_IMAGE)
-        self.background_sprite.center_x = self.window.width / 2
-        self.background_sprite.center_y = self.window.height / 2
+        self.background_sprite = arcade.Sprite(const.BACKGROUND_IMAGE, center_x=const.WINDOW_WIDTH / 2, center_y=const.WINDOW_HEIGHT / 2)
 
         resume_button = SpriteButton(
             name="resume",
@@ -65,4 +64,4 @@ class PauseView(View):
                     case "exit":
                         self.window.show_view(self.window.menu_view)
                     case "controls":
-                        self.window.log_box.add_message("Funcionalidade por vir")
+                        self.window.show_view(ControlsView())
