@@ -24,6 +24,7 @@ class Player(Entity):
             self.center_y += self.velocity_y
     
     def equip_weapon(self, weapon, index: int):
+        if self.equipped_weapon: self.unequip_weapon()
         self.equipped_weapon = weapon
         self.inventory.equip_item(weapon, index)
         weapon.center_x = self.center_x

@@ -81,6 +81,13 @@ class InventoryView(View):
         elif self.item_detail_view and self.developer_mode:
             self.item_detail_view.on_mouse_release(x, y)
     
+    def unequip_temp_func(self, player):
+        self.weapon_slot.remove_item_from_slot()
+        self.equipped_item_sprites.pop(0)
+        self.window.game_view.unequip_item_on_game(self.item_detail_view.item)
+        self.window.log_box.add_message(f"Você desequipou {self.item_detail_view.item.name}.")
+        self.add_item_on_display(self.item_detail_view.item)
+    
     def on_mouse_press(self, x, y, button, modifiers):
         """ Chamado quando o botão do mouse é pressionado. """
         if button == arcade.MOUSE_BUTTON_LEFT:
@@ -100,6 +107,8 @@ class InventoryView(View):
 
                 if action == "equip":
                     player.equip_weapon(self.item_detail_view.item, self.item_detail_view.index)
+                    if self.weapon_slot.item:
+                        self.unequip_temp_func(player)
                     self.equip_item_on_display(player.equipped_weapon)
                     self.window.game_view.equip_item_on_game(player.equipped_weapon)
                     self.window.log_box.add_message(f"Você equipou {self.item_detail_view.item.name}.")
@@ -109,11 +118,7 @@ class InventoryView(View):
                     self.window.log_box.add_message(f"Você descartou {self.item_detail_view.item.name}.")
                 elif action == "unequip":
                     player.unequip_weapon()
-                    self.weapon_slot.remove_item_from_slot()
-                    self.equipped_item_sprites.pop(0)
-                    self.window.game_view.unequip_item_on_game(self.item_detail_view.item)
-                    self.window.log_box.add_message(f"Você desequipou {self.item_detail_view.item.name}.")
-                    self.add_item_on_display(self.item_detail_view.item)
+                    self.unequip_temp_func(player)
 
                 self.item_detail_view = None
             elif self.item_detail_view and not self.item_detail_view.background_sprite.collides_with_point((x, y)):
