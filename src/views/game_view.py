@@ -63,6 +63,7 @@ class GameView(arcade.View):
             self.player.move_state_y = 0
         elif key == arcade.key.A or key == arcade.key.D:
             self.player.move_state_x = 0
+            self.player.animation_state = -1
 
     def on_mouse_release(self, x, y, button, modifiers):
         """ Chamado quando o botão do mouse é liberado. """
