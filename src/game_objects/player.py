@@ -7,28 +7,34 @@ class Player(Entity):
     Classe para o jogador no jogo.
     """
     def __init__(self):
-        super().__init__(const.PLAYER_IMAGE, const.PLAYER_SCALE, const.PLAYER_INITIAL_X, const.PLAYER_INITIAL_Y, max_hp=100)
-        self.velocity_x = 0
-        self.velocity_y = 0
-        self.is_moving = False
+        super().__init__("assets/sprites/entities/soldier.png", scale=2, center_x=const.PLAYER_INITIAL_X, center_y=const.PLAYER_INITIAL_Y, max_hp=100)
+        self.speed = 5
+        self.move_state_x = 0
+        self.move_state_y = 0
         self.equipped_weapon = None  # Arma equipada
         self.inventory = Inventory()
 
-    def update(self, *args, **kwargs):
-        # Lógica de atualização do jogador
-        if self.is_moving:
-            self.center_x += self.velocity_x
-            if self.equipped_weapon:
-                self.equipped_weapon.center_x += self.velocity_x
-                self.equipped_weapon.center_y += self.velocity_y
-            self.center_y += self.velocity_y
+    def update(self, delta_time: float = 1/60):
+        """ Atualiza a lógica do jogador. """
+        self.move_player()
+        self.update_weapon_position()
     
+    def update_weapon_position(self):
+        if self.equipped_weapon:
+            self.equipped_weapon.center_x = self.center_x
+            self.equipped_weapon.center_y = self.center_y
+    
+    def move_player(self):
+        if self.move_state_x != 0 or self.move_state_y != 0:
+            self.center_x += self.move_state_x * self.speed
+            self.center_y += self.move_state_y * self.speed
+
     def equip_weapon(self, weapon, index: int):
         self.equipped_weapon = weapon
         self.inventory.equip_item(weapon, index)
+        self.attack_damage = weapon.get_damage()
         weapon.center_x = self.center_x
         weapon.center_y = self.center_y
-        self.attack_damage = weapon.get_damage()
     
     def unequip_weapon(self):
         if self.equipped_weapon:

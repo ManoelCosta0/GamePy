@@ -1,6 +1,5 @@
 import arcade
 from src.game_objects.item import Item
-from src.views.inventory_view import InventoryView
 
 class Inventory():
     """Classe para gerenciar o inventário do jogador."""
