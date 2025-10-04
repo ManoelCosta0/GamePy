@@ -61,6 +61,7 @@ class GameView(arcade.View):
         """ Chamado quando uma tecla é liberada. """
         if key == arcade.key.W or key == arcade.key.S:
             self.player.move_state_y = 0
+            self.player.animation_state = -1
         elif key == arcade.key.A or key == arcade.key.D:
             self.player.move_state_x = 0
             self.player.animation_state = -1
