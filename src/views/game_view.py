@@ -18,7 +18,7 @@ class GameView(arcade.View):
         self.camera = arcade.Camera2D()
         
         self.sprite_list = arcade.SpriteList()
-        self.tile_map = arcade.load_tilemap("assets/maps/map.json", scaling=4)
+        self.tile_map = arcade.load_tilemap("assets/maps/map.tmx", scaling=4)
         
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
         self.sprite_list.append(self.player)
@@ -26,8 +26,8 @@ class GameView(arcade.View):
     def on_draw(self):
         self.clear()
         with self.camera.activate():
-            self.scene.draw()
-            self.sprite_list.draw()
+            self.scene.draw(pixelated=True)
+            self.sprite_list.draw(pixelated=True)
     
     def on_update(self, delta_time):
         """ Lógica de atualização da View. """
