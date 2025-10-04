@@ -8,7 +8,7 @@ class ControlsView(arcade.View):
         self.ui_manager = UIManager()
         self.sprite_list = arcade.SpriteList()
         
-        self.background = arcade.Sprite(const.BACKGROUND_IMAGE)
+        self.background = arcade.Sprite(const.BACKGROUND_IMAGE, center_x=self.window.width / 2, center_y=self.window.height / 2)
         self.widget = arcade.gui.UISpriteWidget(x=410, y=208-30, width=780, height=484, sprite=arcade.Sprite("assets/ui/controls_screen/controls.png"))
         self.return_button = arcade.gui.UITextureButton(
             x=345, y=600, width=163, height=106, 
