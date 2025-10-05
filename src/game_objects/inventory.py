@@ -26,3 +26,7 @@ class Inventory():
     
     def get_items(self):
         return self.items
+
+    def load_inventory(self, items_data: list):
+        """Carrega o inventário a partir de uma lista de dados de itens."""
+        self.items = [Item(**item) for item in items_data]

@@ -8,16 +8,16 @@ UI_PATH = "assets/ui/"
 
 BUTTON_SCALE = 0.5
 BUTTONS_TEXTURE = {
-    "new_game": UI_PATH + "new_game_button.png",
-    "continue": UI_PATH + "continue_button.png",
+    "new_game": UI_PATH + "home_screen/new_game_button.png",
+    "continue": UI_PATH + "home_screen/continue_button.png",
     "resume": UI_PATH + "pause_screen/resume_button.png",
     "controls": UI_PATH + "pause_screen/controls_button.png",
     "exit": UI_PATH + "pause_screen/exit_button.png",
     "inventory": UI_PATH + "pause_screen/inventory_button.png"
 }
 BUTTONS_HOVERED_TEXTURE = {
-    "new_game": UI_PATH + "new_game_button_hover.png",
-    "continue": UI_PATH + "continue_button_hover.png",
+    "new_game": UI_PATH + "home_screen/new_game_button_hover.png",
+    "continue": UI_PATH + "home_screen/continue_button_hover.png",
     "resume": UI_PATH + "pause_screen/resume_button_hover.png",
     "controls": UI_PATH + "pause_screen/controls_button_hover.png",
     "exit": UI_PATH + "pause_screen/exit_button_hover.png",

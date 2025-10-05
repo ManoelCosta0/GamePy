@@ -1,3 +1,4 @@
+import json
 import arcade
 
 from src.game_objects.player import Player
@@ -43,9 +44,6 @@ class GameView(arcade.View):
             self.player.move_state_x = 1
         elif key == arcade.key.E:
             item = Item("Espada Velha")
-            self.player.inventory.add_item(item)
-            self.window.inventory_view.add_item_on_display(item)
-            self.window.log_box.add_message("Você pegou uma Espada Velha!")
         elif key == arcade.key.ESCAPE:
             self.window.show_view(self.window.pause_view)
         elif key == arcade.key.I:
@@ -85,12 +83,16 @@ class GameView(arcade.View):
             1,
         )
     
-    def equip_item_on_game(self, item: Item):
-        """Equipa um item na tela do jogo."""
-        self.sprite_list.append(item)
-    
-    def unequip_item_on_game(self, item: Item):
-        """Remove o item equipado da tela do jogo."""
-        if item in self.sprite_list:
-            self.sprite_list.remove(item)
-            self.window.log_box.add_message(f"Removendo {item.name}...")
+    def save_game(self):
+        save = {
+            "class": self.player.class_,
+            "inventory": self.player.inventory.get_items(),
+            "equipped_weapon": self.player.equipped_weapon.name if self.player.equipped_weapon else None,
+            "max_hp": self.player.max_hp,
+            "speed": self.player.speed,
+            "position": (self.player.center_x, self.player.center_y),
+        }
+        with open("saves/save.json", "w") as file:
+            json.dump(save, file, indent=4)
+        
+        self.window.log_box.add_message("Jogo salvo com sucesso!")

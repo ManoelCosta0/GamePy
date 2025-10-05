@@ -77,8 +77,8 @@ class Player(Entity):
         if class_ == "Warrior":
             self.max_hp = 150
             self.speed = 4
-        elif class_ == "Archer":
-            self.max_hp = 100
+        elif class_ == "Assassin":
+            self.max_hp = 80
             self.speed = 6
     
     def load_animations(self):
@@ -98,3 +98,11 @@ class Player(Entity):
             self.walk_textures["left"].append(left)
             self.walk_textures["up"].append(up)
             self.walk_textures["down"].append(down)
+    
+    def load_player(self, inventory_data, equipped_weapon_name, position, max_hp, speed):
+        self.inventory.load_inventory(inventory_data)
+        if equipped_weapon_name:
+            self.equip_weapon(Item(equipped_weapon_name))
+        self.center_x, self.center_y = position
+        self.max_hp = max_hp
+        self.speed = speed
