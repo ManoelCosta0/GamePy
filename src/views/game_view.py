@@ -1,19 +1,16 @@
-# src/views/game_view.py
 import arcade
-from src import constants as const
+
 from src.game_objects.player import Player
-from src.game_objects.enemy import Enemy
 from src.game_objects.item import Item
-from src.views.view import View
 
 class GameView(arcade.View):
     """
     View principal do jogo, onde toda a lógica de gameplay acontece.
     """
-    def __init__(self):
+    def __init__(self, class_: str):
         super().__init__()
 
-        self.player = Player()
+        self.player = Player(class_)
         self.enemy = None
         self.camera = arcade.Camera2D()
         

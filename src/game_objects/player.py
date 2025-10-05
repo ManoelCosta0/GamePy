@@ -1,19 +1,23 @@
 import arcade
 from src.game_objects.entity import Entity
 from src.game_objects.inventory import Inventory
-from src import constants as const
+from src.game_objects.item import Item
 
 class Player(Entity):
     """
     Classe para o jogador no jogo.
     """
-    def __init__(self):
-        super().__init__("assets/sprites/player/player.png", scale=2, center_x=const.PLAYER_INITIAL_X, center_y=const.PLAYER_INITIAL_Y, max_hp=100)
-        self.speed = 5
+    def __init__(self, class_: str):
+        super().__init__("assets/sprites/player/player.png", center_x=400, center_y=1500)
+        
+        self.speed = 0
         self.move_state_x = 0
         self.move_state_y = 0
-        self.equipped_weapon = None  # Arma equipada
+        
+        self.equipped_weapon = None
+        self.class_ = class_
         self.inventory = Inventory()
+        self.load_class_configs(class_)
         
         self.animation_state = -1
         self.direction = "right"
@@ -24,12 +28,6 @@ class Player(Entity):
         """ Atualiza a lógica do jogador. """
         self.move_player()
         self.update_anim()
-        self.update_weapon_position()
-    
-    def update_weapon_position(self):
-        if self.equipped_weapon:
-            self.equipped_weapon.center_x = self.center_x
-            self.equipped_weapon.center_y = self.center_y
     
     def update_anim(self):
        if self.animation_state == -1 and self.idle_textures[self.direction] != self.texture:
@@ -55,16 +53,14 @@ class Player(Entity):
             self.animation_state += 1
             self.direction = "down"
 
-    def equip_weapon(self, weapon, index: int):
+    def equip_weapon(self, weapon: Item):
         self.equipped_weapon = weapon
-        self.inventory.equip_item(weapon, index)
+        self.inventory.remove_item(weapon)
         self.attack_damage = weapon.get_damage()
-        weapon.center_x = self.center_x
-        weapon.center_y = self.center_y
     
     def unequip_weapon(self):
         if self.equipped_weapon:
-            self.inventory.unequip_item(self.equipped_weapon)
+            self.inventory.add_item(self.equipped_weapon)
             self.equipped_weapon = None
             self.attack_damage = 0
         else:
@@ -75,7 +71,15 @@ class Player(Entity):
             target.take_damage(self.attack_damage)
     
     def get_items(self):
-        return self.inventory.slot_items
+        return self.inventory.get_items()
+    
+    def load_class_configs(self, class_: str):
+        if class_ == "Warrior":
+            self.max_hp = 150
+            self.speed = 4
+        elif class_ == "Archer":
+            self.max_hp = 100
+            self.speed = 6
     
     def load_animations(self):
         self.idle_textures = {

@@ -1,7 +1,6 @@
 import arcade
 from src import constants as const
 from arcade.gui import UIManager
-from src.ui.buttons import SpriteButton
 from src.views.controls_view import ControlsView
 
 class PauseView(arcade.View):
