@@ -67,18 +67,22 @@ class PauseView(arcade.View):
         
         @self.resume_button.event("on_click")
         def on_click_resume(event):
+            arcade.play_sound(self.window.click_sound)
             self.window.show_view(self.window.game_view)
 
         @self.inventory_button.event("on_click")
         def on_click_inventory(event):
+            arcade.play_sound(self.window.click_sound)
             self.window.show_view(self.window.inventory_view)
 
         @self.exit_button.event("on_click")
         def on_click_exit(event):
+            arcade.play_sound(self.window.click_sound)
             self.window.show_view(self.window.menu_view)
 
         @self.controls_button.event("on_click")
         def on_click_controls(event):
+            arcade.play_sound(self.window.click_sound)
             self.window.show_view(ControlsView())
 
     def on_hide_view(self):
