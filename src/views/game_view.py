@@ -1,6 +1,7 @@
 import json
 import arcade
 
+from src.game_objects.enemy import Enemy
 from src.game_objects.player import Player
 from src.game_objects.item import Item
 
@@ -14,27 +15,39 @@ class GameView(arcade.View):
         self.developer_mode = False
 
         self.player = Player(class_)
-        self.enemy = None
+        self.enemy = Enemy("Bat", 1000, 1500)
         self.camera = arcade.Camera2D()
         
         self.sprite_list = arcade.SpriteList()
+        self.hit_box_list = arcade.SpriteList()
         self.tile_map = arcade.load_tilemap("assets/maps/map.tmx", scaling=4)
         
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
         self.sprite_list.append(self.player)
+        self.sprite_list.append(self.enemy)
 
     def on_draw(self):
         self.clear()
         with self.camera.activate():
             self.scene.draw(pixelated=True)
             self.sprite_list.draw(pixelated=True)
+            self.hit_box_list.draw(pixelated=True)
         if self.developer_mode:
             self.window.log_box.on_draw()
     
     def on_update(self, delta_time):
         """ Lógica de atualização da View. """
         self.sprite_list.update()
+        self.hit_box_list.update()
         self.center_camera_to_player()
+
+        if self.player.animation_state < 0 and self.player.attack_hitbox:
+            is_colliding = self.player.attack_hitbox.collides_with_sprite(self.enemy)
+            if is_colliding:
+                print("Hit") # Lógica de dano aqui
+                self.player.attack_hitbox.kill()
+                self.player.attack_hitbox = None
+                self.hit_box_list.clear()
 
     def on_key_press(self, key, modifiers):
         """ Chamado sempre que uma tecla é pressionada. """
@@ -73,8 +86,11 @@ class GameView(arcade.View):
     def on_mouse_press(self, x, y, button, modifiers):
         if button == arcade.MOUSE_BUTTON_LEFT:
             if self.player.equipped_weapon:
+                self.player.set_hitbox()
+                self.hit_box_list.clear()
+                self.hit_box_list.append(self.player.attack_hitbox)
                 self.player.attack()
-                self.window.log_box.add_message(f"Você atacou com {self.player.equipped_weapon.name}")
+                
     def center_camera_to_player(self):
         screen_center_x, screen_center_y = self.player.position
         if screen_center_x < self.camera.viewport_width/2:

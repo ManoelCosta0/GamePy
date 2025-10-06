@@ -14,7 +14,7 @@ class Enemy(Entity):
     """
     def __init__(self, name: str, x: float, y: float):
         info  = enemy_json[name]
-        super().__init__(info["image_path"], info["scale"], x, y, max_hp=info["max_hp"])
+        super().__init__(info["image_path"], x, y, max_hp=info["max_hp"], scale=info["scale"])
         self.name = name
         self.drops = info["loot_table"]
 

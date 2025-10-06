@@ -76,7 +76,7 @@ class ClassesView(arcade.View):
         save_data = {
             "class": class_,
             "inventory": [],
-            "equipped_weapon": None,
+            "equipped_weapon": "Espada Velha",
             "max_hp": 100,
             "speed": 5,
             "position": (400, 1500)

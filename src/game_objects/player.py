@@ -31,6 +31,8 @@ class Player(Entity):
         self.attack_timer = 0.0
         self.move_state_x = 0
         self.move_state_y = 0
+        
+        self.attack_hitbox = None
 
     def update(self, delta_time: float = 1/60):
         """ Atualiza a lógica do jogador. """
@@ -45,6 +47,11 @@ class Player(Entity):
            x = (self.animation_state // 6 % self.LENGTH_WALK_ANIMATION)
            self.texture = self.walk_textures[self.direction][x]
        elif self.animation_state < 0:
+           if self.attack_hitbox: self.attack_hitbox.life_time -= delta_time
+           if self.attack_hitbox and self.attack_hitbox.life_time <= 0:
+                self.attack_hitbox.remove_from_sprite_lists()
+                self.attack_hitbox = None
+            
            self.attack_timer += delta_time
            if self.attack_timer >= self.attack_cooldown and self.animation_state >= -4:
                 self.attack_timer = 0.0
@@ -83,6 +90,18 @@ class Player(Entity):
         else:
             print("Nenhuma arma equipada para desequipar.")
     
+    def set_hitbox(self):
+        self.attack_hitbox = arcade.SpriteSolidColor(50, 40, color=(255, 0, 0, 100))
+        self.attack_hitbox.life_time = 0.14
+        if self.direction == "right":
+            self.attack_hitbox.center_x, self.attack_hitbox.center_y = self.center_x + 8, self.center_y - 8
+        elif self.direction == "left":
+            self.attack_hitbox.center_x, self.attack_hitbox.center_y = self.center_x - 8, self.center_y - 8
+        elif self.direction == "up":
+            self.attack_hitbox.center_x, self.attack_hitbox.center_y = self.center_x, self.center_y + 4
+        elif self.direction == "down":
+            self.attack_hitbox.center_x, self.attack_hitbox.center_y = self.center_x, self.center_y - 12
+
     def attack(self):
         if self.equipped_weapon is None: return
         self.animation_state = -1
