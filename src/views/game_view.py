@@ -10,6 +10,8 @@ class GameView(arcade.View):
     """
     def __init__(self, class_: str):
         super().__init__()
+        
+        self.developer_mode = False
 
         self.player = Player(class_)
         self.enemy = None
@@ -26,6 +28,8 @@ class GameView(arcade.View):
         with self.camera.activate():
             self.scene.draw(pixelated=True)
             self.sprite_list.draw(pixelated=True)
+        if self.developer_mode:
+            self.window.log_box.on_draw()
     
     def on_update(self, delta_time):
         """ Lógica de atualização da View. """
@@ -44,31 +48,32 @@ class GameView(arcade.View):
             self.player.move_state_x = 1
         elif key == arcade.key.E:
             item = Item("Espada Velha")
+            self.player.inventory.add_item(item)
+            self.player.equip_weapon(item)
+            self.window.log_box.add_message(f"Você equipou {item.name}.")
         elif key == arcade.key.ESCAPE:
             self.window.show_view(self.window.pause_view)
         elif key == arcade.key.I:
             self.window.show_view(self.window.inventory_view)
         elif key == arcade.key.TAB:
             self.developer_mode = not self.developer_mode
-            print(f"Developer Mode {'ON' if self.developer_mode else 'OFF'}")
+        elif key == arcade.key.F1:
+            self.save_game()
 
     def on_key_release(self, key, modifiers):
         """ Chamado quando uma tecla é liberada. """
         if key == arcade.key.W or key == arcade.key.S:
             self.player.move_state_y = 0
-            self.player.animation_state = -1
+            self.player.animation_state = 0
         elif key == arcade.key.A or key == arcade.key.D:
             self.player.move_state_x = 0
-            self.player.animation_state = -1
+            self.player.animation_state = 0
 
-    def on_mouse_release(self, x, y, button, modifiers):
-        """ Chamado quando o botão do mouse é liberado. """
-        if button == arcade.MOUSE_BUTTON_LEFT and self.player.equipped_weapon:
-            if self.enemy is None: return
-            check = arcade.check_for_collision(self.player.equipped_weapon, self.enemy)
-            if check:
-                self.player.attack(self.enemy)
-    
+    def on_mouse_press(self, x, y, button, modifiers):
+        if button == arcade.MOUSE_BUTTON_LEFT:
+            if self.player.equipped_weapon:
+                self.player.attack()
+                self.window.log_box.add_message(f"Você atacou com {self.player.equipped_weapon.name}")
     def center_camera_to_player(self):
         screen_center_x, screen_center_y = self.player.position
         if screen_center_x < self.camera.viewport_width/2:
@@ -83,7 +88,7 @@ class GameView(arcade.View):
             1,
         )
     
-    def save_game(self):
+    def save_game(self) -> list:
         save = {
             "class": self.player.class_,
             "inventory": self.player.inventory.get_items(),
@@ -96,3 +101,4 @@ class GameView(arcade.View):
             json.dump(save, file, indent=4)
         
         self.window.log_box.add_message("Jogo salvo com sucesso!")
+        return save
