@@ -1,4 +1,5 @@
 import arcade
+import random
 import os
 import json
 
@@ -13,10 +14,39 @@ class MenuView(arcade.View):
         super().__init__()
 
         self.ui_manager = arcade.gui.UIManager()
-        self.sprite_list = arcade.SpriteList()
+        # --- AQUI: Reintroduza uma SpriteList para os backgrounds ---
+        self.background_sprite_list = arcade.SpriteList() 
         
-        self.background_sprite = arcade.Sprite("assets/ui/home_background.png", scale=1)
+        # --- Configurações da transição de Background ---
+        self.background_image_paths = [] 
+        for i in range(1, 6):
+            self.background_image_paths.append(f"assets/ui/home_screen/home_background_{i}.png")
         
+        self.current_bg_index = random.randint(0, len(self.background_image_paths) - 1)
+        # Inicializa next_bg_index para que bg_sprite_top tenha uma imagem válida.
+        # Ele será atualizado corretamente no primeiro ciclo do on_update.
+        self.next_bg_index = (self.current_bg_index + 1) % len(self.background_image_paths) 
+
+        # Sprites dedicados para os backgrounds
+        self.bg_sprite_bottom = arcade.Sprite(self.background_image_paths[self.current_bg_index])
+        self.bg_sprite_top = arcade.Sprite(self.background_image_paths[self.next_bg_index])
+        
+        # Configuração inicial do sprite de cima (transparente no começo)
+        self.bg_sprite_top.alpha = 0
+
+        # --- AQUI: Adicione os sprites de background à nova SpriteList ---
+        # A ordem é importante: bottom (fundo) primeiro, top (frente) depois.
+        self.background_sprite_list.append(self.bg_sprite_bottom)
+        self.background_sprite_list.append(self.bg_sprite_top)
+
+        self.is_transitioning = False
+        self.transition_progress = 0.0
+
+        self.TRANSITION_DURATION = 2.0
+        self.IMAGE_DISPLAY_DURATION = 60.0
+        self.timer = 0.0
+
+        # --- SEU CÓDIGO DE BOTÕES (SEM ALTERAÇÕES) ---
         self.new_game_button = arcade.gui.UITextureButton(
             x=310, y=445, width=379, height=142, 
             texture=arcade.load_texture(const.BUTTONS_TEXTURE["new_game"]), 
@@ -36,17 +66,13 @@ class MenuView(arcade.View):
             texture_hovered=arcade.load_texture(const.BUTTONS_HOVERED_TEXTURE["exit"]),
             scale=const.BUTTON_SCALE)
 
-        self.sprite_list.append(self.background_sprite)
         self.ui_manager.add(self.new_game_button)
         self.ui_manager.add(self.continue_button)
         self.ui_manager.add(self.exit_button)
 
     def on_show_view(self):
-        """ Chamado quando esta View é mostrada. """
         self.ui_manager.enable()
-        self.background_sprite.center_x = self.window.width / 2
-        self.background_sprite.center_y = self.window.height / 2
-
+        self.on_resize(self.window.width, self.window.height) 
         if not os.path.exists("saves/save.json"): self.continue_button.disabled = True
 
         @self.new_game_button.event("on_click")
@@ -65,13 +91,18 @@ class MenuView(arcade.View):
             arcade.close_window()
 
     def on_draw(self):
-        """ Desenha a View. """
         self.clear()
-        self.sprite_list.draw()
+        # --- AQUI: Desenhe a SpriteList dos backgrounds ---
+        self.background_sprite_list.draw() 
         self.ui_manager.draw()
         
     def on_hide_view(self):
         self.ui_manager.disable()
+        
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.F11:
+            self.window.set_fullscreen(not self.window.fullscreen)
+            self.on_resize(self.window.width, self.window.height)
         
     def load_game(self):
         save = {}
@@ -88,20 +119,47 @@ class MenuView(arcade.View):
         
         self.window.game_view = game_view
         self.window.show_view(game_view)
-    
-    ''' Função de hover desativada por enquanto
-    def on_update(self, delta_time):
-        if self.new_game_button.hovered:
-            self.on_hover_button(self.new_game_button)
-        elif self.continue_button.hovered:
-            self.on_hover_button(self.continue_button)
-        elif self.exit_button.hovered:
-            self.on_hover_button(self.exit_button)
-        else:
-            self.last_button_hovered = None
+        
+    def on_resize(self, width: int, height: int):
+        super().on_resize(width, height)
 
-    def on_hover_button(self, button):
-        if self.last_button_hovered != button:
-            arcade.play_sound(self.window.hover_sound)
-            self.last_button_hovered = button
-    '''
+        for bg_sprite in [self.bg_sprite_bottom, self.bg_sprite_top]:
+            if bg_sprite and bg_sprite.texture:
+                scale_w = width / bg_sprite.texture.width
+                scale_h = height / bg_sprite.texture.height
+                scale = max(scale_w, scale_h) 
+                
+                bg_sprite.scale = scale
+                bg_sprite.center_x = width / 2
+                bg_sprite.center_y = height / 2
+
+    def on_update(self, delta_time):
+        self.timer += delta_time
+
+        if not self.is_transitioning:
+            if self.timer >= self.IMAGE_DISPLAY_DURATION:
+                self.is_transitioning = True
+                self.transition_progress = 0.0 
+                self.timer = 0.0
+                
+                self.current_bg_index = (self.current_bg_index + 1) % len(self.background_image_paths)
+                self.next_bg_index = (self.current_bg_index + 1) % len(self.background_image_paths)
+                
+                self.bg_sprite_top.texture = arcade.load_texture(self.background_image_paths[self.next_bg_index])
+                self.bg_sprite_top.alpha = 0
+                self.on_resize(self.window.width, self.window.height)
+
+        if self.is_transitioning:
+            self.transition_progress += delta_time / self.TRANSITION_DURATION
+            
+            if self.transition_progress >= 1.0:
+                self.transition_progress = 1.0
+                self.is_transitioning = False
+                
+                self.bg_sprite_bottom.texture = self.bg_sprite_top.texture
+                self.bg_sprite_bottom.alpha = 255
+                
+                self.bg_sprite_top.alpha = 0 
+            
+            self.bg_sprite_top.alpha = int(self.transition_progress * 255)
+            if self.bg_sprite_top.alpha > 255: self.bg_sprite_top.alpha = 255

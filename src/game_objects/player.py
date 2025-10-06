@@ -86,7 +86,6 @@ class Player(Entity):
     def attack(self):
         if self.equipped_weapon is None: return
         self.animation_state = -1
-        print(self.animation_state)
 
     def get_items(self):
         return self.inventory.get_items()

@@ -52,6 +52,7 @@ class GameView(arcade.View):
             self.player.equip_weapon(item)
             self.window.log_box.add_message(f"Você equipou {item.name}.")
         elif key == arcade.key.ESCAPE:
+            arcade.play_sound(self.window.click_sound)
             self.window.show_view(self.window.pause_view)
         elif key == arcade.key.I:
             self.window.show_view(self.window.inventory_view)

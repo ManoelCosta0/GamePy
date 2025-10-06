@@ -88,3 +88,8 @@ class PauseView(arcade.View):
     def on_hide_view(self):
         """ Chamado quando esta View é escondida. """
         self.ui_manager.disable()
+        
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.ESCAPE:
+            arcade.play_sound(self.window.click_sound)
+            self.window.show_view(self.window.game_view)
