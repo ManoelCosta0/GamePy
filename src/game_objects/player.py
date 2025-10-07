@@ -9,18 +9,16 @@ class Player(Entity):
     """
     Classe para o jogador no jogo.
     """
-    def __init__(self, class_: str):
-        super().__init__("assets/sprites/player/player.png", center_x=400, center_y=1500)
+    def __init__(self):
+        super().__init__("assets/sprites/player/player.png", center_x=0, center_y=0)
         
         # Atributos do jogador
-        self.speed = 0
+        self.class_ = None
+        self.speed = None
         self.equipped_weapon = None
-        self.class_ = class_
         self.inventory = Inventory()
-        self.attack_cooldown = 0.07
+        self.attack_cooldown = None
         
-        # Carregar configurações da classe
-        self.load_class_configs(class_)
         # Carregar animações
         self.load_animations()
         
@@ -109,14 +107,6 @@ class Player(Entity):
     def get_items(self):
         return self.inventory.get_items()
     
-    def load_class_configs(self, class_: str):
-        if class_ == "Warrior":
-            self.max_hp = 150
-            self.speed = 4
-        elif class_ == "Assassin":
-            self.max_hp = 80
-            self.speed = 7
-    
     def load_animations(self):
         self.idle_textures = {
             "right": arcade.load_texture("assets/sprites/player/player.png"),
@@ -146,10 +136,12 @@ class Player(Entity):
             self.attack_textures["up"].append(up)
             self.attack_textures["down"].append(down)
     
-    def load_player(self, inventory_data, equipped_weapon_name, position, max_hp, speed):
-        self.inventory.load_inventory(inventory_data)
-        if equipped_weapon_name:
-            self.equip_weapon(Item(equipped_weapon_name))
-        self.center_x, self.center_y = position
-        self.max_hp = max_hp
-        self.speed = speed
+    def load_player(self, data):
+        self.inventory.load_inventory(data["inventory"])
+        if data["equipped_weapon"]:
+            self.equip_weapon(Item(data["equipped_weapon"]))
+        self.center_x, self.center_y = data["position"]
+        self.max_hp = data["max_hp"]
+        self.speed = data["speed"]
+        self.attack_cooldown = data["attack_cooldown"]
+        self.class_ = data["class"]

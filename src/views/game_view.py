@@ -9,12 +9,12 @@ class GameView(arcade.View):
     """
     View principal do jogo, onde toda a lógica de gameplay acontece.
     """
-    def __init__(self, class_: str):
+    def __init__(self):
         super().__init__()
         
         self.developer_mode = False
 
-        self.player = Player(class_)
+        self.player = Player()
         self.enemy = Enemy("Bat", 1000, 1500)
         self.camera = arcade.Camera2D()
         
@@ -105,17 +105,17 @@ class GameView(arcade.View):
             1,
         )
     
-    def save_game(self) -> list:
+    def save_game(self):
         save = {
             "class": self.player.class_,
             "inventory": self.player.inventory.get_items(),
             "equipped_weapon": self.player.equipped_weapon.name if self.player.equipped_weapon else None,
             "max_hp": self.player.max_hp,
             "speed": self.player.speed,
+            "attack_cooldown": self.player.attack_cooldown,
             "position": (self.player.center_x, self.player.center_y),
         }
         with open("saves/save.json", "w") as file:
             json.dump(save, file, indent=4)
         
         self.window.log_box.add_message("Jogo salvo com sucesso!")
-        return save

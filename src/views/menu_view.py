@@ -109,13 +109,8 @@ class MenuView(arcade.View):
         with open("saves/save.json") as file:
             save = json.load(file)
         
-        game_view = GameView(save["class"])
-        game_view.player.load_player(
-            save["inventory"], 
-            save["equipped_weapon"], 
-            save["position"],
-            save["max_hp"],
-            save["speed"])
+        game_view = GameView()
+        game_view.player.load_player(save)
         
         self.window.game_view = game_view
         self.window.show_view(game_view)

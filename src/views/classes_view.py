@@ -76,13 +76,30 @@ class ClassesView(arcade.View):
         save_data = {
             "class": class_,
             "inventory": [],
-            "equipped_weapon": "Espada Velha",
-            "max_hp": 100,
-            "speed": 5,
+            "equipped_weapon": self.new_game_configs[class_]["equipped_weapon"],
+            "max_hp": self.new_game_configs[class_]["max_hp"],
+            "speed": self.new_game_configs[class_]["speed"],
+            "attack_cooldown": self.new_game_configs[class_]["attack_cooldown"],
             "position": (400, 1500)
         }
         with open("saves/save.json", "w") as save_file:
             json.dump(save_data, save_file, indent=4)
 
-        self.window.game_view = GameView(class_)
+        self.window.game_view = GameView()
+        self.window.game_view.player.load_player(save_data)
         self.window.show_view(self.window.game_view)
+
+    new_game_configs = {
+        "Warrior": {
+            "max_hp": 150,
+            "speed": 4,
+            "attack_cooldown": 0.08,
+            "equipped_weapon": "Espada Velha"
+        },
+        "Assassin": {
+            "max_hp": 80,
+            "speed": 7,
+            "attack_cooldown": 0.05,
+            "equipped_weapon": "Espada Velha" # Temporário
+        }
+    }
