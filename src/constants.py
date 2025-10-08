@@ -2,7 +2,7 @@ WINDOW_WIDTH = 1600
 WINDOW_HEIGHT = 900
 WINDOW_TITLE = "GAME"
 
-BACKGROUND_IMAGE = "assets/ui/background.jpg"
+BACKGROUND_IMAGE = "assets/ui/util/background.jpg"
 FONT_PATH = "assets/fonts/alagard.ttf"
 UI_PATH = "assets/ui/"
 
