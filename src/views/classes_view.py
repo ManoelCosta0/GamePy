@@ -82,7 +82,7 @@ class ClassesView(arcade.View):
             "attack_cooldown": self.new_game_configs[class_]["attack_cooldown"],
             "level": 1,
             "current_xp": 0,
-            "position": (400, 1500)
+            "position": (600, 1500)
         }
         with open("saves/save.json", "w") as save_file:
             json.dump(save_data, save_file, indent=4)

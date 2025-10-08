@@ -4,6 +4,7 @@ import arcade
 from src.game_objects.enemy import Enemy
 from src.game_objects.player import Player
 from src.game_objects.item import Item
+from src.ui.hud import HUD as hud
 
 class GameView(arcade.View):
     """
@@ -27,6 +28,8 @@ class GameView(arcade.View):
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
         self.sprite_list.append(self.player)
         self.sprite_list.append(self.enemy)
+        
+        hud(self.hud_manager)
 
     def on_show_view(self):
         self.hud_manager.enable()
