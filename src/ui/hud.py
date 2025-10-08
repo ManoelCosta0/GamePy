@@ -28,7 +28,7 @@ class HUD:
             align="center")
 
         self.xp_label = arcade.gui.UILabel(
-            text="Xp. 0/100",
+            text="Xp. 10/100",
             x=130, y=self.ui_manager.window.height - 113,
             width=100, height=50,
             font_name = "alagard",
