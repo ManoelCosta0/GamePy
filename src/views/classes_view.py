@@ -80,6 +80,8 @@ class ClassesView(arcade.View):
             "max_hp": self.new_game_configs[class_]["max_hp"],
             "speed": self.new_game_configs[class_]["speed"],
             "attack_cooldown": self.new_game_configs[class_]["attack_cooldown"],
+            "level": 1,
+            "current_xp": 0,
             "position": (400, 1500)
         }
         with open("saves/save.json", "w") as save_file:

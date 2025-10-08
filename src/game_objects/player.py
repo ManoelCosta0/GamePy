@@ -1,16 +1,16 @@
 import arcade
-import time
 
 from src.game_objects.entity import Entity
 from src.game_objects.inventory import Inventory
 from src.game_objects.item import Item
+from src.ui.health_bar import HealthBar
 
 class Player(Entity):
     """
     Classe para o jogador no jogo.
     """
     def __init__(self):
-        super().__init__("assets/sprites/player/player.png", center_x=0, center_y=0)
+        super().__init__("assets/sprites/player/player.png", center_x=0, center_y=0, scale=2.0)
         
         # Atributos do jogador
         self.class_ = None
@@ -31,11 +31,15 @@ class Player(Entity):
         self.move_state_y = 0
         
         self.attack_hitbox = None
+        self.health_bar = None
+        
+        self.window = arcade.get_window()
 
     def update(self, delta_time: float = 1/60):
         """ Atualiza a lógica do jogador. """
         self.move_player()
         self.update_anim(delta_time)
+        self.health_bar.update()
 
     def update_anim(self, delta_time: float = 1/60):
        if self.animation_state == 0 and self.idle_textures[self.direction] != self.texture:
@@ -76,8 +80,10 @@ class Player(Entity):
 
     def equip_weapon(self, weapon: Item):
         self.equipped_weapon = weapon
-        #Verificação temporária (remover depois)
         if self.inventory.find_item(weapon.name) is not None: self.inventory.remove_item(weapon)
+        '''Verificação temporária (remover depois) 
+        Motivo: verificação acontece em todas as chamadas de equip_weapon, mas só serve para a primeira vez (load_player)
+        '''
         self.attack_damage = weapon.get_damage()
         
     def unequip_weapon(self):
@@ -142,6 +148,9 @@ class Player(Entity):
             self.equip_weapon(Item(data["equipped_weapon"]))
         self.center_x, self.center_y = data["position"]
         self.max_hp = data["max_hp"]
+        self.current_hp = self.max_hp
         self.speed = data["speed"]
         self.attack_cooldown = data["attack_cooldown"]
         self.class_ = data["class"]
+
+        self.health_bar = HealthBar(self, self.window.game_view.hud_sprite_list, self.max_hp, height=10)

@@ -25,7 +25,7 @@ class MyGame(arcade.Window):
         self.hover_sound = arcade.load_sound("assets/sounds/ui/on_hover_3.wav")
         self.click_sound = arcade.load_sound("assets/sounds/ui/on_click_1.wav")
         
-        arcade.get_window().maximize()
+        self.maximize()
 
         self.show_view(self.menu_view)
 

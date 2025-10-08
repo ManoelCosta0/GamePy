@@ -13,24 +13,34 @@ class GameView(arcade.View):
         super().__init__()
         
         self.developer_mode = False
-
+        
+        self.sprite_list = arcade.SpriteList()
+        self.hud_sprite_list = arcade.SpriteList()
+        self.hud_manager = arcade.gui.UIManager()
+        self.hit_box_list = arcade.SpriteList()
+        self.tile_map = arcade.load_tilemap("assets/maps/map.tmx", scaling=4)
+        
         self.player = Player()
         self.enemy = Enemy("Bat", 1000, 1500)
         self.camera = arcade.Camera2D()
         
-        self.sprite_list = arcade.SpriteList()
-        self.hit_box_list = arcade.SpriteList()
-        self.tile_map = arcade.load_tilemap("assets/maps/map.tmx", scaling=4)
-        
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
         self.sprite_list.append(self.player)
         self.sprite_list.append(self.enemy)
+
+    def on_show_view(self):
+        self.hud_manager.enable()
+
+    def on_hide_view(self):
+        self.hud_manager.disable()
 
     def on_draw(self):
         self.clear()
         with self.camera.activate():
             self.scene.draw(pixelated=True)
             self.sprite_list.draw(pixelated=True)
+            self.hud_sprite_list.draw(pixelated=True)
+            self.hud_manager.draw(pixelated=True)
             self.hit_box_list.draw(pixelated=True)
         if self.developer_mode:
             self.window.log_box.on_draw()
@@ -38,6 +48,7 @@ class GameView(arcade.View):
     def on_update(self, delta_time):
         """ Lógica de atualização da View. """
         self.sprite_list.update()
+        self.hud_sprite_list.update()
         self.hit_box_list.update()
         self.center_camera_to_player()
 
@@ -73,6 +84,8 @@ class GameView(arcade.View):
             self.developer_mode = not self.developer_mode
         elif key == arcade.key.F1:
             self.save_game()
+        elif key == arcade.key.K:
+            self.player.current_hp -= 10
 
     def on_key_release(self, key, modifiers):
         """ Chamado quando uma tecla é liberada. """

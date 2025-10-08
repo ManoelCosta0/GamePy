@@ -109,12 +109,11 @@ class MenuView(arcade.View):
         with open("saves/save.json") as file:
             save = json.load(file)
         
-        game_view = GameView()
-        game_view.player.load_player(save)
-        
-        self.window.game_view = game_view
-        self.window.show_view(game_view)
-        
+        self.window.game_view = GameView()
+        self.window.game_view.player.load_player(save)
+
+        self.window.show_view(self.window.game_view)
+
     def on_resize(self, width: int, height: int):
         super().on_resize(width, height)
 
