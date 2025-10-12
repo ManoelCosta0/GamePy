@@ -83,6 +83,7 @@ class GameView(arcade.View):
             self.window.show_view(self.window.pause_view)
         elif key == arcade.key.I:
             self.window.show_view(self.window.inventory_view)
+            self.window.inventory_view.origin = self
         elif key == arcade.key.TAB:
             self.developer_mode = not self.developer_mode
         elif key == arcade.key.F1:

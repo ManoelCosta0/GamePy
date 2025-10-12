@@ -1,164 +1,139 @@
 import arcade
-from src.views.view import View
 from src.game_objects.item import Item
-from src.views.item_detail_view import ItemDetailView
-from src.ui.slot import Slot
+from src import constants
 
-class InventoryView(View):
+class InventoryView(arcade.View):
     """
     Tela de Inventário do Jogo.
     """
     def __init__(self):
         super().__init__()
         
-        self.background_sprite = arcade.Sprite("assets/ui/util/background.jpg", center_x=self.window.width / 2, center_y=self.window.height / 2)
-        self.general_sprite_list.append(self.background_sprite)
-        self.inventory_elements = arcade.SpriteList()
-        self.item_sprites = arcade.SpriteList()
-        self.equipped_item_sprites = arcade.SpriteList()
-        self.item_detail_view = None
-        self.setup()
-
-    def setup(self):
-        # Instâncias dos sprites do inventário
-        x,y = self.window.width / 2, self.window.height / 2
-        self.inventory_box = arcade.Sprite("assets/ui/inventory_screen/inventory_box.png", center_x=x, center_y=y, scale=0.8)
-        self.weapon_slot = Slot("assets/ui/inventory_screen/inventory_weapon_slot.png", x - 140, y + 84, 0.4, "weapon", 9)
-        self.armor_slot = Slot("assets/ui/inventory_screen/inventory_armor_slot.png", x - 140, y - 47, 0.4, "armor", 10)
-        self.accessory_slot = Slot("assets/ui/inventory_screen/inventory_accessory_slot.png", x - 140, y - 153, 0.25, "accessory", 11)
-        self.uslot = arcade.load_texture("assets/ui/inventory_screen/inventory_unavailable_slot.png")
-        self.normal_slot = arcade.load_texture("assets/ui/inventory_screen/inventory_available_slot.png")
-
-        self.create_slots() # Cria os slots do inventário
-
-        # Adiciona os sprites à lista geral
-        self.general_sprite_list.append(self.inventory_box)
-        self.inventory_elements.append(self.weapon_slot)
-        self.inventory_elements.append(self.armor_slot)
-        self.inventory_elements.append(self.accessory_slot)
+        self.origin = None
+        
+        self.sprite_list = arcade.SpriteList()
+        self.background = arcade.Sprite(constants.BACKGROUND_IMAGE)
+        self.sprite_list.append(self.background)
+        
+        self.ui_manager = arcade.gui.UIManager()
+        self.background_sprite = arcade.gui.UISpriteWidget(
+            x=0, y=0,
+            width=1831/2, height=1139/2,
+            sprite=arcade.Sprite("assets/ui/inventory_screen/inventory_background.png", scale=0.5)
+        )
+        self.background_sprite.center_on_screen()
+        self.background_sprite.center_y -= 50
+        self.grid_1 = arcade.gui.UIGridLayout(
+            x=self.background_sprite.center_x-190, y=-10, 
+            width=self.background_sprite.width, height=self.background_sprite.height,
+            align_horizontal="left", align_vertical="top",
+            horizontal_spacing=20, vertical_spacing=20,
+            column_count=6, row_count=2
+        )
+        self.grid_2 = arcade.gui.UIGridLayout(
+            x=self.background_sprite.center_x-190, y=-10-(2*137/2)-40, 
+            width=self.background_sprite.width, height=self.background_sprite.height,
+            align_horizontal="left", align_vertical="top",
+            horizontal_spacing=20, vertical_spacing=20,
+            column_count=4, row_count=2
+        )
+        self.weapon_slot = arcade.gui.UITextureButton(
+            x=self.background_sprite.center_x - 345, y=self.background_sprite.center_y - 55,
+            width=138/2.3, height=137/2.3,
+            texture=arcade.load_texture("assets/ui/inventory_screen/slot.png"),
+            texture_hovered=arcade.load_texture("assets/ui/inventory_screen/slot_hover.png")
+        )
+        self.ui_manager.add(self.background_sprite)
+        self.background_sprite.add(self.weapon_slot)
+        self.ui_manager.add(self.grid_1, layer=1)
+        self.ui_manager.add(self.grid_2, layer=1)
+        self.generate_grid()
 
     def on_show_view(self):
-        self.background_sprite.center_x, self.background_sprite.center_y = self.window.width / 2, self.window.height / 2
+        self.ui_manager.enable()
+        self.background.center_x, self.background.center_y = self.window.width / 2, self.window.height / 2
+
+    def on_hide_view(self):
+        self.ui_manager.disable()
 
     def on_draw(self):
         """ Desenha todos os elementos da View. """
         self.clear()
-        self.general_sprite_list.draw()
-        self.inventory_elements.draw()
-        self.item_sprites.draw()
-        self.equipped_item_sprites.draw()
-        if self.item_detail_view:
-            self.item_detail_view.on_draw()
-
+        self.sprite_list.draw()
+        self.ui_manager.draw()
+    
+    def on_update(self, delta_time):
+        self.sprite_list.update()
+    
     def on_key_press(self, key, modifiers):
+        """ Volta para a View de origem ao pressionar a tecla ESCAPE. """
         if key == arcade.key.ESCAPE:
-            self.window.show_view(self.window.pause_view)
+            self.window.show_view(self.origin)
         elif key == arcade.key.I:
             self.window.show_view(self.window.game_view)
-        elif key == arcade.key.TAB:
-            self.developer_mode = not self.developer_mode
-            print(f"Developer Mode {'ON' if self.developer_mode else 'OFF'}")
-
-    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        """ Chamado quando o mouse é arrastado. """
-        elements_colliding = arcade.get_sprites_at_point((x, y), self.inventory_elements)
-
-        if elements_colliding and self.developer_mode and self.item_detail_view is None:
-            self.is_dragging = True
-            elements_colliding[0].center_x += dx
-            elements_colliding[0].center_y += dy
-        elif self.item_detail_view and self.developer_mode:
-            self.is_dragging = True
-            self.item_detail_view.on_mouse_drag(x, y, dx, dy)
-    
-    def on_mouse_release(self, x, y, button, modifiers):
-        self.is_dragging = False
-        elements_colliding = arcade.get_sprites_at_point((x, y), self.inventory_elements)
-        if elements_colliding and self.item_detail_view is None and self.developer_mode:
-            pos_x = self.window.width / 2 - elements_colliding[0].center_x
-            pos_y = self.window.height / 2 - elements_colliding[0].center_y
-            print(f"Elemento {elements_colliding[0]} solto na posição ({pos_x}, {pos_y}) relativa ao centro")
-        elif self.item_detail_view and self.developer_mode:
-            self.item_detail_view.on_mouse_release(x, y)
-    
+            
     def on_mouse_press(self, x, y, button, modifiers):
-        """ Chamado quando o botão do mouse é pressionado. """
-        if button == arcade.MOUSE_BUTTON_LEFT:
-            elements_colliding = arcade.get_sprites_at_point((x, y), self.inventory_elements)
+        pos_x = x - self.background_sprite.center_x
+        pos_y = y - self.background_sprite.center_y
+        print(f"Mouse pressionado em ({pos_x}, {pos_y})")
+        
+    def generate_grid(self):
+        """Gera os dois grids de slots do inventário."""
+        for column in range(6):
+            for row in range(2):
+                slot = arcade.gui.UITextureButton(
+                    width=138/2, height=137/2,
+                    texture=arcade.load_texture("assets/ui/inventory_screen/slot.png"),
+                    texture_hovered=arcade.load_texture("assets/ui/inventory_screen/slot_hover.png")
+                )
+                @slot.event("on_click")
+                def on_click(event):
+                    print(f"Fonte do evento: {event.source}")
+                self.grid_1.add(slot, column=column, row=row)
+        
+        for column in range(4): 
+            for row in range(2):
+                slot = arcade.gui.UITextureButton(
+                    width=138/2, height=137/2,
+                    texture=arcade.load_texture("assets/ui/inventory_screen/slot.png"),
+                    texture_hovered=arcade.load_texture("assets/ui/inventory_screen/slot_hover.png")
+                )
+                @slot.event("on_click")
+                def on_click(event):
+                    print(f"Fonte do evento: {event.source}")
+                self.grid_2.add(slot, column=column, row=row)
+    
+    def initialize_inventory(self, class_name, speed, damage):
+        """Inicializa o inventário com a classe, os itens e os stats do jogador."""
+        
+        # Classe
+        self.class_icon = arcade.gui.UISpriteWidget(
+            x=self.background_sprite.center_x - 365, y=self.background_sprite.center_y + 68,
+            width=198/2, height=193/2,
+            sprite=arcade.Sprite(f"assets/ui/inventory_screen/{class_name}_icon.png")
+            )
+        self.ui_manager.add(self.class_icon, layer=1)
 
-            if elements_colliding and elements_colliding[0].item: 
-                # Se clicar no slot com item
-                self.item_detail_view = ItemDetailView(
-                    elements_colliding[0].item, 
-                    self.inventory_box.center_x, 
-                    self.inventory_box.center_y,
-                    self.inventory_elements.index(elements_colliding[0]))
-            elif self.item_detail_view:
-                # Se clicar em algo dentro da tela de detalhes
-                action = self.item_detail_view.on_mouse_press(x, y)
-                player = self.window.game_view.player
+        arcade.load_font("assets/fonts/SuperLegendBoy.ttf")
 
-                if action == "equip":
-                    player.equip_weapon(self.item_detail_view.item, self.item_detail_view.index)
-                    self.equip_item_on_display(player.equipped_weapon)
-                    self.window.game_view.equip_item_on_game(player.equipped_weapon)
-                    self.window.log_box.add_message(f"Você equipou {self.item_detail_view.item.name}.")
-                elif action == "discard":
-                    player.inventory.remove_item(self.item_detail_view.index)
-                    self.restructure_slots()
-                    self.window.log_box.add_message(f"Você descartou {self.item_detail_view.item.name}.")
-                elif action == "unequip":
-                    player.unequip_weapon()
-                    self.weapon_slot.remove_item_from_slot()
-                    self.equipped_item_sprites.pop(0)
-                    self.window.game_view.unequip_item_on_game(self.item_detail_view.item)
-                    self.window.log_box.add_message(f"Você desequipou {self.item_detail_view.item.name}.")
-                    self.add_item_on_display(self.item_detail_view.item)
-
-                self.item_detail_view = None
-            elif self.item_detail_view and not self.item_detail_view.background_sprite.collides_with_point((x, y)):
-                # Se clicar fora da tela de detalhes
-                self.item_detail_view = None
-
-    def create_slots(self):
-        """Cria os slots do inventário."""
-        count = 0
-        for j in range(4):
-            for i in range(3):
-                slot = Slot("assets/ui/inventory_screen/inventory_available_slot.png", 
-                            self.inventory_box.center_x - 20 + i * 95, 
-                            self.inventory_box.center_y + 80 - j * 90, 
-                            0.12, "normal", count)
-                self.inventory_elements.append(slot)
-                count += 1
-
-    def get_free_slot_index(self) -> int:
-        """ Retorna o índice do primeiro slot livre. """
-        for index, slot in enumerate(self.inventory_elements):
-            if slot.slot_type == "normal" and slot.item is None:
-                return index
-        raise Exception("Nenhum slot livre disponível!")
-
-    def restructure_slots(self):
-        """ Reestrutura os slots do inventário após a remoção de um item. """
-        self.item_sprites.clear()
-        for slot in self.inventory_elements:
-            if slot.slot_type == "normal":
-                slot.remove_item_from_slot()
-                
-
-        remaining_items = self.window.game_view.player.get_items()
-        for item in remaining_items:
-            self.add_item_on_display(item)
-
-    def add_item_on_display(self, item: Item):
-        """Adiciona um item à tela do inventário."""
-        free_slot_index = self.window.inventory_view.get_free_slot_index()
-        item_sprite = self.inventory_elements[free_slot_index].add_item_on_slot(item)
-        self.item_sprites.append(item_sprite)
-
-    def equip_item_on_display(self, item: Item):
-        """Equipa um item na tela do inventário."""
-        self.restructure_slots()
-        item_sprite = self.weapon_slot.add_item_on_slot(item)
-        self.equipped_item_sprites.append(item_sprite)
+        self.player_class = arcade.gui.UILabel(
+            text=f"Class: {class_name}",
+            x=self.background_sprite.center_x - 390, y=self.background_sprite.center_y - 150,
+            width=348/2, height=20,
+            font_name="alagard", font_size=15, text_color=arcade.color.WHITE,
+        )
+        self.player_speed = arcade.gui.UILabel(
+            text=f"Speed: {speed}",
+            x=self.background_sprite.center_x - 390, y=self.background_sprite.center_y - 175,
+            width=348/2, height=20,
+            font_name="alagard", font_size=15, text_color=arcade.color.WHITE,
+        )
+        self.player_damage = arcade.gui.UILabel(
+            text=f"Damage: {damage}",
+            x=self.background_sprite.center_x - 390, y=self.background_sprite.center_y - 200,
+            width=348/2, height=20,
+            font_name="alagard", font_size=15, text_color=arcade.color.WHITE,
+        )
+        self.ui_manager.add(self.player_class, layer=1)
+        self.ui_manager.add(self.player_speed, layer=1)
+        self.ui_manager.add(self.player_damage, layer=1)

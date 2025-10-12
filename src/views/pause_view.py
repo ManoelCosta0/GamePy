@@ -74,6 +74,7 @@ class PauseView(arcade.View):
         def on_click_inventory(event):
             arcade.play_sound(self.window.click_sound)
             self.window.show_view(self.window.inventory_view)
+            self.window.inventory_view.origin = self
 
         @self.exit_button.event("on_click")
         def on_click_exit(event):

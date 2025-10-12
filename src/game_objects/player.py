@@ -154,3 +154,4 @@ class Player(Entity):
         self.class_ = data["class"]
 
         self.health_bar = HealthBar(self, self.window.game_view.hud_sprite_list, self.max_hp, height=10)
+        self.window.inventory_view.initialize_inventory(self.class_, self.speed, 20)  # Adiciona o ataque como 20 temporariamente
