@@ -6,6 +6,7 @@ from src.views.classes_view import ClassesView
 from src.views.pause_view import PauseView
 from src.views.inventory_view import InventoryView
 from src.ui.log_box import LogBox
+from src.controllers.game_controller import Controller
 
 class MyGame(arcade.Window):
     """
@@ -22,11 +23,11 @@ class MyGame(arcade.Window):
         self.inventory_view = InventoryView()
         self.log_box = LogBox(x=10, y=const.WINDOW_HEIGHT - 450, width=300, height=230)
 
-        self.hover_sound = arcade.load_sound("assets/sounds/ui/on_hover_3.wav")
+        # Carrega os sons
         self.click_sound = arcade.load_sound("assets/sounds/ui/on_click_1.wav")
         
+        # Maxima a janela e mostra a View do Menu
         self.maximize()
-
         self.show_view(self.menu_view)
 
 if __name__ == "__main__":

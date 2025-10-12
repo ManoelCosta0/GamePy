@@ -5,6 +5,7 @@ class Inventory():
     """Classe para gerenciar o inventário do jogador."""
     def __init__(self):
         self.items = []
+        self.inventory_view = arcade.get_window().inventory_view
 
     def add_item(self, item: Item):
         """Adiciona um item ao inventário."""
@@ -12,6 +13,7 @@ class Inventory():
             self.items[self.find_item(item.name)].stack += 1
         else:
             self.items.append(item)
+            self.inventory_view.add_item_to_grid(item)
 
     def remove_item(self, item: Item):
         """Remove um item do inventário."""
@@ -29,4 +31,4 @@ class Inventory():
 
     def load_inventory(self, items_data: list):
         """Carrega o inventário a partir de uma lista de dados de itens."""
-        self.items = [Item(**item) for item in items_data]
+        self.items = [Item(item) for item in items_data]
