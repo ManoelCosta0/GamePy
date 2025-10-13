@@ -6,7 +6,6 @@ from src.views.classes_view import ClassesView
 from src.views.pause_view import PauseView
 from src.views.inventory_view import InventoryView
 from src.ui.log_box import LogBox
-from src.controllers.game_controller import Controller
 
 class MyGame(arcade.Window):
     """
@@ -14,7 +13,7 @@ class MyGame(arcade.Window):
     """
     def __init__(self):
         super().__init__(const.WINDOW_WIDTH, const.WINDOW_HEIGHT, const.WINDOW_TITLE, resizable=True)
-
+        
         # Inicializa as Views
         self.menu_view = MenuView()
         self.classes_view = ClassesView()
@@ -27,7 +26,6 @@ class MyGame(arcade.Window):
         self.click_sound = arcade.load_sound("assets/sounds/ui/on_click_1.wav")
         
         # Maxima a janela e mostra a View do Menu
-        self.maximize()
         self.show_view(self.menu_view)
 
 if __name__ == "__main__":
