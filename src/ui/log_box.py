@@ -1,5 +1,6 @@
 import arcade
 import collections
+from src import constants as const
 
 class LogBox:
     """
@@ -19,6 +20,7 @@ class LogBox:
         self.text_color = arcade.color.WHITE
         self.font_size = 14
         self.line_height = self.font_size * 2 # Espaçamento entre linhas
+        arcade.load_font(const.FONT_PATH)
 
     def add_message(self, text: str):
         """
@@ -46,7 +48,7 @@ class LogBox:
             y=self.y,
             color=self.text_color,
             font_size= 19,
-            font_name="Arial",
+            font_name="alagard",
             bold=True
         )
         arcade.draw_line(
@@ -68,6 +70,6 @@ class LogBox:
                 y=y_position,
                 color=self.text_color,
                 font_size=self.font_size,
-                font_name="calibri",
+                font_name="alagard",
                 anchor_y="center"
             )

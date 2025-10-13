@@ -1,39 +1,108 @@
 import arcade
-from src import constants as const
-from src.views.view import View
-from src.ui.buttons import SpriteButton
+import random
+import os
+import json
+import time
 
-class MenuView(View):
+from src import constants as const
+from src.views.game_view import GameView
+
+class MenuView(arcade.View):
     """
     Tela do Menu Principal.
     """
     def __init__(self):
         super().__init__()
 
-        self.background_sprite = arcade.Sprite("assets/UI/background.png", scale=1.15)
-        new_game_button = SpriteButton(
-            name="new_game",
-            normal_texture_path="assets/UI/New_Game_Buttom_normal.png",
-            hover_texture_path="assets/UI/New_Game_Buttom_hover.png")
+        self.ui_manager = arcade.gui.UIManager()
+        self.background_sprite_list = arcade.SpriteList()
 
-        self.general_sprite_list.append(self.background_sprite)
-        self.button_list.append(new_game_button)
+        self.splash_screen = arcade.Sprite("assets/ui/home_screen/splash_screen.png", center_x=self.window.width / 2, center_y=self.window.height / 2)
+        self.background_sprite_list.append(self.splash_screen)
+
+        self.timer = 0.0
+
+        self.new_game_button = arcade.gui.UITextureButton(
+            x=310, y=445, width=379, height=142, 
+            texture=arcade.load_texture(const.BUTTONS_TEXTURE["new_game"]), 
+            texture_hovered=arcade.load_texture(const.BUTTONS_HOVERED_TEXTURE["new_game"]),
+            scale=const.BUTTON_SCALE)
+
+        self.continue_button = arcade.gui.UITextureButton(
+            x=310, y=345, width=379, height=142, 
+            texture=arcade.load_texture(const.BUTTONS_TEXTURE["continue"]), 
+            texture_hovered=arcade.load_texture(const.BUTTONS_HOVERED_TEXTURE["continue"]),
+            texture_disabled=arcade.load_texture("assets/ui/home_screen/continue_button_disabled.png"),
+            scale=const.BUTTON_SCALE)
         
+        self.exit_button = arcade.gui.UITextureButton(
+            x=310, y=245, width=379, height=142, 
+            texture=arcade.load_texture(const.BUTTONS_TEXTURE["exit"]), 
+            texture_hovered=arcade.load_texture(const.BUTTONS_HOVERED_TEXTURE["exit"]),
+            scale=const.BUTTON_SCALE)
+        
+        self.intro_phase = ""
+
     def on_show_view(self):
-        """ Chamado quando esta View é mostrada. """
+        self.ui_manager.enable()
+        if not os.path.exists("saves/save.json"): self.continue_button.disabled = True
+
+        @self.new_game_button.event("on_click")
+        def on_click_new_game_button(event):
+            arcade.play_sound(self.window.click_sound)
+            self.window.show_view(self.window.classes_view)
+
+        @self.continue_button.event("on_click")
+        def on_click_continue_button(event):
+            arcade.play_sound(self.window.click_sound)
+            self.load_game()
+            
+        @self.exit_button.event("on_click")
+        def on_click_exit_button(event):
+            arcade.play_sound(self.window.click_sound)
+            arcade.close_window()
+
+    def on_draw(self):
         self.clear()
-        arcade.set_background_color(arcade.color.BLACK) # Um fundo preto para garantir
+        self.background_sprite_list.draw() 
+        self.ui_manager.draw()
+        
+    def on_hide_view(self):
+        self.ui_manager.disable()
     
     def on_resize(self, width, height):
-        self.background_sprite.center_x = width / 2
-        self.background_sprite.center_y = height / 2
-        self.background_sprite.scale = width / const.WINDOW_WIDTH * 1.15
+        self.splash_screen.center_x = width / 2
+        self.splash_screen.center_y = height / 2
 
-    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
-        """ Chamado quando um botão do mouse é pressionado. """
-        if button == arcade.MOUSE_BUTTON_LEFT:
-            # Verifica se o clique foi em cima de algum botão
-            buttons_colliding = arcade.get_sprites_at_point((x, y), self.button_list)
-            
-            if buttons_colliding and not self.developer_mode:
-                self.window.show_view(self.window.game_view)
+    def load_game(self):
+        save = {}
+        with open("saves/save.json") as file:
+            save = json.load(file)
+        
+        self.window.game_view = GameView()
+        self.window.game_view.player.load_player(save)
+
+        self.window.show_view(self.window.game_view)
+
+    def on_update(self, delta_time):
+        self.timer += delta_time
+
+        if self.timer >= 0.1 and self.intro_phase == "":
+            self.window.set_fullscreen(True)
+            self.intro_phase = "Splash Screen"
+        elif self.timer >= 4.0 and self.intro_phase == "Splash Screen":
+            self.intro_phase = "Transition"
+            self.timer = 0.0
+            random_value = random.randint(1, 5)
+            background = arcade.Sprite(f"assets/ui/home_screen/home_background_{random_value}.png", center_x=self.window.width / 2, center_y=self.window.height / 2)
+            self.background_sprite_list.insert(0, background)
+        elif self.intro_phase == "Transition":
+            self.splash_screen.alpha -= 5
+            if self.splash_screen.alpha <= 0:
+                self.intro_phase = "Main Menu"
+        elif self.timer >= 1.0 and self.intro_phase == "Main Menu":
+            self.intro_phase = None
+            self.splash_screen.remove_from_sprite_lists()
+            self.ui_manager.add(self.new_game_button)
+            self.ui_manager.add(self.continue_button)
+            self.ui_manager.add(self.exit_button)

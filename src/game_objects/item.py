@@ -23,7 +23,7 @@ class Item(arcade.Sprite):
     def get_damage(self):
         """Retorna o dano do item, se aplicável."""
         if self.type == "Sword":
-            return item_json[self.name]["stats"]["damage"]
+            return item_json[self.name]["damage"]
         return 0
     
     def get_drop_chance(self):
