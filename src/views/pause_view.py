@@ -13,7 +13,7 @@ class PauseView(arcade.View):
         self.ui_manager = UIManager()
         self.sprite_list = arcade.SpriteList()
         
-        self.developer_mode = False
+        self.developer_mode = True
         if self.developer_mode: print("Developer mode is ON in PauseView")
         
         self.background = arcade.Sprite(const.BACKGROUND_IMAGE, center_x=self.window.width / 2, center_y=self.window.height / 2)

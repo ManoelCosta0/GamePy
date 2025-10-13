@@ -22,7 +22,7 @@ class MenuView(arcade.View):
 
         self.timer = 0.0
         
-        self.developer_mode = False
+        self.developer_mode = True
         if self.developer_mode: print("Developer mode is ON in MenuView")
 
         self.new_game_button = arcade.gui.UITextureButton(
