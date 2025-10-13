@@ -9,20 +9,13 @@ Projeto de criação de um RPG em python
 - Ambientação: [Floresta corrompida](./pre-production/images/ambiente_1.png)
 - Sistema de luta de acordo com as classes:
 	- Guerreiro: Espada
-	- Arqueiro: Arco
+	- Assassino: Adaga
 - Itens coletáveis: 
 	- Moeda (drop) (sem utilidade inicialmente)
-	- Minério (drop) (para construção de espadas)
-	- Fibra de seda (drop) (para a construção de um arco)
-	- Acessório (drop) (buff de defesa para jogador)
-	- Couro especial (drop) (para a construção de uma armadura)
+	- Minério (drop) (para construção de armas)
 - Evolução do personagem:
 	- 5 Níveis
 	- Itens melhores são craftáveis com os drops
-- Esboço de elementos visuais:
-	- [Inventário](./pre-production/images/Inventario_1.png)
-	- Craft
-	- HUD
 
 # Instalação e Execução
 
