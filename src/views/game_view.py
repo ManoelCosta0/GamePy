@@ -22,7 +22,7 @@ class GameView(arcade.View):
         self.tile_map = arcade.load_tilemap("assets/maps/map.tmx", scaling=4)
         
         self.player = Player()
-        self.enemy = Enemy("Bat", 1000, 1500)
+        self.enemy = Enemy("Slime", 1000, 1500)
         self.camera = arcade.Camera2D()
         
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
@@ -89,7 +89,7 @@ class GameView(arcade.View):
         elif key == arcade.key.F1:
             self.save_game()
         elif key == arcade.key.K:
-            self.player.current_hp -= 10
+            self.enemy.move_to(self.player.center_x, self.player.center_y)
 
     def on_key_release(self, key, modifiers):
         """ Chamado quando uma tecla é liberada. """

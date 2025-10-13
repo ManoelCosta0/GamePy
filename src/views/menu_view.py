@@ -21,6 +21,9 @@ class MenuView(arcade.View):
         self.background_sprite_list.append(self.splash_screen)
 
         self.timer = 0.0
+        
+        self.developer_mode = False
+        if self.developer_mode: print("Developer mode is ON in MenuView")
 
         self.new_game_button = arcade.gui.UITextureButton(
             x=310, y=445, width=379, height=142, 
@@ -86,6 +89,11 @@ class MenuView(arcade.View):
 
     def on_update(self, delta_time):
         self.timer += delta_time
+        if self.developer_mode and self.timer >= 0.2:
+            if not self.window.fullscreen: 
+                self.window.set_fullscreen(True)
+                self.load_game()
+            return
 
         if self.timer >= 0.1 and self.intro_phase == "":
             self.window.set_fullscreen(True)

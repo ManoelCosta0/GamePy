@@ -13,6 +13,9 @@ class PauseView(arcade.View):
         self.ui_manager = UIManager()
         self.sprite_list = arcade.SpriteList()
         
+        self.developer_mode = False
+        if self.developer_mode: print("Developer mode is ON in PauseView")
+        
         self.background = arcade.Sprite(const.BACKGROUND_IMAGE, center_x=self.window.width / 2, center_y=self.window.height / 2)
 
         self.resume_button = arcade.gui.UITextureButton(
@@ -78,6 +81,9 @@ class PauseView(arcade.View):
 
         @self.exit_button.event("on_click")
         def on_click_exit(event):
+            if self.developer_mode:
+                self.window.close()
+                return
             arcade.play_sound(self.window.click_sound)
             self.window.show_view(self.window.menu_view)
 

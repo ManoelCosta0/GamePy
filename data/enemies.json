@@ -9,5 +9,14 @@
         "loot_table": [
             "Minerio Estranho"
         ]
+    },
+    "Slime": {
+        "image_path": "assets/sprites/enemies/slime_1/idle/slime1_idle_left_1.png",
+        "scale": 2,
+        "max_hp": 50,
+        "attack": 5,
+        "speed": 3,
+        "exp_reward": 30,
+        "loot_table": []
     }
 }
