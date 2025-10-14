@@ -22,7 +22,7 @@ class GameView(arcade.View):
         self.tile_map = arcade.load_tilemap("assets/maps/map.tmx", scaling=4)
         
         self.player = Player()
-        self.enemy = Enemy("Slime", 1000, 1500)
+        self.enemy = Enemy("Slime1", 1000, 1500)
         self.camera = arcade.Camera2D()
         
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
