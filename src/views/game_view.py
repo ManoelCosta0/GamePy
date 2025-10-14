@@ -16,23 +16,26 @@ class GameView(arcade.View):
         self.developer_mode = False
         
         self.sprite_list = arcade.SpriteList()
+        self.enemies_list = arcade.SpriteList()
         self.hud_sprite_list = arcade.SpriteList()
         self.hud_manager = arcade.gui.UIManager()
         self.hit_box_list = arcade.SpriteList()
         self.tile_map = arcade.load_tilemap("assets/maps/map.tmx", scaling=4)
         
         self.player = Player()
-        self.enemy = Enemy("Slime1", 1000, 1500)
         self.camera = arcade.Camera2D()
         
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
         self.sprite_list.append(self.player)
-        self.sprite_list.append(self.enemy)
-        
+
+        self.physics_engine = arcade.PhysicsEngineSimple(self.player, self.enemies_list)
+
         hud(self.hud_manager)
 
     def on_show_view(self):
         self.hud_manager.enable()
+        self.enemy = Enemy("Slime1", 1000, 1500)
+        self.enemies_list.append(self.enemy)
 
     def on_hide_view(self):
         self.hud_manager.disable()
@@ -45,20 +48,23 @@ class GameView(arcade.View):
             self.hud_sprite_list.draw(pixelated=True)
             self.hud_manager.draw(pixelated=True)
             self.hit_box_list.draw(pixelated=True)
+            self.enemies_list.draw(pixelated=True)
         if self.developer_mode:
             self.window.log_box.on_draw()
     
     def on_update(self, delta_time):
         """ Lógica de atualização da View. """
         self.sprite_list.update()
+        self.enemies_list.update()
         self.hud_sprite_list.update()
         self.hit_box_list.update()
+        self.physics_engine.update()
         self.center_camera_to_player()
 
         if self.player.animation_state < 0 and self.player.attack_hitbox:
-            is_colliding = self.player.attack_hitbox.collides_with_sprite(self.enemy)
-            if is_colliding:
-                print("Hit") # Lógica de dano aqui
+            collision_list = arcade.check_for_collision_with_list(self.player.attack_hitbox, self.enemies_list)
+            for enemy in collision_list:
+                enemy.hurt_enemy(self.player.attack_damage)
                 self.player.attack_hitbox.kill()
                 self.player.attack_hitbox = None
                 self.hit_box_list.clear()

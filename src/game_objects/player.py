@@ -30,6 +30,10 @@ class Player(Entity):
         self.move_state_x = 0
         self.move_state_y = 0
         
+        self.attack_damage = 0
+        
+        self.is_colliding = False
+        
         self.attack_hitbox = None
         self.health_bar = None
         
@@ -77,6 +81,9 @@ class Player(Entity):
             self.direction = "down"
         if (self.move_state_x != 0 or self.move_state_y != 0) and self.animation_state >= 0:
             self.animation_state += 1
+            if self.is_colliding == False:
+                self.last_x = self.center_x
+                self.last_y = self.center_y
 
     def equip_weapon(self, weapon: Item):
         self.equipped_weapon = weapon
@@ -153,5 +160,5 @@ class Player(Entity):
         self.attack_cooldown = data["attack_cooldown"]
         self.class_ = data["class"]
 
-        self.health_bar = HealthBar(self, self.window.game_view.hud_sprite_list, self.max_hp, height=10)
+        self.health_bar = HealthBar(self, self.window.game_view.hud_sprite_list, self.max_hp, height=32)
         self.window.inventory_view.initialize_inventory(self.inventory.get_items(), self.class_, self.speed, self.equipped_weapon, 20)  # Adiciona o ataque como 20 temporariamente

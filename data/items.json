@@ -5,7 +5,7 @@
     "sprite_path": "assets/sprites/items/sword.png",
     "scale": 0.2,
     "stack_limit": 1,
-    "damage": 5
+    "damage": 10
   },
   "Minerio Estranho": {
     "description": "Um minério com propriedades desconhecidas. Pode ser valioso.",
