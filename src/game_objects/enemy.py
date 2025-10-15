@@ -40,7 +40,7 @@ class Enemy(Entity):
         # Variáveis de animação
         self.animation_state = 0
         self.timers = {"between_attacks": 0.0, "idle": 0.0, "animation": 0.0}
-        self.state = "run"  # "idle", "walk", "run", "attack"
+        self.state = "attack"  # "idle", "walk", "run", "attack"
         self.direction = "left"
         
         # Carregar animações
@@ -159,5 +159,5 @@ class Enemy(Entity):
     def load_animations(self):
         for state, length in self.len_anim.items():
             for direction in ("left", "right", "up", "down"):
-                base_path = f"assets/sprites/enemies/{self.name.lower()}/{state}/{self.name.lower()}_{state}_{direction}_"
+                base_path = f"assets/sprites/enemies/{self.name.lower()}/{state}/{direction}_"
                 self.textures[state][direction] = [arcade.load_texture(f"{base_path}{i+1}.png") for i in range(length)]

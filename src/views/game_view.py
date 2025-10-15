@@ -15,20 +15,26 @@ class GameView(arcade.View):
         
         self.developer_mode = False
         
-        self.sprite_list = arcade.SpriteList()
         self.enemies_list = arcade.SpriteList()
         self.hud_sprite_list = arcade.SpriteList()
         self.hud_manager = arcade.gui.UIManager()
         self.hit_box_list = arcade.SpriteList()
-        self.tile_map = arcade.load_tilemap("assets/maps/map.tmx", scaling=4)
+        
+        layer_options = {
+            "walls": {"use_spatial_hash": True},
+            "collide": {"use_spatial_hash": True}
+        }
+        
+        self.tile_map = arcade.load_tilemap("assets/maps/map.tmx", scaling=4, layer_options=layer_options)
         
         self.player = Player()
         self.camera = arcade.Camera2D()
         
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
-        self.sprite_list.append(self.player)
+        self.scene.add_sprite("Player", self.player)
 
-        self.physics_engine = arcade.PhysicsEngineSimple(self.player, self.enemies_list)
+        # Adcionar "walls" como paredes e "collide" como colisões
+        self.physics_engine = arcade.PhysicsEngineSimple(self.player, [self.scene["walls"], self.scene["collide"], self.enemies_list])
 
         hud(self.hud_manager)
 
@@ -44,22 +50,22 @@ class GameView(arcade.View):
         self.clear()
         with self.camera.activate():
             self.scene.draw(pixelated=True)
-            self.sprite_list.draw(pixelated=True)
-            self.hud_sprite_list.draw(pixelated=True)
-            self.hud_manager.draw(pixelated=True)
             self.hit_box_list.draw(pixelated=True)
+            self.hud_sprite_list.draw(pixelated=True)
             self.enemies_list.draw(pixelated=True)
+        self.hud_manager.draw(pixelated=True)
         if self.developer_mode:
             self.window.log_box.on_draw()
     
     def on_update(self, delta_time):
         """ Lógica de atualização da View. """
-        self.sprite_list.update()
+        self.player.update()
         self.enemies_list.update()
         self.hud_sprite_list.update()
         self.hit_box_list.update()
         self.physics_engine.update()
         self.center_camera_to_player()
+        self.scene.update(delta_time=delta_time)
 
         if self.player.animation_state < 0 and self.player.attack_hitbox:
             collision_list = arcade.check_for_collision_with_list(self.player.attack_hitbox, self.enemies_list)
@@ -95,7 +101,18 @@ class GameView(arcade.View):
         elif key == arcade.key.F1:
             self.save_game()
         elif key == arcade.key.K:
-            self.enemy.move_to(self.player.center_x, self.player.center_y)
+            astar_barrier = arcade.AStarBarrierList(
+                self.enemies_list[0], 
+                blocking_sprites=self.scene["collide"], 
+                grid_size=64,
+                left=-2000, right=4000, bottom=-2000, top=3000
+                )
+            path = arcade.astar_calculate_path(
+                start_point=self.enemies_list[0].position,
+                end_point=self.player.position,
+                astar_barrier_list=astar_barrier)
+            
+            print(path)
 
     def on_key_release(self, key, modifiers):
         """ Chamado quando uma tecla é liberada. """
