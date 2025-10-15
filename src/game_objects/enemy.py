@@ -26,10 +26,11 @@ class Enemy(Entity):
         self.attack = info["attack"]
         
         #Informaçoes do inimigo
-        self.range = 40
+        self.range = 100
         self.area = 150
         self.spawn = (x, y)
         self.target = {"x": None, "y": None}
+        self.attack_range = 40
         
         # Constantes de animação (Carregadas uma vez - não mutáveis)
         self.animation_cooldowns = {"idle": 0.17, "walk": 0.12, "attack": 0.1, "run": 0.1}
@@ -40,20 +41,24 @@ class Enemy(Entity):
         # Variáveis de animação
         self.animation_state = 0
         self.timers = {"between_attacks": 0.0, "idle": 0.0, "animation": 0.0}
-        self.state = "attack"  # "idle", "walk", "run", "attack"
+        self.state = "idle"  # "idle", "walk", "run", "attack"
         self.direction = "left"
         
         # Carregar animações
         self.load_animations()
         
-        #Carregar barra de vida
+        # Carregar barra de vida
         window = arcade.get_window()
         self.health_bar = HealthBar(self, window.game_view.hud_sprite_list, self.max_hp, height=-40)
+        
+        # Carregar variáveis de pathfinding
+        self.player = window.game_view.player
+        self.walls = window.game_view.scene["collide"]
+        self.astar_barrier_list = self.load_astar_barrier()
     
     #----------------------
     # Máquinas de estados
     #----------------------
-
     def update(self, delta_time = 1 / 60, *args, **kwargs):
         """ Máquina de estados do inimigo. """
         if self.state in ["walk", "run"]:
@@ -71,7 +76,41 @@ class Enemy(Entity):
                 if self.update_anim() == 0: self.timers["between_attacks"] = 0.0
         self.timers["animation"] += delta_time
         self.health_bar.update()
-
+    '''
+    def update(self, delta_time = 1 / 60, *args, **kwargs):
+        """ Máquina de estados do inimigo. """
+        if self.state == "idle":
+            self.update_anim() #Verificar se é mais eficiente chamar upodate_anim() primeiro ou por último
+            self.timers["idle"] += delta_time
+            if self.is_player_in_range():
+                self.chase_player()
+            elif self.timers["idle"] >= self.state_cooldowns["idle"]:
+                self.patrol()
+                self.timers["idle"] = 0.0
+        elif self.state == "walk":
+            self.move_enemy()
+            self.update_anim()
+            if self.is_player_in_range():
+                self.chase_player()
+            elif self.target["x"] is not None and self.target["y"] is not None:
+                if math.hypot(self.center_x - self.target["x"], self.center_y - self.target["y"]) < 5:
+                    self.state = "idle"
+                    #self.timers["idle"] = 0.0 
+                    self.animation_state = 0
+        elif self.state == "run":
+            self.move_enemy()
+            self.update_anim()
+            self.chase_player()
+        elif self.state == "attack":
+            self.timers["between_attacks"] += delta_time
+            if self.timers["between_attacks"] >= self.state_cooldowns["between_attacks"]:
+                if self.update_anim() == 0: self.timers["between_attacks"] = 0.0
+                if not self.is_player_in_range(self.attack_range):
+                    self.chase_player()
+        self.timers["animation"] += delta_time
+        self.health_bar.update()
+        '''
+                    
     #----------------------
     # Função de atualização de animação
     #----------------------
@@ -113,15 +152,61 @@ class Enemy(Entity):
         """ Move o inimigo para um ponto aleatório dentro da área de patrulha. """
         self.move_to(
             random.uniform(self.spawn[0]-self.area, self.spawn[0]+self.area),
-            random.uniform(self.spawn[1]-self.area, self.spawn[1]+self.area),
-            "walk")
+            random.uniform(self.spawn[1]-self.area, self.spawn[1]+self.area)
+        )
+    
+    def chase_player(self):
+        """ Move o inimigo em direção ao jogador. """
+        self.state = "run"
+        # Desafio: lidar com movimentação do player enquanto o inimigo está se movendo
+        # Sugestão 1: chamar is_player_in_range() a cada X segundos
+        # Sugestão 2: Chamar get_path_to_player() a cada Y segundos (X < Y)
+        # Quando get_path_to_player() for chamado, is_player_in_range() não deverá ser chamado
+        # Questionamento: Se o player se manter parado, o pathfinding seguirá um caminho fixo?
+        # Sugestão 3: Recalcular o caminho a cada path andado
+        # Sugestão 4: range de 450
+        pass
     
     def move_to(self, target_x: float, target_y: float, state: str = "walk"):
         """ Define um ponto para o inimigo se mover. """
-        self.target = {"x": target_x, "y": target_y}
-        self.state = state
-        self.animation_state = 0
+        if self.target["x"] != target_x or self.target["y"] != target_y:
+            self.target = {"x": target_x, "y": target_y}
+            self.state = state
+            self.animation_state = 0
+
+    # ----------------------
+    # Função de pathfinding
+    # ----------------------
     
+    def get_path_to_player(self):
+        
+        self.astar_barrier_list.left = self.center_x - self.range
+        self.astar_barrier_list.right = self.center_x + self.range
+        self.astar_barrier_list.bottom = self.center_y - self.range
+        self.astar_barrier_list.top = self.center_y + self.range
+        
+        return arcade.astar_calculate_path(
+            self.position,
+            self.player.position,
+            self.astar_barrier_list
+        )
+    
+    def load_astar_barrier(self):
+        return arcade.AStarBarrierList(
+                self, 
+                blocking_sprites=self.walls, 
+                grid_size=64,
+                left=0, right=0, bottom=0, top=0)
+    
+    def is_player_in_range(self, range:float = None) -> bool:
+        return arcade.has_line_of_sight(
+            self.position,
+            self.player.position,
+            self.walls,
+            max_distance=range if range else self.range,
+            check_resolution=2 # Verificar possibilidades de ajuste para performance
+        )
+
     #----------------------
     # Funções de dano
     #----------------------

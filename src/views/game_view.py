@@ -14,6 +14,8 @@ class GameView(arcade.View):
         super().__init__()
         
         self.developer_mode = False
+        self.timers = {"fps": 0.0}
+        self.fps = 0
         
         self.enemies_list = arcade.SpriteList()
         self.hud_sprite_list = arcade.SpriteList()
@@ -54,8 +56,12 @@ class GameView(arcade.View):
             self.hud_sprite_list.draw(pixelated=True)
             self.enemies_list.draw(pixelated=True)
         self.hud_manager.draw(pixelated=True)
+        
         if self.developer_mode:
             self.window.log_box.on_draw()
+            arcade.draw_text(
+            f"FPS: {self.fps:.1f}", self.window.width - 70, self.window.height - 20,
+            arcade.color.WHITE, 14)
     
     def on_update(self, delta_time):
         """ Lógica de atualização da View. """
@@ -66,6 +72,11 @@ class GameView(arcade.View):
         self.physics_engine.update()
         self.center_camera_to_player()
         self.scene.update(delta_time=delta_time)
+        
+        self.timers["fps"] += delta_time
+        if self.developer_mode and self.timers["fps"] >= 0.2:
+            self.timers["fps"] = 0.0
+            self.fps = 1 / delta_time
 
         if self.player.animation_state < 0 and self.player.attack_hitbox:
             collision_list = arcade.check_for_collision_with_list(self.player.attack_hitbox, self.enemies_list)
