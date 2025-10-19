@@ -14,13 +14,15 @@ class MyGame(arcade.Window):
     def __init__(self):
         super().__init__(const.WINDOW_WIDTH, const.WINDOW_HEIGHT, const.WINDOW_TITLE, resizable=True)
         
+        self.developer_mode = True  # Ativar modo desenvolvedor para toda a aplicação
+        
         # Inicializa as Views
         self.menu_view = MenuView()
         self.classes_view = ClassesView()
         self.game_view = None 
         self.pause_view = PauseView()
         self.inventory_view = InventoryView()
-        self.log_box = LogBox(x=10, y=const.WINDOW_HEIGHT - 450, width=300, height=230)
+        self.log_box = LogBox(x=10, y=160, width=300, height=150)
 
         # Carrega os sons
         self.click_sound = arcade.load_sound("assets/sounds/ui/on_click_1.wav")

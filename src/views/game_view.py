@@ -13,7 +13,7 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
         
-        self.developer_mode = False
+        self.developer_mode = self.window.developer_mode
         self.timers = {"fps": 0.0}
         self.fps = 0
         
