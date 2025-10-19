@@ -24,3 +24,7 @@ class HealthBar:
         self.background_sprite.position = self.position
         self.foreground_sprite.position = self.position
         self.foreground_sprite.left = self.background_sprite.left + 0.595
+    
+    def remove_from_sprite_lists(self):
+        self.background_sprite.remove_from_sprite_lists()
+        self.foreground_sprite.remove_from_sprite_lists()

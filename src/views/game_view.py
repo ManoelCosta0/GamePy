@@ -42,8 +42,6 @@ class GameView(arcade.View):
 
     def on_show_view(self):
         self.hud_manager.enable()
-        self.enemy = Enemy("Slime1", 1000, 1500)
-        self.enemies_list.append(self.enemy)
 
     def on_hide_view(self):
         self.hud_manager.disable()
@@ -81,7 +79,7 @@ class GameView(arcade.View):
         if self.player.animation_state < 0 and self.player.attack_hitbox:
             collision_list = arcade.check_for_collision_with_list(self.player.attack_hitbox, self.enemies_list)
             for enemy in collision_list:
-                enemy.hurt_enemy(self.player.attack_damage)
+                enemy.hurt(self.player.attack_damage)
                 self.player.attack_hitbox.kill()
                 self.player.attack_hitbox = None
                 self.hit_box_list.clear()
@@ -112,18 +110,8 @@ class GameView(arcade.View):
         elif key == arcade.key.F1:
             self.save_game()
         elif key == arcade.key.K:
-            astar_barrier = arcade.AStarBarrierList(
-                self.enemies_list[0], 
-                blocking_sprites=self.scene["collide"], 
-                grid_size=64,
-                left=-2000, right=4000, bottom=-2000, top=3000
-                )
-            path = arcade.astar_calculate_path(
-                start_point=self.enemies_list[0].position,
-                end_point=self.player.position,
-                astar_barrier_list=astar_barrier)
-            
-            print(path)
+            self.enemy = Enemy("Slime1", 1000, 1500)
+            self.enemies_list.append(self.enemy)
 
     def on_key_release(self, key, modifiers):
         """ Chamado quando uma tecla é liberada. """
