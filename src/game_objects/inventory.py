@@ -26,9 +26,10 @@ class Inventory():
                 return item 
         return None
     
-    def get_items(self):
-        return self.items
+    def get_items(self): # Retorna a lista de nomes dos itens no inventário
+        return [item.name for item in self.items]
 
     def load_inventory(self, items_data: list):
         """Carrega o inventário a partir de uma lista de dados de itens."""
         self.items = [Item(item) for item in items_data]
+        return self.items

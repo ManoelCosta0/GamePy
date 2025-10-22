@@ -87,10 +87,6 @@ class Player(Entity):
 
     def equip_weapon(self, weapon: Item):
         self.equipped_weapon = weapon
-        if self.inventory.find_item(weapon.name) is not None: self.inventory.remove_item(weapon)
-        '''Verificação temporária (remover depois) 
-        Motivo: verificação acontece em todas as chamadas de equip_weapon, mas só serve para a primeira vez (load_player)
-        '''
         self.attack_damage = weapon.get_damage()
         
     def unequip_weapon(self):
@@ -98,8 +94,6 @@ class Player(Entity):
             self.inventory.add_item(self.equipped_weapon)
             self.equipped_weapon = None
             self.attack_damage = 0
-        else:
-            print("Nenhuma arma equipada para desequipar.")
     
     def set_hitbox(self):
         self.attack_hitbox = arcade.SpriteSolidColor(50, 40, color=(255, 0, 0, 0))
@@ -150,9 +144,9 @@ class Player(Entity):
             self.attack_textures["down"].append(down)
     
     def load_player(self, data):
-        self.inventory.load_inventory(data["inventory"])
+        equipped = None
         if data["equipped_weapon"]:
-            self.equip_weapon(Item(data["equipped_weapon"]))
+            equipped = data["equipped_weapon"]
         self.center_x, self.center_y = data["position"]
         self.max_hp = data["max_hp"]
         self.current_hp = self.max_hp
@@ -161,4 +155,4 @@ class Player(Entity):
         self.class_ = data["class"]
 
         self.health_bar = HealthBar(self, self.window.game_view.hud_sprite_list, self.max_hp, height=32)
-        self.window.inventory_view.initialize_inventory(self.inventory.get_items(), self.class_, self.speed, self.equipped_weapon, 20)  # Adiciona o ataque como 20 temporariamente
+        self.window.inventory_view.initialize_inventory(self.inventory.load_inventory(data["inventory"]), self.class_, self.speed, equipped, 0)  # Adiciona o ataque como 0 temporariamente
