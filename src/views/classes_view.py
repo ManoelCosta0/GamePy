@@ -81,7 +81,7 @@ class ClassesView(arcade.View):
             "speed": self.new_game_configs[class_]["speed"],
             "attack_cooldown": self.new_game_configs[class_]["attack_cooldown"],
             "level": 1,
-            "current_xp": 0,
+            "experience": 0,
             "position": (600, 1500)
         }
         with open("saves/save.json", "w") as save_file:
@@ -93,14 +93,14 @@ class ClassesView(arcade.View):
 
     new_game_configs = {
         "Warrior": {
-            "max_hp": 150,
-            "speed": 4,
+            "max_hp": 100,
+            "speed": 2.1,
             "attack_cooldown": 0.08,
             "equipped_weapon": "Espada Velha"
         },
         "Assassin": {
-            "max_hp": 80,
-            "speed": 7,
+            "max_hp": 70,
+            "speed": 2.5,
             "attack_cooldown": 0.05,
             "equipped_weapon": "Espada Velha" # Temporário
         }

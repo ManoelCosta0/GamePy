@@ -24,6 +24,7 @@ class Enemy(Entity):
         self.speed = info["speed"]
         self.drops = info["loot_table"]
         self.attack_damage = info["attack"]
+        self.exp_reward = info["exp_reward"]
         
         #Informaçoes do inimigo
         self.range = 300
@@ -189,10 +190,9 @@ class Enemy(Entity):
     def hurt(self, damage: int):
         self.take_damage(damage)
         if self.current_hp <= 0:
-            return self.on_die()
+            self.on_die()
         else:
             self.hurt_flash()
-            return None
 
     def hurt_flash(self):
         self.color = (255, 100, 100)  # levemente avermelhado
@@ -217,13 +217,16 @@ class Enemy(Entity):
         self.animation_state = 0
         arcade.unschedule(self.respawn)
     
-    def on_die(self) -> Item:
-        self.remove_from_sprite_lists()
+    def give_drop(self):
         for item in self.drops:
             item = Item(item)
-            drop_chance = item.get_drop_chance()
-            if random.random() <= drop_chance:
-                return item
+            if random.random() < item.get_drop_chance():
+                self.player.inventory.add_item(item)
+
+    def on_die(self) -> Item:
+        self.remove_from_sprite_lists()
+        self.player.increase_experience(self.exp_reward)
+        self.give_drop()
         self.health_bar.remove_from_sprite_lists()
         arcade.schedule(self.respawn, 15.0)
     

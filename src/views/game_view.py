@@ -38,7 +38,7 @@ class GameView(arcade.View):
         # Adcionar "walls" como paredes e "collide" como colisões
         self.physics_engine = arcade.PhysicsEngineSimple(self.player, [self.scene["walls"], self.scene["collide"], self.enemies_list])
 
-        hud(self.hud_manager)
+        self.hud = hud(self.hud_manager)
 
     def on_show_view(self):
         self.hud_manager.enable()

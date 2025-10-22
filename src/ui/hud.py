@@ -38,7 +38,8 @@ class HUD:
 
         @self.menu_button.event("on_click")
         def on_click(event):
-            print("Menu button clicked! (Functionality not implemented yet)")
+            arcade.play_sound(arcade.load_sound("assets/sounds/ui/on_click_1.wav"))
+            arcade.get_window().show_view(arcade.get_window().pause_view)
         
         self.ui_manager.add(self.hud_sprite)
         self.ui_manager.add(self.menu_button, layer=1)

@@ -4,7 +4,7 @@
     "type": "Sword",
     "sprite_path": "assets/sprites/items/sword.png",
     "scale": 0.2,
-    "stack_limit": 1,
+    "stackable": false,
     "damage": 10
   },
   "Minerio Estranho": {
@@ -12,7 +12,7 @@
     "type": "Material",
     "sprite_path": "assets/sprites/items/strange_ore.png",
     "scale": 0.08,
-    "stack_limit": 20,
+    "stackable": true,
     "drop_chance": 1
   }
 }

@@ -16,7 +16,7 @@ class Item(arcade.Sprite):
 
         self.description = item_json[name]["description"]
         self.type = item_json[name]["type"]
-        self.stack_limit = item_json[name]["stack_limit"]
+        self.stackable = item_json[name]["stackable"]
 
         self.stack = 1
 

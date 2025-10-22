@@ -15,9 +15,12 @@ class Player(Entity):
         # Atributos do jogador
         self.class_ = None
         self.speed = None
+        self.attack_cooldown = None
+        self.level = None
+        self.experience = None
+        
         self.equipped_weapon = None
         self.inventory = Inventory()
-        self.attack_cooldown = None
         
         # Carregar animações
         self.load_animations()
@@ -38,6 +41,7 @@ class Player(Entity):
         self.health_bar = None
         
         self.window = arcade.get_window()
+        self.hud = None
 
     def update(self, delta_time: float = 1/60):
         """ Atualiza a lógica do jogador. """
@@ -153,6 +157,28 @@ class Player(Entity):
         self.speed = data["speed"]
         self.attack_cooldown = data["attack_cooldown"]
         self.class_ = data["class"]
+        self.level = data["level"]
+        self.experience = data["experience"]
 
         self.health_bar = HealthBar(self, self.window.game_view.hud_sprite_list, self.max_hp, height=32)
-        self.window.inventory_view.initialize_inventory(self.inventory.load_inventory(data["inventory"]), self.class_, self.speed, equipped, 0)  # Adiciona o ataque como 0 temporariamente
+        self.window.inventory_view.initialize_inventory(self.inventory.load_inventory(data["inventory"]), self.class_, self.speed, equipped, 0)
+        
+        self.hud = self.window.game_view.hud
+        self.hud.set_level(self.level)
+        self.hud.set_xp(self.experience, self.get_max_experience())
+        
+
+    def increase_experience(self, amount):
+        self.experience += amount
+        next_level_exp = self.get_max_experience()
+        
+        if self.experience >= next_level_exp:
+            self.level += 1
+            self.experience -= next_level_exp
+            next_level_exp = self.get_max_experience()
+            self.hud.set_level(self.level)
+        
+        self.hud.set_xp(self.experience, next_level_exp)
+    
+    def get_max_experience(self):
+        return 5**self.level + 20 * self.level + 80
