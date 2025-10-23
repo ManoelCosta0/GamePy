@@ -213,6 +213,7 @@ class Enemy(Entity):
         self.player.increase_experience(self.exp_reward)
         self.give_drop()
         self.health_bar.remove_from_sprite_lists()
+        self.alpha = 255
         arcade.schedule(self.respawn, 15.0)
     
     #----------------------
