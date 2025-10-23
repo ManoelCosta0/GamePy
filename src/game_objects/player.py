@@ -19,6 +19,7 @@ class Player(Entity):
         self.level = None
         self.experience = None
         
+        self.spwan_point = (0, 0)
         self.equipped_weapon = None
         self.inventory = Inventory()
         
@@ -53,7 +54,6 @@ class Player(Entity):
        if self.animation_state == 0 and self.idle_textures[self.direction] != self.texture:
            self.texture = self.idle_textures[self.direction]
        elif self.animation_state > 0:
-           #x precisa estar entre 0 e 5 com animation_state indo de 1 a infinito
            x = (self.animation_state // 6 % self.LENGTH_WALK_ANIMATION)
            self.texture = self.walk_textures[self.direction][x]
        elif self.animation_state < 0:
@@ -114,6 +114,27 @@ class Player(Entity):
     def attack(self):
         if self.equipped_weapon is None: return
         self.animation_state = -1
+    
+    def _fade_in_respawn(self, delta_time):
+        """Faz o sprite reaparecer gradualmente após respawn."""
+        self.alpha += 15
+        if self.alpha >= 255:
+            arcade.unschedule(self._fade_in_respawn)
+            self.alpha = 255
+            self.health_bar.add_to_sprite_list()
+            self.current_hp = self.max_hp
+        
+    def respawn(self, delta_time):
+        """Reaparece o jogador no ponto de spawn após morrer."""
+        arcade.unschedule(self.respawn)
+        self.color = (255, 255, 255)
+        self.alpha = 0
+        arcade.schedule(self._fade_in_respawn, 0.05)
+    
+    def on_die(self):
+        self.health_bar.remove_from_sprite_lists()
+        self.position = self.spawn_point
+        arcade.schedule(self.respawn, 1.0)
 
     def get_items(self):
         return self.inventory.get_items()
@@ -151,7 +172,7 @@ class Player(Entity):
         equipped = None
         if data["equipped_weapon"]:
             equipped = data["equipped_weapon"]
-        self.center_x, self.center_y = data["position"]
+        self.position, self.spawn_point = data["position"], data["position"]
         self.max_hp = data["max_hp"]
         self.current_hp = self.max_hp
         self.speed = data["speed"]

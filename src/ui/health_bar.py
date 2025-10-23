@@ -7,6 +7,7 @@ class HealthBar:
         self.current_health = max_health
         self.position = (0, 0)
         self.height = height
+        self.sprite_list = sprite_list
 
         self.background_sprite = arcade.Sprite("assets/ui/hud/healthbar_background.png", center_x=0, center_y=0, scale=0.07)
         self.foreground_sprite = arcade.Sprite("assets/ui/hud/healthbar_foreground.png", center_x=0, center_y=0, scale=0.07)
@@ -15,7 +16,7 @@ class HealthBar:
         sprite_list.append(self.foreground_sprite)
 
     def update(self):
-        if self.owner.current_hp != self.current_health and self.owner.current_hp >= 0:
+        if self.owner.current_hp != self.current_health:
             delta_health = self.current_health - self.owner.current_hp
             self.current_health = max(0, min(self.current_health - delta_health, self.max_health))
             self.foreground_sprite.width = (self.current_health / self.max_health) * self.background_sprite.width
@@ -28,3 +29,7 @@ class HealthBar:
     def remove_from_sprite_lists(self):
         self.background_sprite.remove_from_sprite_lists()
         self.foreground_sprite.remove_from_sprite_lists()
+        
+    def add_to_sprite_list(self):
+        self.sprite_list.append(self.background_sprite)
+        self.sprite_list.append(self.foreground_sprite)

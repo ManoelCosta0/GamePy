@@ -79,7 +79,7 @@ class GameView(arcade.View):
         if self.player.animation_state < 0 and self.player.attack_hitbox:
             collision_list = arcade.check_for_collision_with_list(self.player.attack_hitbox, self.enemies_list)
             for enemy in collision_list:
-                enemy.hurt(self.player.attack_damage)
+                enemy.take_damage(self.player.attack_damage)
                 self.player.attack_hitbox.kill()
                 self.player.attack_hitbox = None
                 self.hit_box_list.clear()
@@ -153,6 +153,8 @@ class GameView(arcade.View):
             "speed": self.player.speed,
             "attack_cooldown": self.player.attack_cooldown,
             "position": (self.player.center_x, self.player.center_y),
+            "level": self.player.level,
+            "experience": self.player.experience
         }
         with open("saves/save.json", "w") as file:
             json.dump(save, file, indent=4)

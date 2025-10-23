@@ -63,18 +63,20 @@ class Enemy(Entity):
     
     def update(self, delta_time = 1 / 60, *args, **kwargs):
         """ Máquina de estados do inimigo. """
+        if not self.is_alive(): self.state = "idle"; self.animation_state = 0
         if self.state == "idle":
             self.update_anim()
             self.timers["idle"] += delta_time
             if self.is_player_in_range(self.range):
                 self.chase_player()
-            elif self.timers["idle"] >= self.state_cooldowns["idle"]:
+                #pass
+            if self.timers["idle"] >= self.state_cooldowns["idle"]:
                 self.patrol()
                 self.timers["idle"] = 0.0
         elif self.state == "walk":
             self.move_enemy()
             self.update_anim()
-            if self.is_player_in_range(self.range):
+            if self.is_player_in_range(self.range) and self.player.is_alive():
                 self.chase_player()
             elif self.target["x"] is not None and self.target["y"] is not None:
                 if math.hypot(self.center_x - self.target["x"], self.center_y - self.target["y"]) < 5:
@@ -95,6 +97,9 @@ class Enemy(Entity):
                         self.attack()
                     elif stage == 0:
                         self.timers["between_attacks"] = 0.0
+            if not self.player.is_alive():
+                self.state = "idle"
+                self.animation_state = 0
         self.timers["animation"] += delta_time
         self.health_bar.update()
                     
@@ -144,6 +149,7 @@ class Enemy(Entity):
     
     def chase_player(self):
         """ Move o inimigo em direção ao jogador. """
+        if not self.player.is_alive(): return
         if self.is_player_in_range(self.attack_range/2): # Está em range de ataque
             self.state = "attack"
             self.timers["between_attacks"] = self.state_cooldowns["between_attacks"]
@@ -182,27 +188,6 @@ class Enemy(Entity):
             max_distance=range if range else self.range,
             check_resolution=2 # Verificar possibilidades de ajuste para performance
         )
-
-    #----------------------
-    # Funções de dano
-    #----------------------
-    
-    def hurt(self, damage: int):
-        self.take_damage(damage)
-        if self.current_hp <= 0:
-            self.on_die()
-        else:
-            self.hurt_flash()
-
-    def hurt_flash(self):
-        self.color = (255, 100, 100)  # levemente avermelhado
-        self.alpha = 200  # semi-transparente
-        arcade.schedule(self.reset_color, 0.15)
-    
-    def reset_color(self, delta_time):
-        self.color = (255, 255, 255)  # volta à cor normal
-        self.alpha = 255  # volta à opaco
-        arcade.unschedule(self.reset_color)
     
     #----------------------
     # Funções de morte e respawn
@@ -212,7 +197,7 @@ class Enemy(Entity):
         self.current_hp = self.max_hp
         self.center_x, self.center_y = self.spawn
         arcade.get_window().game_view.enemies_list.append(self)
-        self.health_bar = HealthBar(self, arcade.get_window().game_view.hud_sprite_list, self.max_hp, height=-40)
+        self.health_bar.add_to_sprite_list()
         self.state = "idle"
         self.animation_state = 0
         arcade.unschedule(self.respawn)
@@ -223,7 +208,7 @@ class Enemy(Entity):
             if random.random() < item.get_drop_chance():
                 self.player.inventory.add_item(item)
 
-    def on_die(self) -> Item:
+    def on_die(self):
         self.remove_from_sprite_lists()
         self.player.increase_experience(self.exp_reward)
         self.give_drop()
