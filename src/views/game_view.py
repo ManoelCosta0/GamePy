@@ -27,13 +27,13 @@ class GameView(arcade.View):
             "collide": {"use_spatial_hash": True}
         }
         
-        self.tile_map = arcade.load_tilemap("assets/maps/map.tmx", scaling=4, layer_options=layer_options)
+        self.tile_map = arcade.load_tilemap("assets/maps/map.tmx", scaling=3, layer_options=layer_options)
         
         self.player = Player()
         self.camera = arcade.Camera2D()
         
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
-        self.scene.add_sprite("Player", self.player)
+        self.scene.add_sprite("player", self.player)
 
         # Adcionar "walls" como paredes e "collide" como colisões
         self.physics_engine = arcade.PhysicsEngineSimple(self.player, [self.scene["walls"], self.scene["collide"], self.enemies_list])
@@ -110,8 +110,11 @@ class GameView(arcade.View):
         elif key == arcade.key.F1:
             self.save_game()
         elif key == arcade.key.K:
-            self.enemy = Enemy("Slime1", 1000, 1500)
-            self.enemies_list.append(self.enemy)
+            #self.enemy = Enemy("Slime1", 1000, 1500)
+            #self.enemies_list.append(self.enemy)
+            self.window.log_box.add_message(f"Posição do jogador: {self.player.position}")
+        elif key == arcade.key.LSHIFT:
+            self.player.speed += 2
 
     def on_key_release(self, key, modifiers):
         """ Chamado quando uma tecla é liberada. """
@@ -121,7 +124,9 @@ class GameView(arcade.View):
         elif key == arcade.key.A or key == arcade.key.D:
             self.player.move_state_x = 0
             self.player.animation_state = 0
-
+        elif key == arcade.key.LSHIFT:
+            self.player.speed -= 2
+            
     def on_mouse_press(self, x, y, button, modifiers):
         if button == arcade.MOUSE_BUTTON_LEFT:
             if self.player.equipped_weapon:
@@ -152,7 +157,7 @@ class GameView(arcade.View):
             "max_hp": self.player.max_hp,
             "speed": self.player.speed,
             "attack_cooldown": self.player.attack_cooldown,
-            "position": (self.player.center_x, self.player.center_y),
+            "spawn_point": (self.player.center_x, self.player.center_y),
             "level": self.player.level,
             "experience": self.player.experience
         }

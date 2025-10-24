@@ -10,7 +10,7 @@ class Player(Entity):
     Classe para o jogador no jogo.
     """
     def __init__(self):
-        super().__init__("assets/sprites/player/player.png", center_x=0, center_y=0, scale=2.0)
+        super().__init__("assets/sprites/player/player.png", center_x=0, center_y=0, scale=2.1)
         
         # Atributos do jogador
         self.class_ = None
@@ -172,7 +172,7 @@ class Player(Entity):
         equipped = None
         if data["equipped_weapon"]:
             equipped = data["equipped_weapon"]
-        self.position, self.spawn_point = data["position"], data["position"]
+        self.position, self.spawn_point = data["spawn_point"], data["spawn_point"]
         self.max_hp = data["max_hp"]
         self.current_hp = self.max_hp
         self.speed = data["speed"]
