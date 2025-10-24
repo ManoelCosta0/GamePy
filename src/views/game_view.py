@@ -34,6 +34,7 @@ class GameView(arcade.View):
         
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
         self.scene.add_sprite("player", self.player)
+        self.scene.add_sprite_list("player", sprite_list=self.enemies_list)
 
         # Adcionar "walls" como paredes e "collide" como colisões
         self.physics_engine = arcade.PhysicsEngineSimple(self.player, [self.scene["walls"], self.scene["collide"], self.enemies_list])
@@ -104,7 +105,6 @@ class GameView(arcade.View):
             self.window.show_view(self.window.pause_view)
         elif key == arcade.key.I:
             self.window.show_view(self.window.inventory_view)
-            self.window.inventory_view.origin = self
         elif key == arcade.key.TAB:
             self.developer_mode = not self.developer_mode
         elif key == arcade.key.F1:

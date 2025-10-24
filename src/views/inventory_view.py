@@ -100,7 +100,7 @@ class InventoryView(arcade.View):
     def on_key_press(self, key, modifiers):
         """ Volta para a View de origem ao pressionar a tecla ESCAPE. """
         if key == arcade.key.ESCAPE:
-            self.window.show_view(self.origin)
+            self.window.show_view(self.origin) if self.origin else self.window.show_view(self.window.game_view)
         elif key == arcade.key.I:
             self.window.show_view(self.window.game_view)
             
