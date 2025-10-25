@@ -85,6 +85,7 @@ class MenuView(arcade.View):
         self.window.game_view = GameView()
         self.window.game_view.player.load_player(save)
 
+        self.window.game_view.load_game()
         self.window.show_view(self.window.game_view)
 
     def on_update(self, delta_time):
