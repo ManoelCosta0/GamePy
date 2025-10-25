@@ -81,3 +81,8 @@ class ControlsView(arcade.View):
         "logbox": (x, y + 80),
         "perf_graph": (x, y + 120)
         }
+    
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.ESCAPE:
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
+            self.window.show_view(self.window.pause_view)
