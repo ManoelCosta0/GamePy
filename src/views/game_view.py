@@ -13,7 +13,13 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
         
-        self.developer_mode = self.window.developer_mode
+        #Settings
+        self.configs = {
+            "fps": True,
+            "fullscreen": True,
+            "logbox": False,
+            "perf_graph": True
+        }
         self.timers = {"fps": 0.0}
         self.fps = 0
         
@@ -22,6 +28,12 @@ class GameView(arcade.View):
         self.hud_manager = arcade.gui.UIManager()
         self.hit_box_list = arcade.SpriteList()
         
+        self.perf_graph_list = arcade.SpriteList()
+        graph = arcade.PerfGraph(200, 120, graph_data="FPS")
+        graph.position = (self.window.width - 280, self.window.height - 120)
+        self.perf_graph_list.append(graph)
+        arcade.enable_timings()
+
         layer_options = {
             "walls": {"use_spatial_hash": True},
             "collide": {"use_spatial_hash": True}
@@ -34,7 +46,7 @@ class GameView(arcade.View):
         
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
         self.scene.add_sprite("player", self.player)
-        self.scene.add_sprite_list("player", sprite_list=self.enemies_list)
+        self.scene.add_sprite_list_after("enemies", "player",self.enemies_list)
 
         # Adcionar "walls" como paredes e "collide" como colisões
         self.physics_engine = arcade.PhysicsEngineSimple(self.player, [self.scene["walls"], self.scene["collide"], self.enemies_list])
@@ -56,10 +68,13 @@ class GameView(arcade.View):
             self.enemies_list.draw(pixelated=True)
         self.hud_manager.draw(pixelated=True)
         
-        if self.developer_mode:
+        if self.configs["perf_graph"]:
+            self.perf_graph_list.draw()
+        if self.configs["logbox"]:
             self.window.log_box.on_draw()
+        if self.configs["fps"]:
             arcade.draw_text(
-            f"FPS: {self.fps:.1f}", self.window.width - 70, self.window.height - 20,
+            f"FPS: {self.fps:.1f}", self.window.width - 70, self.window.height - 30,
             arcade.color.WHITE, 14)
     
     def on_update(self, delta_time):
@@ -73,7 +88,7 @@ class GameView(arcade.View):
         self.scene.update(delta_time=delta_time)
         
         self.timers["fps"] += delta_time
-        if self.developer_mode and self.timers["fps"] >= 0.2:
+        if self.configs["fps"] and self.timers["fps"] >= 0.2:
             self.timers["fps"] = 0.0
             self.fps = 1 / delta_time
 
@@ -81,6 +96,7 @@ class GameView(arcade.View):
             collision_list = arcade.check_for_collision_with_list(self.player.attack_hitbox, self.enemies_list)
             for enemy in collision_list:
                 enemy.take_damage(self.player.attack_damage)
+            if self.player.attack_hitbox and len(collision_list) > 0:
                 self.player.attack_hitbox.kill()
                 self.player.attack_hitbox = None
                 self.hit_box_list.clear()
@@ -105,14 +121,12 @@ class GameView(arcade.View):
             self.window.show_view(self.window.pause_view)
         elif key == arcade.key.I:
             self.window.show_view(self.window.inventory_view)
-        elif key == arcade.key.TAB:
-            self.developer_mode = not self.developer_mode
         elif key == arcade.key.F1:
             self.save_game()
         elif key == arcade.key.K:
-            #self.enemy = Enemy("Slime1", 1000, 1500)
-            #self.enemies_list.append(self.enemy)
-            self.window.log_box.add_message(f"Posição do jogador: {self.player.position}")
+            self.enemy = Enemy("Slime1", 1000, 1500)
+            self.enemies_list.append(self.enemy)
+            #self.window.log_box.add_message(f"Posição do jogador: {self.player.position}")
         elif key == arcade.key.LSHIFT:
             self.player.speed += 2
 

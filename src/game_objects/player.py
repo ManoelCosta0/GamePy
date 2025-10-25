@@ -100,7 +100,7 @@ class Player(Entity):
             self.attack_damage = 0
     
     def set_hitbox(self):
-        self.attack_hitbox = arcade.SpriteSolidColor(50, 40, color=(255, 0, 0, 0))
+        self.attack_hitbox = arcade.SpriteSolidColor(50, 40, color=(255, 0, 0, 100))
         self.attack_hitbox.life_time = 0.14
         if self.direction == "right":
             self.attack_hitbox.center_x, self.attack_hitbox.center_y = self.center_x + 8, self.center_y - 8
