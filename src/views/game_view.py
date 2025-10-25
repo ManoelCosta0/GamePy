@@ -6,6 +6,10 @@ from src.game_objects.player import Player
 from src.game_objects.item import Item
 from src.ui.hud import HUD as hud
 
+spawns = {}
+with open("data/spawns_set.json") as f:
+    spawns = json.load(f)
+
 class GameView(arcade.View):
     """
     View principal do jogo, onde toda a lógica de gameplay acontece.
@@ -17,7 +21,7 @@ class GameView(arcade.View):
         self.configs = {
             "fps": True,
             "fullscreen": True,
-            "logbox": False,
+            "logbox": True,
             "perf_graph": True
         }
         self.timers = {"fps": 0.0}
@@ -46,10 +50,9 @@ class GameView(arcade.View):
         
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
         self.scene.add_sprite("player", self.player)
-        self.scene.add_sprite_list_after("enemies", "player",self.enemies_list)
 
         # Adcionar "walls" como paredes e "collide" como colisões
-        self.physics_engine = arcade.PhysicsEngineSimple(self.player, [self.scene["walls"], self.scene["collide"], self.enemies_list])
+        self.physics_engine = arcade.PhysicsEngineSimple(self.player, [self.scene["walls"], self.scene["collide"], self.scene["enemies"]])
 
         self.hud = hud(self.hud_manager)
 
@@ -65,7 +68,6 @@ class GameView(arcade.View):
             self.scene.draw(pixelated=True)
             self.hit_box_list.draw(pixelated=True)
             self.hud_sprite_list.draw(pixelated=True)
-            self.enemies_list.draw(pixelated=True)
         self.hud_manager.draw(pixelated=True)
         
         if self.configs["perf_graph"]:
@@ -80,7 +82,6 @@ class GameView(arcade.View):
     def on_update(self, delta_time):
         """ Lógica de atualização da View. """
         self.player.update()
-        self.enemies_list.update()
         self.hud_sprite_list.update()
         self.hit_box_list.update()
         self.physics_engine.update()
@@ -93,7 +94,7 @@ class GameView(arcade.View):
             self.fps = 1 / delta_time
 
         if self.player.animation_state < 0 and self.player.attack_hitbox:
-            collision_list = arcade.check_for_collision_with_list(self.player.attack_hitbox, self.enemies_list)
+            collision_list = arcade.check_for_collision_with_list(self.player.attack_hitbox, self.scene["enemies"])
             for enemy in collision_list:
                 enemy.take_damage(self.player.attack_damage)
             if self.player.attack_hitbox and len(collision_list) > 0:
@@ -117,16 +118,17 @@ class GameView(arcade.View):
             #self.player.equip_weapon(item)
             self.window.log_box.add_message(f"Você equipou {item.name}.")
         elif key == arcade.key.ESCAPE:
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.window.show_view(self.window.pause_view)
         elif key == arcade.key.I:
             self.window.show_view(self.window.inventory_view)
         elif key == arcade.key.F1:
             self.save_game()
         elif key == arcade.key.K:
-            self.enemy = Enemy("Slime1", 1000, 1500)
-            self.enemies_list.append(self.enemy)
-            #self.window.log_box.add_message(f"Posição do jogador: {self.player.position}")
+            x, y = self.player.position
+            position = (int(x), int(y))
+            self.window.log_box.add_message(f"Posição do jogador: {position}")
+            print(f"Posição do jogador: {position}")
         elif key == arcade.key.LSHIFT:
             self.player.speed += 2
 
@@ -179,3 +181,9 @@ class GameView(arcade.View):
             json.dump(save, file, indent=4)
         
         self.window.log_box.add_message("Jogo salvo com sucesso!")
+    
+    def load_game(self):
+        for enemy, data in spawns.items():
+            for x, y in data:
+                new_enemy = Enemy(enemy, x, y)
+                self.scene["enemies"].append(new_enemy)

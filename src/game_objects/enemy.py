@@ -16,28 +16,30 @@ class Enemy(Entity):
     Classe para inimigos no jogo.
     """
     def __init__(self, name: str, x: float, y: float):
-        info  = enemy_json[name]
-        super().__init__(info["image_path"], x, y, max_hp=info["max_hp"], scale=info["scale"])
+        data  = enemy_json[name]
+        super().__init__(data["image_path"], x, y, max_hp=data["max_hp"], scale=data["scale"])
         
         # Atributos do inimigo
         self.name = name
-        self.speed = info["speed"]
-        self.drops = info["loot_table"]
-        self.attack_damage = info["attack"]
-        self.exp_reward = info["exp_reward"]
+        self.speed = data["speed"]
+        self.drops = data["loot_table"]
+        self.attack_damage = data["attack"]
+        self.exp_reward = data["exp_reward"]
         
         #Informaçoes do inimigo
-        self.range = 300
-        self.area = 300
+        self.range = data["range"]
+        self.area = data["area"]
         self.spawn = (x, y)
+        self.patrol_point = (x, y)
         self.target = {"x": None, "y": None}
-        self.attack_range = 64
-        
+        self.attack_range = data["attack_range"]
+
         # Constantes de animação (Carregadas uma vez - não mutáveis)
-        self.animation_cooldowns = {"idle": 0.17, "walk": 0.12, "attack": 0.1, "run": 0.1}
-        self.state_cooldowns = {"between_attacks": 1.0, "idle": 5.0, "between_pathfindings": 0.5}
-        self.len_anim = {"idle": 6, "walk": 8, "attack": 10, "run": 8}
+        self.animation_cooldowns = data["animation_cooldowns"]
+        self.state_cooldowns = data["state_cooldowns"]
+        self.len_anim = data["len_anim"]
         self.textures = {"idle": {}, "walk": {}, "attack": {}, "run": {}}
+        self.attack_frame = data["attack_frame"]
         
         # Variáveis de animação
         self.animation_state = 0
@@ -50,12 +52,11 @@ class Enemy(Entity):
         
         # Carregar barra de vida
         window = arcade.get_window()
-        self.health_bar = HealthBar(self, window.game_view.hud_sprite_list, self.max_hp, height=-40)
+        self.health_bar = HealthBar(self, window.game_view.hud_sprite_list, self.max_hp, height=data["lifebar_height"])
         
         # Carregar variáveis de pathfinding
         self.player = window.game_view.player
         self.walls = window.game_view.scene["collide"]
-        #self.chasing_player = False
     
     #----------------------
     # Máquinas de estados
@@ -89,14 +90,14 @@ class Enemy(Entity):
         elif self.state == "attack":
             self.timers["between_attacks"] += delta_time
             if self.timers["between_attacks"] >= self.state_cooldowns["between_attacks"]:
+                stage = self.update_anim()
+                if stage == self.attack_frame and self.is_player_in_range(self.attack_range):
+                    self.attack()
+                elif stage == 0:
+                    self.timers["between_attacks"] = 0.0
+            else:
                 if not self.is_player_in_range(self.attack_range):
                     self.chase_player()
-                else:
-                    stage = self.update_anim()
-                    if stage == 7:
-                        self.attack()
-                    elif stage == 0:
-                        self.timers["between_attacks"] = 0.0
             if not self.player.is_alive():
                 self.state = "idle"
                 self.animation_state = 0
@@ -143,14 +144,14 @@ class Enemy(Entity):
     def patrol(self):
         """ Move o inimigo para um ponto aleatório dentro da área de patrulha. """
         self.move_to(
-            random.uniform(self.spawn[0]-self.area, self.spawn[0]+self.area),
-            random.uniform(self.spawn[1]-self.area, self.spawn[1]+self.area)
+            random.uniform(self.patrol_point[0]-self.area, self.patrol_point[0]+self.area),
+            random.uniform(self.patrol_point[1]-self.area, self.patrol_point[1]+self.area)
         )
     
     def chase_player(self):
         """ Move o inimigo em direção ao jogador. """
         if not self.player.is_alive(): return
-        if self.is_player_in_range(self.attack_range/2): # Está em range de ataque
+        if self.is_player_in_range(self.attack_range*0.65): # Está em range de ataque
             self.state = "attack"
             self.timers["between_attacks"] = self.state_cooldowns["between_attacks"]
             self.animation_state = 1
@@ -158,6 +159,7 @@ class Enemy(Entity):
         elif self.is_player_in_range(self.range): # Não está em range de ataque mas está me range de perseguição
             self.move_to(self.player.center_x, self.player.center_y, state="run")
         else: # Não está em nenhum range
+            self.patrol_point = self.position
             self.patrol()
             self.animation_state = 0
 
@@ -213,7 +215,7 @@ class Enemy(Entity):
         self.player.increase_experience(self.exp_reward)
         self.give_drop()
         self.health_bar.remove_from_sprite_lists()
-        self.alpha = 255
+        self.color = (255, 255, 255, 255)
         arcade.schedule(self.respawn, 15.0)
     
     #----------------------
