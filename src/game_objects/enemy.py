@@ -196,9 +196,10 @@ class Enemy(Entity):
     #----------------------
     
     def respawn(self, delta_time):
+        print(f"Respawning enemy")
         self.current_hp = self.max_hp
         self.center_x, self.center_y = self.spawn
-        arcade.get_window().game_view.enemies_list.append(self)
+        arcade.get_window().game_view.scene["enemies"].append(self)
         self.health_bar.add_to_sprite_list()
         self.state = "idle"
         self.animation_state = 0
@@ -211,6 +212,7 @@ class Enemy(Entity):
                 self.player.inventory.add_item(item)
 
     def on_die(self):
+        print(f"Enemy died")   
         self.remove_from_sprite_lists()
         self.player.increase_experience(self.exp_reward)
         self.give_drop()
