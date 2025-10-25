@@ -93,7 +93,7 @@ class GameView(arcade.View):
             self.timers["fps"] = 0.0
             self.fps = 1 / delta_time
 
-        if self.player.animation_state < 0 and self.player.attack_hitbox:
+        if self.player.attack_hitbox:
             collision_list = arcade.check_for_collision_with_list(self.player.attack_hitbox, self.scene["enemies"])
             for enemy in collision_list:
                 enemy.take_damage(self.player.attack_damage)
@@ -154,6 +154,7 @@ class GameView(arcade.View):
     def add_hitbox(self, hitbox):
         self.hit_box_list.clear()
         self.hit_box_list.append(hitbox)
+        print("Hitbox adicionada.")
     
     def center_camera_to_player(self):
         screen_center_x, screen_center_y = self.player.position
