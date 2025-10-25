@@ -10,7 +10,7 @@ class Player(Entity):
     Classe para o jogador no jogo.
     """
     def __init__(self):
-        super().__init__("assets/sprites/player/player.png", center_x=0, center_y=0, scale=2.1)
+        super().__init__("assets/sprites/player/player_idle_right_1.png", center_x=0, center_y=0, scale=2.1)
         
         # Atributos do jogador
         self.class_ = None
@@ -18,25 +18,25 @@ class Player(Entity):
         self.attack_cooldown = None
         self.level = None
         self.experience = None
+        self.attack_damage = 0
         
         self.spwan_point = (0, 0)
         self.equipped_weapon = None
         self.inventory = Inventory()
         
+        # Estados de animação e movimento
+        self.state = "idle"
+        self.animation_state = 0
+        self.direction = "right"
+        self.move_state_x = 0
+        self.move_state_y = 0
+        self.len_anims = {"walk": 6, "attack": 4, "idle": 1}
+        
         # Carregar animações
         self.load_animations()
         
-        # Estados de animação e movimento
-        self.animation_state = 0
-        self.direction = "right"
-        self.LENGTH_WALK_ANIMATION = 6
-        self.attack_timer = 0.0
-        self.move_state_x = 0
-        self.move_state_y = 0
-        
-        self.attack_damage = 0
-        
-        self.is_colliding = False
+        self.timers = {"attack": 0.0, "animation": 0.0}
+        self.cooldowns = {"attack": 0.2, "walk": 0.3, "idle": 0,"between_attack": 0.5}
         
         self.attack_hitbox = None
         self.health_bar = None
@@ -46,29 +46,44 @@ class Player(Entity):
 
     def update(self, delta_time: float = 1/60):
         """ Atualiza a lógica do jogador. """
-        self.move_player()
-        self.update_anim(delta_time)
+        
+        self.timers["attack"] += delta_time
+        self.timers["animation"] += delta_time
+        
+        if self.state == "attack":
+            
+            self.update_anim(delta_time)
+            self.move_player()
+            
+            if self.attack_hitbox:
+                self.attack_hitbox.life_time -= delta_time
+                if self.attack_hitbox.life_time <= 0:
+                    self.attack_hitbox.remove_from_sprite_lists()
+                    self.attack_hitbox = None
+                    
+            if self.animation_state >= self.len_anims["attack"]:
+                if self.move_state_x == 0 and self.move_state_y == 0:
+                    self.state = "idle"
+                else:
+                    self.state = "walk"
+        elif self.move_state_x != 0 or self.move_state_y != 0:
+            self.state = "walk"
+            self.move_player()
+            self.update_anim(delta_time)
+        else:
+            self.state = "idle"
+            self.animation_state = 0
+            self.update_anim(delta_time)
+            
         self.health_bar.update()
 
     def update_anim(self, delta_time: float = 1/60):
-       if self.animation_state == 0 and self.idle_textures[self.direction] != self.texture:
-           self.texture = self.idle_textures[self.direction]
-       elif self.animation_state > 0:
-           x = (self.animation_state // 6 % self.LENGTH_WALK_ANIMATION)
-           self.texture = self.walk_textures[self.direction][x]
-       elif self.animation_state < 0:
-           if self.attack_hitbox: self.attack_hitbox.life_time -= delta_time
-           if self.attack_hitbox and self.attack_hitbox.life_time <= 0:
-                self.attack_hitbox.remove_from_sprite_lists()
-                self.attack_hitbox = None
-            
-           self.attack_timer += delta_time
-           if self.attack_timer >= self.attack_cooldown and self.animation_state >= -4:
-                self.attack_timer = 0.0
-                self.texture = self.attack_textures[self.direction][-self.animation_state - 1]
-                self.animation_state -= 1
-           elif self.animation_state < -4:
-                self.animation_state = 0
+        self.timers["animation"] += delta_time
+        if self.timers["animation"] >= self.cooldowns[self.state]:
+            self.timers["animation"] = 0.0
+            x = self.animation_state % self.len_anims[self.state]
+            self.texture = self.animations[self.state][self.direction][x]
+            self.animation_state += 1
            
     def move_player(self):
         if self.move_state_x > 0:
@@ -83,11 +98,6 @@ class Player(Entity):
         elif self.move_state_y < 0:
             self.center_y += self.move_state_y * self.speed
             self.direction = "down"
-        if (self.move_state_x != 0 or self.move_state_y != 0) and self.animation_state >= 0:
-            self.animation_state += 1
-            if self.is_colliding == False:
-                self.last_x = self.center_x
-                self.last_y = self.center_y
 
     def equip_weapon(self, weapon: Item):
         self.equipped_weapon = weapon
@@ -100,7 +110,7 @@ class Player(Entity):
             self.attack_damage = 0
     
     def set_hitbox(self):
-        self.attack_hitbox = arcade.SpriteSolidColor(50, 40, color=(255, 0, 0, 100))
+        self.attack_hitbox = arcade.SpriteSolidColor(50, 40, color=(255, 0, 0, 0))
         self.attack_hitbox.life_time = 0.14
         if self.direction == "right":
             self.attack_hitbox.center_x, self.attack_hitbox.center_y = self.center_x + 8, self.center_y - 8
@@ -110,10 +120,14 @@ class Player(Entity):
             self.attack_hitbox.center_x, self.attack_hitbox.center_y = self.center_x, self.center_y + 4
         elif self.direction == "down":
             self.attack_hitbox.center_x, self.attack_hitbox.center_y = self.center_x, self.center_y - 12
+        self.window.game_view.add_hitbox(self.attack_hitbox)
 
     def attack(self):
-        if self.equipped_weapon is None: return
-        self.animation_state = -1
+        if self.equipped_weapon and self.timers["attack"] >= self.cooldowns["between_attack"]:
+            self.timers["attack"] = 0.0
+            self.state = "attack"
+            self.animation_state = 0
+            self.set_hitbox()
     
     def _fade_in_respawn(self, delta_time):
         """Faz o sprite reaparecer gradualmente após respawn."""
@@ -140,34 +154,18 @@ class Player(Entity):
         return self.inventory.get_items()
     
     def load_animations(self):
-        self.idle_textures = {
-            "right": arcade.load_texture("assets/sprites/player/player.png"),
-            "left": arcade.load_texture("assets/sprites/player/player_left.png"),
-            "up": arcade.load_texture("assets/sprites/player/player_up.png"),
-            "down": arcade.load_texture("assets/sprites/player/player_down.png")}
+        # Unificar carregamento de texturas por estado e direção
+        self.animations = {}
+        directions = ["right", "left", "up", "down"]
         
-        self.walk_textures = {"right": [], "left": [], "up": [], "down": []}
-        for i in range(1, 7):
-            right = arcade.load_texture(f"assets/sprites/player/player_walk_right_{i}.png")
-            left = arcade.load_texture(f"assets/sprites/player/player_walk_left_{i}.png")
-            up = arcade.load_texture(f"assets/sprites/player/player_walk_up_{i}.png")
-            down = arcade.load_texture(f"assets/sprites/player/player_walk_down_{i}.png")
-            self.walk_textures["right"].append(right)
-            self.walk_textures["left"].append(left)
-            self.walk_textures["up"].append(up)
-            self.walk_textures["down"].append(down)
-        
-        self.attack_textures = {"right": [], "left": [], "up": [], "down": []}
-        for i in range(1, 5):
-            right = arcade.load_texture(f"assets/sprites/player/player_attack_right_{i}.png")
-            left = arcade.load_texture(f"assets/sprites/player/player_attack_left_{i}.png")
-            up = arcade.load_texture(f"assets/sprites/player/player_attack_up_{i}.png")
-            down = arcade.load_texture(f"assets/sprites/player/player_attack_down_{i}.png")
-            self.attack_textures["right"].append(right)
-            self.attack_textures["left"].append(left)
-            self.attack_textures["up"].append(up)
-            self.attack_textures["down"].append(down)
-    
+        for state, i in self.len_anims.items():
+            self.animations[state] = {}
+            for direction in directions:
+                self.animations[state][direction] = []
+                for j in range(i):
+                    texture = arcade.load_texture(f"assets/sprites/player/player_{state}_{direction}_{j+1}.png")
+                    self.animations[state][direction].append(texture)
+
     def load_player(self, data):
         equipped = None
         if data["equipped_weapon"]:

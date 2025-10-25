@@ -146,11 +146,15 @@ class GameView(arcade.View):
     def on_mouse_press(self, x, y, button, modifiers):
         if button == arcade.MOUSE_BUTTON_LEFT:
             if self.player.equipped_weapon:
-                self.player.set_hitbox()
-                self.hit_box_list.clear()
-                self.hit_box_list.append(self.player.attack_hitbox)
+                #self.player.set_hitbox()
+                #self.hit_box_list.clear()
+                #self.hit_box_list.append(self.player.attack_hitbox)
                 self.player.attack()
-                
+    
+    def add_hitbox(self, hitbox):
+        self.hit_box_list.clear()
+        self.hit_box_list.append(hitbox)
+    
     def center_camera_to_player(self):
         screen_center_x, screen_center_y = self.player.position
         if screen_center_x < self.camera.viewport_width/2:
