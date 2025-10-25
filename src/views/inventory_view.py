@@ -158,7 +158,7 @@ class InventoryView(arcade.View):
             
         # Weapon Slot
         if equipped:
-            self.equip_item(Item(equipped))
+            self.set_equipped_item(Item(equipped))
 
     #----------------------
     # Funções de operações do inventário
@@ -188,14 +188,8 @@ class InventoryView(arcade.View):
         self.clicked_slot.item = None
         self.clicked_slot.remove(self.clicked_slot.children[1])
         
-    def equip_item(self, item: Item):
-        """Equipa um item no slot de arma."""
-        # Desequipa o item atual, se houver
-        self.unequip_item()
-        
-        # Remove o item do inventário
-        self.remove_item_from_grid(item)
-        
+    def set_equipped_item(self, item: Item):
+        """Define o item equipado no slot de arma."""
         # Equipa no backend
         player = self.window.game_view.player
         player.equip_weapon(item)
@@ -209,6 +203,16 @@ class InventoryView(arcade.View):
         self.weapon_slot.item = item
         self.weapon_slot.add(item_icon)
         self.update_stats()
+        
+    def equip_item(self, item: Item):
+        """Equipa um item no slot de arma."""
+        # Desequipa o item atual, se houver
+        self.unequip_item()
+        
+        # Remove o item do inventário
+        self.remove_item_from_grid(item)
+        
+        self.set_equipped_item(item)
         
     def unequip_item(self):
         """Desequipa o item do slot de arma."""
