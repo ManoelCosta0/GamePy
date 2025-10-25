@@ -61,7 +61,7 @@ class ControlsView(arcade.View):
         
         @self.return_button.event("on_click")
         def on_click_return_button(event):
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.window.show_view(self.window.pause_view)
 
     def on_hide_view(self):
