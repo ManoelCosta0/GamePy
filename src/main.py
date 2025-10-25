@@ -15,6 +15,7 @@ class MyGame(arcade.Window):
         super().__init__(const.WINDOW_WIDTH, const.WINDOW_HEIGHT, const.WINDOW_TITLE, resizable=True)
         
         self.developer_mode = True  # Ativar modo desenvolvedor para toda a aplicação
+        self._background_color = (36, 160, 222) # cor de fundo escura
         
         # Inicializa as Views
         self.menu_view = MenuView()
