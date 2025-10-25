@@ -30,7 +30,7 @@ class ControlsView(arcade.View):
             )
             @checkbox_widget.event("on_click")
             def on_click_checkbox(event, checkbox=checkbox):
-                arcade.play_sound(self.window.click_sound)
+                arcade.play_sound(self.window.click_sound, volume=self.window.volume)
                 if checkbox == "fps":
                     self.game_view.configs["fps"] = not self.game_view.configs["fps"]
                 elif checkbox == "fullscreen":

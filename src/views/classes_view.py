@@ -48,17 +48,17 @@ class ClassesView(arcade.View):
         
         @self.return_button.event("on_click")
         def on_click_return_button(event):
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.window.show_view(self.window.menu_view)
             
         @self.select_warrior_button.event("on_click")
         def on_click_warrior_button(event):
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.create_save_file("Warrior")
         
         @self.select_assassin_button.event("on_click")
         def on_click_assassin_button(event):
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.create_save_file("Assassin")
             
     def on_draw(self):

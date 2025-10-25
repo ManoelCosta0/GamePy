@@ -52,17 +52,17 @@ class MenuView(arcade.View):
 
         @self.new_game_button.event("on_click")
         def on_click_new_game_button(event):
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.window.show_view(self.window.classes_view)
 
         @self.continue_button.event("on_click")
         def on_click_continue_button(event):
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.load_game()
             
         @self.exit_button.event("on_click")
         def on_click_exit_button(event):
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             arcade.close_window()
 
     def on_draw(self):

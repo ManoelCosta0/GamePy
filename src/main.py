@@ -16,6 +16,7 @@ class MyGame(arcade.Window):
         
         self.developer_mode = True  # Ativar modo desenvolvedor para toda a aplicação
         self._background_color = (36, 160, 222) # cor de fundo escura
+        self.volume = 20/100
         
         # Inicializa as Views
         self.menu_view = MenuView()
