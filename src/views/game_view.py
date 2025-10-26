@@ -22,7 +22,7 @@ class GameView(arcade.View):
         self.configs = {
             "fps": True,
             "fullscreen": True,
-            "logbox": True,
+            "logbox": False,
             "perf_graph": True
         }
         self.timers = {"fps": 0.0}
@@ -34,9 +34,11 @@ class GameView(arcade.View):
         self.hit_box_list = arcade.SpriteList()
         self.campfires_list = arcade.SpriteList()
         
+        self.campfire = None
+        
         self.perf_graph_list = arcade.SpriteList()
         graph = arcade.PerfGraph(200, 120, graph_data="FPS")
-        graph.position = (self.window.width - 280, self.window.height - 120)
+        graph.position = (self.window.width - 230, self.window.height - 75)
         self.perf_graph_list.append(graph)
         arcade.enable_timings()
 
@@ -70,8 +72,8 @@ class GameView(arcade.View):
             self.scene.draw(pixelated=True)
             self.hit_box_list.draw(pixelated=True)
             self.hud_sprite_list.draw(pixelated=True)
+            self.campfires_list.draw(pixelated=True)
         self.hud_manager.draw(pixelated=True)
-        self.campfires_list.draw(pixelated=True)
         
         if self.configs["perf_graph"]:
             self.perf_graph_list.draw()
@@ -79,23 +81,23 @@ class GameView(arcade.View):
             self.window.log_box.on_draw()
         if self.configs["fps"]:
             arcade.draw_text(
-            f"FPS: {self.fps:.1f}", self.window.width - 70, self.window.height - 30,
+            f"FPS: {self.fps:.1f}", self.window.width - 80, self.window.height - 25,
             arcade.color.WHITE, 14)
     
     def on_update(self, delta_time):
         """ Lógica de atualização da View. """
+        self.scene.update(delta_time=delta_time)
+        self.physics_engine.update()
         self.player.update()
+        self.hit_box_list.update()
         self.campfires_list.update()
         self.hud_sprite_list.update()
-        self.hit_box_list.update()
-        self.physics_engine.update()
         self.center_camera_to_player()
-        self.scene.update(delta_time=delta_time)
         
         self.timers["fps"] += delta_time
         if self.configs["fps"] and self.timers["fps"] >= 0.2:
             self.timers["fps"] = 0.0
-            self.fps = 1 / delta_time
+            self.fps = arcade.get_fps()
 
         if self.player.attack_hitbox:
             collision_list = arcade.check_for_collision_with_list(self.player.attack_hitbox, self.scene["enemies"])
@@ -121,14 +123,16 @@ class GameView(arcade.View):
             if collision_list:
                 x = self.campfires_list.index(collision_list[0]) - 1
                 campfire = self.campfires_list[x]
-                for i, c in enumerate(self.campfires_list):
-                    if i % 2 == 0:
-                       c.desactivate_campfire()
-                if not campfire.campfire_activated:
-                    campfire.activate_campfire()
+                if self.campfire != campfire and not campfire.campfire_activated:
+                    self.campfire.desactivate_campfire()
+                    self.campfire = campfire
+                    self.campfire.activate_campfire()
                     self.window.log_box.add_message("Ponto de spawn atualizado!")
                     self.save_game()
-
+                elif self.campfire == campfire and not campfire.campfire_activated:
+                    self.campfire.activate_campfire()
+                elif self.campfire == campfire and campfire.campfire_activated:
+                    self.campfire.desactivate_campfire()
         elif key == arcade.key.ESCAPE:
             arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.window.show_view(self.window.pause_view)
@@ -202,7 +206,9 @@ class GameView(arcade.View):
                 self.scene["enemies"].append(new_enemy)
         for spawn, data in spawns["campfires"].items():
             spawn = tuple(map(int, spawn.split(',')))
-            campfire = Campfire(tuple(data["spawn_point"]), self.player, self.campfires_list, spawn)
+            campfire = Campfire(data, self.player, self.campfires_list, spawn)
             self.scene.add_sprite("collide", campfire)
+            
             if spawn == tuple(self.player.spawn_point):
                 campfire.activate_campfire()
+                self.campfire = campfire

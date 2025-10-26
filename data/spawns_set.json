@@ -35,16 +35,18 @@
     },
     "campfires": {
         "430, 2670": {
-            "spawn_point": [
+            "position": [
                 430,
                 2880
-            ]
+            ],
+            "level_required": 1
         },
         "2850, 1710": {
-            "spawn_point": [
+            "position": [
                 3125,
                 1680
-            ]
+            ],
+            "level_required": 2
         }
     }
 }
