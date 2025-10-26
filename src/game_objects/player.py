@@ -19,6 +19,7 @@ class Player(Entity):
         self.level = None
         self.experience = None
         self.attack_damage = 0
+        self.auto_heal_factor = 1.05
         
         self.spwan_point = (0, 0)
         self.equipped_weapon = None
@@ -35,14 +36,16 @@ class Player(Entity):
         # Carregar animações
         self.load_animations()
         
-        self.timers = {"attack": 0.0, "animation": 0.0}
-        self.cooldowns = {"attack": 0.2, "walk": 0.3, "idle": 0,"between_attack": 0.5}
+        self.timers = {"attack": 0.0, "animation": 0.0, "heal": 0.0, "without_take_damage": 0.0}
+        self.cooldowns = {"attack": 0.3, "walk": 0.3, "idle": 0,"between_attack": 0.5, "heal": 4.0}
         
         self.attack_hitbox = None
         self.health_bar = None
         
         self.window = arcade.get_window()
         self.hud = None
+        
+        self.old_health = None
 
     def update(self, delta_time: float = 1/60):
         """ Atualiza a lógica do jogador. """
@@ -76,6 +79,7 @@ class Player(Entity):
             self.update_anim(delta_time)
             
         self.health_bar.update()
+        self.auto_heal(delta_time)
 
     def update_anim(self, delta_time: float = 1/60):
         self.timers["animation"] += delta_time
@@ -128,7 +132,29 @@ class Player(Entity):
             self.state = "attack"
             self.animation_state = 0
             self.set_hitbox()
-    
+            
+    def auto_heal(self, delta_time):
+        """ Cura automática do jogador ao longo do tempo. """
+        self.timers["heal"] += delta_time
+        if self.old_health and self.current_hp < self.old_health:
+            self.old_health = self.current_hp
+            self.timers["heal"] = 0.0
+            self.timers["without_take_damage"] = 0.0
+            self.auto_heal_factor = 1.05
+        elif self.old_health:
+            self.timers["without_take_damage"] += delta_time
+            if self.timers["without_take_damage"] > 5.0:
+                self.auto_heal_factor += 0.01
+                self.timers["without_take_damage"] = 0.0
+        if self.current_hp < self.max_hp and self.timers["heal"] >= self.cooldowns["heal"]:
+            self.current_hp *= self.auto_heal_factor
+            if self.current_hp > self.max_hp:
+                self.current_hp = self.max_hp
+            self.timers["heal"] = 0.0
+        elif self.current_hp >= self.max_hp:
+            self.old_health = self.max_hp
+            self.auto_heal_factor = 1.05
+
     def _fade_in_respawn(self, delta_time):
         """Faz o sprite reaparecer gradualmente após respawn."""
         self.alpha += 15
@@ -185,7 +211,8 @@ class Player(Entity):
         self.hud = self.window.game_view.hud
         self.hud.set_level(self.level)
         self.hud.set_xp(self.experience, self.get_max_experience())
-        
+
+        self.old_health = self.max_hp
 
     def increase_experience(self, amount):
         self.experience += amount

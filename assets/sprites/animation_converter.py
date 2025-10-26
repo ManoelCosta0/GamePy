@@ -6,21 +6,21 @@ import os
 3. Nomeie os arquivos como {name}_{state}_with_shadow.png
 '''
 # Configurações
-name = "slime3"
-frame_width = 64   # ajuste conforme o tamanho do frame
+name = "campfire"
+frame_width = 32   # ajuste conforme o tamanho do frame
 frame_height = 64
-rows = 4
-cols = None
-directions = ["down", "up", "left", "right"]
-states = ["idle", "walk", "attack", "run"]
+rows = 1
+cols = 8
+directions = [""]
+states = ["starting", "burning"]
 
-output_dir = f"assets/sprites/enemies/{name}"
+output_dir = f"assets/sprites/details/{name}"
 
 for s in states:
     state_dir = os.path.join(output_dir, s)
     os.makedirs(state_dir, exist_ok=True)
     
-    img = Image.open(f"{output_dir}/{name}_{s}_with_shadow.png")
+    img = Image.open(f"{output_dir}/{name}_{s}.png")
     cols = img.width // frame_width
     
     for r in range(rows):
@@ -35,5 +35,5 @@ for s in states:
             path = f"{state_dir}/{direction}_{c+1}.png"
             frame.save(path)
     
-    os.remove(f"{output_dir}/{name}_{s}_with_shadow.png")
+    os.remove(f"{output_dir}/{name}_{s}.png")
 print("Animações convertidas e salvas com sucesso!")
