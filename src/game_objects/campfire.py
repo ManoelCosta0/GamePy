@@ -3,7 +3,7 @@ import arcade
 campfire_dir = "assets/sprites/details/campfire/"
 
 class Campfire(arcade.Sprite):
-    def __init__(self, data, player, campfires_list, spawn_point: tuple):
+    def __init__(self, data, player, scene, spawn_point: tuple):
         position = tuple(data["position"])
         self.campfire = arcade.load_texture(campfire_dir + "campfire_idle.png")
         super().__init__(self.campfire, center_x=position[0], center_y=position[1], scale=2.0)
@@ -16,14 +16,13 @@ class Campfire(arcade.Sprite):
         self.level_required = data["level_required"]
         
         self.hitbox = None
-        self.sprite_list = campfires_list
-        campfires_list.append(self)
-        self.set_interaction_area(position)
+        scene.add_sprite("interactive_obj", self)
+        self.set_interaction_area(position, scene)
 
         self.animation_state = 0
         self.timers = {"animation": 0.0}
         self.animations = {"starting": [], "burning": []}
-        self.anim_cooldowns = {"starting": 0.15, "burning": 0.3}
+        self.anim_cooldowns = {"starting": 0.2, "burning": 0.2}
         self.len_anims = {"starting": 8, "burning": 8}
         self.load_animations()
         self.campfire_activated = False
@@ -31,7 +30,7 @@ class Campfire(arcade.Sprite):
         self.spawn_point = spawn_point
         
         self.interaction_key = arcade.Sprite("assets/ui/util/interaction_key_E.png", center_x=position[0] + 50, center_y=position[1]-50, scale=0.4)
-        campfires_list.append(self.interaction_key)
+        scene.add_sprite("details", self.interaction_key)
         self.interaction_key.visible = False
 
     def load_animations(self):
@@ -43,10 +42,10 @@ class Campfire(arcade.Sprite):
                 frames.append(texture)
             self.animations[state] = frames
 
-    def set_interaction_area(self, position):
+    def set_interaction_area(self, position, scene):
         self.hitbox = arcade.SpriteSolidColor(140, 140, color=(255, 0, 0, 0))
         self.hitbox.center_x, self.hitbox.center_y = position[0], position[1] - 16
-        self.sprite_list.append(self.hitbox)
+        scene.add_sprite("interactive_area", self.hitbox)
 
     def update(self, delta_time: float = 1/60):
         """ Atualiza a lógica do campfire. """
@@ -70,15 +69,19 @@ class Campfire(arcade.Sprite):
             self.texture = self.animations[self.state][x]
             self.animation_state += 1
     
-    def activate_campfire(self):
+    def activate_campfire(self)-> bool:
+        """ Ativa o campfire como ponto de spawn.\n 
+        Retorna "True" se ativado com sucesso e "False" caso contrário. """
         if self.player.level >= self.level_required:
             self.state = "starting"
             self.animation_state = 0
             self.player.spawn_point = self.spawn_point
             self.campfire_activated = True
+            return True
         else:
             arcade.get_window().log_box.add_message(f"Nível {self.level_required} necessário")
             # Tela de aviso de nível necessário aqui
+            return False
 
     def desactivate_campfire(self):
         self.state = "idle"

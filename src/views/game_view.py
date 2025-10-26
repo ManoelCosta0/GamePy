@@ -44,7 +44,9 @@ class GameView(arcade.View):
 
         layer_options = {
             "walls": {"use_spatial_hash": True},
-            "collide": {"use_spatial_hash": True}
+            "collide": {"use_spatial_hash": True},
+            "interactive_obj": {"use_spatial_hash": True},
+            "interactive_area": {"use_spatial_hash": True},
         }
         
         self.tile_map = arcade.load_tilemap("assets/maps/map.tmx", scaling=3, layer_options=layer_options)
@@ -56,7 +58,7 @@ class GameView(arcade.View):
         self.scene.add_sprite("player", self.player)
 
         # Adcionar "walls" como paredes e "collide" como colisões
-        self.physics_engine = arcade.PhysicsEngineSimple(self.player, [self.scene["walls"], self.scene["collide"], self.scene["enemies"]])
+        self.physics_engine = arcade.PhysicsEngineSimple(self.player, [self.scene["walls"], self.scene["collide"], self.scene["interactive_obj"], self.scene["enemies"]])
 
         self.hud = hud(self.hud_manager)
 
@@ -119,16 +121,16 @@ class GameView(arcade.View):
         elif key == arcade.key.D:
             self.player.move_state_x = 1
         elif key == arcade.key.E:
-            collision_list = arcade.check_for_collision_with_list(self.player, self.campfires_list)
+            collision_list = arcade.check_for_collision_with_list(self.player, self.scene["interactive_area"])
             if collision_list:
-                x = self.campfires_list.index(collision_list[0]) - 1
-                campfire = self.campfires_list[x]
+                x = self.scene["interactive_area"].index(collision_list[0]) - 1
+                campfire = self.scene["interactive_obj"][x]
                 if self.campfire != campfire and not campfire.campfire_activated:
                     self.campfire.desactivate_campfire()
                     self.campfire = campfire
-                    self.campfire.activate_campfire()
-                    self.window.log_box.add_message("Ponto de spawn atualizado!")
-                    self.save_game()
+                    if self.campfire.activate_campfire():
+                        self.window.log_box.add_message("Ponto de spawn atualizado!")
+                        self.save_game()
                 elif self.campfire == campfire and not campfire.campfire_activated:
                     self.campfire.activate_campfire()
                 elif self.campfire == campfire and campfire.campfire_activated:
@@ -206,9 +208,7 @@ class GameView(arcade.View):
                 self.scene["enemies"].append(new_enemy)
         for spawn, data in spawns["campfires"].items():
             spawn = tuple(map(int, spawn.split(',')))
-            campfire = Campfire(data, self.player, self.campfires_list, spawn)
-            self.scene.add_sprite("collide", campfire)
-            
+            campfire = Campfire(data, self.player, self.scene, spawn)            
             if spawn == tuple(self.player.spawn_point):
                 campfire.activate_campfire()
                 self.campfire = campfire
