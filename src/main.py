@@ -14,7 +14,7 @@ class MyGame(arcade.Window):
     def __init__(self):
         super().__init__(const.WINDOW_WIDTH, const.WINDOW_HEIGHT, const.WINDOW_TITLE, resizable=True)
         
-        self.developer_mode = True  # Ativar modo desenvolvedor para toda a aplicação
+        self.developer_mode = False  # Ativar modo desenvolvedor para toda a aplicação
         self._background_color = (36, 160, 222) # cor de fundo escura
         self.volume = 20/100
         
@@ -35,3 +35,13 @@ class MyGame(arcade.Window):
 if __name__ == "__main__":
     window = MyGame()
     arcade.run()
+    
+    
+    '''
+Nova realease:
+- Developer mode desligado
+- Classes View devidamente configurada com load game
+- Valores da base de dados do inimigo ajustados
+- Configurações desativadas para o usuário final
+- Executar teste final de release
+'''

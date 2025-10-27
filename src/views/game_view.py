@@ -20,10 +20,10 @@ class GameView(arcade.View):
         
         #Settings
         self.configs = {
-            "fps": True,
+            "fps": False,
             "fullscreen": True,
             "logbox": False,
-            "perf_graph": True
+            "perf_graph": False
         }
         self.timers = {"fps": 0.0}
         self.fps = 0

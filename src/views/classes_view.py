@@ -79,16 +79,17 @@ class ClassesView(arcade.View):
             "equipped_weapon": self.new_game_configs[class_]["equipped_weapon"],
             "max_hp": self.new_game_configs[class_]["max_hp"],
             "speed": self.new_game_configs[class_]["speed"],
-            "attack_cooldown": self.new_game_configs[class_]["attack_cooldown"],
             "level": 1,
             "experience": 0,
-            "spawn_point": (420, 2670)
+            "spawn_point": (430, 2670)
         }
         with open("saves/save.json", "w") as save_file:
             json.dump(save_data, save_file, indent=4)
 
         self.window.game_view = GameView()
         self.window.game_view.player.load_player(save_data)
+        
+        self.window.game_view.load_game()
         self.window.show_view(self.window.game_view)
 
     new_game_configs = {
