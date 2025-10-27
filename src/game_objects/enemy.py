@@ -43,7 +43,7 @@ class Enemy(Entity):
         
         # Variáveis de animação
         self.animation_state = 0
-        self.timers = {"between_attacks": 0.0, "idle": 0.0, "animation": 0.0, "chase": 0.0}
+        self.timers = {"between_attacks": 0.0, "idle": 0.0, "animation": 0.0, "between_pathfindings": 0.0}
         self.state = "idle"  # "idle", "walk", "run", "attack"
         self.direction = "left"
         
@@ -68,18 +68,15 @@ class Enemy(Entity):
         if self.state == "idle":
             self.update_anim()
             self.timers["idle"] += delta_time
-            if self.is_player_in_range(self.range):
-                self.chase_player()
-                #pass
+            self.find_player()
             if self.timers["idle"] >= self.state_cooldowns["idle"]:
                 self.patrol()
                 self.timers["idle"] = 0.0
         elif self.state == "walk":
             self.move_enemy()
             self.update_anim()
-            if self.is_player_in_range(self.range) and self.player.is_alive():
-                self.chase_player()
-            elif self.target["x"] is not None and self.target["y"] is not None:
+            self.find_player()
+            if self.target["x"] is not None and self.target["y"] is not None:
                 if math.hypot(self.center_x - self.target["x"], self.center_y - self.target["y"]) < 5:
                     self.state = "idle"
                     self.animation_state = 0
@@ -91,17 +88,18 @@ class Enemy(Entity):
             self.timers["between_attacks"] += delta_time
             if self.timers["between_attacks"] >= self.state_cooldowns["between_attacks"]:
                 stage = self.update_anim()
-                if stage == self.attack_frame and self.is_player_in_range(self.attack_range):
+                self.is_player_in_range(self.attack_range)
+                if stage == self.attack_frame and self.is_player_in_range(self.attack_range*1.15):
                     self.attack()
                 elif stage == 0:
                     self.timers["between_attacks"] = 0.0
-            else:
-                if not self.is_player_in_range(self.attack_range):
-                    self.chase_player()
+            elif not self.is_player_in_range(self.attack_range):
+                self.find_player()
             if not self.player.is_alive():
                 self.state = "idle"
                 self.animation_state = 0
         self.timers["animation"] += delta_time
+        self.timers["between_pathfindings"] += delta_time
         self.health_bar.update()
                     
     #----------------------
@@ -182,6 +180,12 @@ class Enemy(Entity):
     # Função de pathfinding
     # ----------------------
     
+    def find_player(self):
+        if self.timers["between_pathfindings"] >= self.state_cooldowns["between_pathfindings"]:
+            self.timers["between_pathfindings"] = 0.0
+            if self.is_player_in_range(self.range) and self.player.is_alive():
+                self.chase_player()
+    
     def is_player_in_range(self, range:float = None) -> bool:
         return arcade.has_line_of_sight(
             self.position,
@@ -229,3 +233,9 @@ class Enemy(Entity):
             for direction in ("left", "right", "up", "down"):
                 base_path = f"assets/sprites/enemies/{self.name.lower()}/{state}/{direction}_"
                 self.textures[state][direction] = [arcade.load_texture(f"{base_path}{i+1}.png") for i in range(length)]
+
+'''
+Objetivo: Otimizar o código ao máximo possível, mantendo a legibilidade e funcionalidade.
+Fps: max=47 min=38 med=42
+
+'''
