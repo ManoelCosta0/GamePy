@@ -17,12 +17,30 @@
     "damage": 5,
     "attack_speed": 0.5
   },
-  "Minerio Estranho": {
+  "Falchion Antigo": {
+    "description": "Uma espada curva antiga, usada por guerreiros lendários.",
+    "type": "Sword",
+    "sprite_path": "assets/sprites/items/falchion.png",
+    "scale": 0.2,
+    "stackable": false,
+    "damage": 15,
+    "drop_chance": 0.05,
+    "attack_speed": 1.2
+  },
+  "Slime Cristalizado": {
     "description": "Um minério com propriedades desconhecidas. Pode ser valioso.",
     "type": "Material",
-    "sprite_path": "assets/sprites/items/strange_ore.png",
-    "scale": 0.08,
+    "sprite_path": "assets/sprites/items/slime_ore.png",
+    "scale": 0.2,
     "stackable": true,
     "drop_chance": 1
+  },
+  "Magma Cristalizado": {
+    "description": "Um minério quente e brilhante. Parece instável.",
+    "type": "Material",
+    "sprite_path": "assets/sprites/items/magma_ore.png",
+    "scale": 0.2,
+    "stackable": true,
+    "drop_chance": 0.1
   }
 }
