@@ -100,6 +100,6 @@ class ClassesView(arcade.View):
         "Assassin": {
             "max_hp": 70,
             "speed": 2,
-            "equipped_weapon": "Espada Velha" # Temporário
+            "equipped_weapon": "Adaga Velha"
         }
     }
