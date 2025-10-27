@@ -114,13 +114,13 @@ class GameView(arcade.View):
 
     def on_key_press(self, key, modifiers):
         """ Chamado sempre que uma tecla é pressionada. """
-        if key == arcade.key.W:
+        if key == arcade.key.W or key == arcade.key.UP:
             self.player.move_state_y = 1
-        elif key == arcade.key.S:
+        elif key == arcade.key.S or key == arcade.key.DOWN:
             self.player.move_state_y = -1
-        elif key == arcade.key.A:
+        elif key == arcade.key.A or key == arcade.key.LEFT:
             self.player.move_state_x = -1
-        elif key == arcade.key.D:
+        elif key == arcade.key.D or key == arcade.key.RIGHT:
             self.player.move_state_x = 1
         elif key == arcade.key.E:
             collision_list = arcade.check_for_collision_with_list(self.player, self.scene["interactive_area"])
@@ -154,10 +154,10 @@ class GameView(arcade.View):
 
     def on_key_release(self, key, modifiers):
         """ Chamado quando uma tecla é liberada. """
-        if key == arcade.key.W or key == arcade.key.S:
+        if key == arcade.key.W or key == arcade.key.S or key == arcade.key.UP or key == arcade.key.DOWN:
             self.player.move_state_y = 0
             self.player.animation_state = 0
-        elif key == arcade.key.A or key == arcade.key.D:
+        elif key == arcade.key.A or key == arcade.key.D or key == arcade.key.LEFT or key == arcade.key.RIGHT:
             self.player.move_state_x = 0
             self.player.animation_state = 0
         elif key == arcade.key.LSHIFT:
@@ -193,7 +193,6 @@ class GameView(arcade.View):
             "equipped_weapon": self.player.equipped_weapon.name if self.player.equipped_weapon else None,
             "max_hp": self.player.max_hp,
             "speed": self.player.speed,
-            "attack_cooldown": self.player.attack_cooldown,
             "spawn_point": self.player.spawn_point,
             "level": self.player.level,
             "experience": self.player.experience
