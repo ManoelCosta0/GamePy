@@ -64,9 +64,12 @@ class GameView(arcade.View):
 
     def on_show_view(self):
         self.hud_manager.enable()
+        if not arcade.timings_enabled():
+            arcade.enable_timings()
 
     def on_hide_view(self):
         self.hud_manager.disable()
+        arcade.disable_timings()
 
     def on_draw(self):
         self.clear()
