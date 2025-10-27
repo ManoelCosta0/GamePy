@@ -28,6 +28,8 @@ Execute os comandos abaixo na ordem:
 1.  Clone o repositório e depois abra-o:
     ```bash
     git clone https://github.com/ManoelCosta0/GamePy.git
+    ```
+    ```bash
     cd GamePy
     ```
 
@@ -50,13 +52,12 @@ Execute os comandos abaixo na ordem:
 Com o ambiente virtual ativado, rode:
 
 ```bash
-python src/main.py
+python -m src.main
 ```
 # Controles
 
 - [ESC] Pause
 - [I] Inventário
-- [TAB] Abrir logbox
 - [W], [S], [A], [D] movimentação do personagem
 
 # GitFlow
