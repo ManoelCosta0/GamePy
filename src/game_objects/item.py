@@ -17,8 +17,7 @@ class Item(arcade.Sprite):
         self.description = item_json[name]["description"]
         self.type = item_json[name]["type"]
         self.stackable = item_json[name]["stackable"]
-
-        self.stack = 1
+        self.amount = 1
 
     def get_damage(self):
         """Retorna o dano do item, se aplicável."""

@@ -9,11 +9,12 @@ class Inventory():
 
     def add_item(self, item: Item):
         """Adiciona um item ao inventário."""
-        if item.stackable and self.find_item(item.name) is not None:
-            self.find_item(item.name).stack += 1
-        else:
-            self.items.append(item) 
-            self.inventory_view.add_item_to_grid(item)
+        self.items.append(item) 
+        self.inventory_view.add_item_to_grid(item)
+
+    def count_items(self) -> int:
+        """Conta o número de itens no inventário."""
+        pass #implementação futura
 
     def remove_item(self, item: Item):
         """Remove um item do inventário."""

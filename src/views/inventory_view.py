@@ -166,8 +166,8 @@ class InventoryView(arcade.View):
     
     def add_item_to_grid(self, item: Item):
         """Adiciona um item ao grid do inventário."""
-        slot = self.get_empty_slot()
-        if slot:
+        slot = self.get_empty_slot(item.name)
+        if slot and (not hasattr(slot, 'item') or slot.item is None):
             item_icon = arcade.gui.UISpriteWidget(
                 x=0, y=0,
                 width=114/2, height=114/2,
@@ -175,8 +175,10 @@ class InventoryView(arcade.View):
             )
             slot.item = item
             slot.add(item_icon)
+        elif slot and hasattr(slot, 'item') and item.stackable and slot.item.name == item.name:
+            slot.item.amount += 1
         else:
-            print("Inventário cheio!")
+            self.window.log_box.add_message("Inventário cheio!")
 
     def remove_item_from_grid(self, item: Item):
         """Remove um item do grid do inventário."""
@@ -239,7 +241,7 @@ class InventoryView(arcade.View):
             width=200, spacing=15, font_size=12,
             texts=[
                 f"Name: {item.name}",
-                f"Amount: {item.stack}",
+                f"Amount: {item.amount}",
                 f"Damage: {item.get_damage()}",
                 f"Description: {item.description}"
             ]
@@ -317,10 +319,12 @@ class InventoryView(arcade.View):
     # Funções auxiliares
     #-------------------------
     
-    def get_empty_slot(self):
+    def get_empty_slot(self, name):
         """Retorna o primeiro slot vazio do inventário."""
         for slot in self.grid_1.children + self.grid_2.children:
-            if len(slot.children) <= 1:
+            if len(slot.children) <= 1 or (slot.item.name == name and slot.item.stackable):
+                return slot
+            elif slot.item is None:
                 return slot
         return None
 
