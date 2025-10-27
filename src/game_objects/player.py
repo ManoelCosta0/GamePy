@@ -41,6 +41,7 @@ class Player(Entity):
         
         self.attack_hitbox = None
         self.health_bar = None
+        self.level_text = None
         
         self.window = arcade.get_window()
         self.hud = None
@@ -80,6 +81,7 @@ class Player(Entity):
             
         self.health_bar.update()
         self.auto_heal(delta_time)
+        self.set_level_text()
 
     def update_anim(self, delta_time: float = 1/60):
         self.timers["animation"] += delta_time
@@ -211,6 +213,7 @@ class Player(Entity):
         self.hud = self.window.game_view.hud
         self.hud.set_level(self.level)
         self.hud.set_xp(self.experience, self.get_max_experience())
+        self.set_level_text()
 
         self.old_health = self.max_hp
 
@@ -228,3 +231,23 @@ class Player(Entity):
     
     def get_max_experience(self):
         return 5**self.level + 20 * self.level + 80
+    
+    def set_level_text(self):
+        if self.level_text:
+            self.level_text.x = self.center_x + 17
+            self.level_text.y = self.center_y + 47
+            #self.level_text.text = f"Lv. {self.level}"
+        else:
+            self.level_text = arcade.Text(
+                text=f"Lv. {self.level}",
+                x=self.center_x + 17,
+                y=self.center_y + 50,
+                color=arcade.color.WHITE,
+                font_size=8,
+                width=20,
+                font_name="arial",
+                bold=True,
+                anchor_x="right",
+                anchor_y="top"
+        )
+        

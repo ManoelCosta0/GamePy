@@ -75,6 +75,8 @@ class GameView(arcade.View):
             self.hit_box_list.draw(pixelated=True)
             self.hud_sprite_list.draw(pixelated=True)
             self.campfires_list.draw(pixelated=True)
+            if self.player.level_text:
+                self.player.level_text.draw()
         self.hud_manager.draw(pixelated=True)
         
         if self.configs["perf_graph"]:
