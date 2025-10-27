@@ -17,15 +17,15 @@ class ControlsView(arcade.View):
             texture_hovered=arcade.load_texture("assets/ui/util/return_button_hover.png"),
             scale=const.BUTTON_SCALE-0.1)
         
-        checkbox_texture = arcade.load_texture("assets/ui/controls_screen/checkbox.png")
-        checkbox_checked_texture = arcade.load_texture("assets/ui/controls_screen/checkbox_checked.png")
+        self.checkbox_texture = arcade.load_texture("assets/ui/controls_screen/checkbox.png")
+        self.checkbox_checked_texture = arcade.load_texture("assets/ui/controls_screen/checkbox_checked.png")
         
         for checkbox, position in self.checkbox_positions.items():
             checkbox_widget = arcade.gui.UITextureButton(
                 x=self.widget.center_x + position[0], y=self.widget.center_y - position[1], 
                 width=35, height=35,
-                texture=checkbox_checked_texture if self.game_view.configs[checkbox] else checkbox_texture,
-                texture_hovered=None, # Bug, texture_hovered está aparecendo mesmo nula
+                texture=self.set_checkbox_state(checkbox),
+                texture_hovered=self.set_checkbox_state(checkbox),
                 scale=0.5
             )
             @checkbox_widget.event("on_click")
@@ -41,11 +41,8 @@ class ControlsView(arcade.View):
                 elif checkbox == "perf_graph":
                     self.game_view.configs["perf_graph"] = not self.game_view.configs["perf_graph"]
                 
-                # Troca de textura está dando problema. Trocar para lógica mais robusta
-                if self.game_view.configs[checkbox]:
-                    event.source.texture = checkbox_checked_texture
-                else:
-                    event.source.texture = checkbox_texture
+                event.source.texture = self.set_checkbox_state(checkbox)
+                event.source.texture_hovered = self.set_checkbox_state(checkbox)
 
             self.ui_manager.add(checkbox_widget, layer=1)
             
@@ -66,6 +63,12 @@ class ControlsView(arcade.View):
 
     def on_hide_view(self):
         self.ui_manager.disable()
+    
+    def set_checkbox_state(self, checkbox):
+        if self.game_view.configs[checkbox]:
+            return self.checkbox_checked_texture
+        else:   
+            return self.checkbox_texture
 
     def on_draw(self):
         self.clear()
