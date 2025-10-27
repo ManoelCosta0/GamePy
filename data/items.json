@@ -5,7 +5,17 @@
     "sprite_path": "assets/sprites/items/sword.png",
     "scale": 0.2,
     "stackable": false,
-    "damage": 10
+    "damage": 10,
+    "attack_speed": 0.9
+  },
+  "Adaga Velha": {
+    "description": "Uma adaga pequena e enferrujada. Boa para ataques rápidos.",
+    "type": "Dagger",
+    "sprite_path": "assets/sprites/items/dagger.png",
+    "scale": 0.2,
+    "stackable": false,
+    "damage": 5,
+    "attack_speed": 0.5
   },
   "Minerio Estranho": {
     "description": "Um minério com propriedades desconhecidas. Pode ser valioso.",
