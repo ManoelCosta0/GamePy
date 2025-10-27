@@ -15,7 +15,6 @@ class Player(Entity):
         # Atributos do jogador
         self.class_ = None
         self.speed = None
-        self.attack_cooldown = None
         self.level = None
         self.experience = None
         self.attack_damage = 0
@@ -37,8 +36,8 @@ class Player(Entity):
         self.load_animations()
         
         self.timers = {"attack": 0.0, "animation": 0.0, "heal": 0.0, "without_take_damage": 0.0}
-        self.cooldowns = {"attack": 0.3, "walk": 0.3, "idle": 0,"between_attack": 0.5, "heal": 4.0}
-        
+        self.cooldowns = {"attack": 0.3, "walk": 0.3, "idle": 0,"between_attack": 10, "heal": 4.0}
+
         self.attack_hitbox = None
         self.health_bar = None
         self.level_text = None
@@ -51,11 +50,10 @@ class Player(Entity):
     def update(self, delta_time: float = 1/60):
         """ Atualiza a lógica do jogador. """
         
-        self.timers["attack"] += delta_time
         self.timers["animation"] += delta_time
+        self.timers["attack"] += delta_time
         
         if self.state == "attack":
-            
             self.update_anim(delta_time)
             self.move_player()
             
@@ -108,6 +106,7 @@ class Player(Entity):
     def equip_weapon(self, weapon: Item):
         self.equipped_weapon = weapon
         self.attack_damage = weapon.get_damage()
+        self.cooldowns["between_attack"] = weapon.get_attack_speed()
         
     def unequip_weapon(self):
         if self.equipped_weapon:
@@ -130,10 +129,12 @@ class Player(Entity):
 
     def attack(self):
         if self.equipped_weapon and self.timers["attack"] >= self.cooldowns["between_attack"]:
-            self.timers["attack"] = 0.0
+            #self.timers["attack"] = 0.0
             self.state = "attack"
             self.animation_state = 0
             self.set_hitbox()
+            self.timers["attack"] = 0.0
+            
             
     def auto_heal(self, delta_time):
         """ Cura automática do jogador ao longo do tempo. """
@@ -202,7 +203,6 @@ class Player(Entity):
         self.max_hp = data["max_hp"]
         self.current_hp = self.max_hp
         self.speed = data["speed"]
-        self.attack_cooldown = data["attack_cooldown"]
         self.class_ = data["class"]
         self.level = data["level"]
         self.experience = data["experience"]
