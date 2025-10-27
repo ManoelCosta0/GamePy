@@ -265,11 +265,13 @@ class InventoryView(arcade.View):
         
         @self.drop_button.event("on_click")
         def on_click_drop(event):
-            if self.clicked_slot and hasattr(self.clicked_slot, 'item'):
+            if self.clicked_slot and hasattr(self.clicked_slot, 'item') and self.clicked_slot != self.weapon_slot:
                 item = self.clicked_slot.item
                 self.remove_item_from_grid(item)
                 self.close_item_desc()
                 self.clicked_slot = None
+            elif self.clicked_slot == self.weapon_slot:
+                self.window.log_box.add_message("Não é possível dropar o item equipado!")
 
         @self.use_button.event("on_click")
         def on_click_use(event):
