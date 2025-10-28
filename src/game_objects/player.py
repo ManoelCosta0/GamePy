@@ -226,6 +226,7 @@ class Player(Entity):
             self.experience -= next_level_exp
             next_level_exp = self.get_max_experience()
             self.hud.set_level(self.level)
+            self.level_text.text = f"Lv. {self.level}"
         
         self.hud.set_xp(self.experience, next_level_exp)
     
@@ -236,7 +237,6 @@ class Player(Entity):
         if self.level_text:
             self.level_text.x = self.center_x + 17
             self.level_text.y = self.center_y + 47
-            #self.level_text.text = f"Lv. {self.level}"
         else:
             self.level_text = arcade.Text(
                 text=f"Lv. {self.level}",
