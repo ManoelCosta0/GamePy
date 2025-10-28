@@ -33,7 +33,10 @@ class GameView(arcade.View):
         self.hud_manager = arcade.gui.UIManager()
         self.hit_box_list = arcade.SpriteList()
         self.campfires_list = arcade.SpriteList()
-        
+
+        self.sword_miss_sound = arcade.load_sound("assets/sounds/game/sword_miss_1.wav")
+        self.hit_sound = arcade.load_sound("assets/sounds/game/hit_2.wav")
+
         self.campfire = None
         
         self.perf_graph_list = arcade.SpriteList()
@@ -61,6 +64,8 @@ class GameView(arcade.View):
         self.physics_engine = arcade.PhysicsEngineSimple(self.player, [self.scene["walls"], self.scene["collide"], self.scene["interactive_obj"], self.scene["enemies"]])
 
         self.hud = hud(self.hud_manager)
+        
+        self.missed = None
 
     def on_show_view(self):
         self.hud_manager.enable()
@@ -110,11 +115,15 @@ class GameView(arcade.View):
             collision_list = arcade.check_for_collision_with_list(self.player.attack_hitbox, self.scene["enemies"])
             for enemy in collision_list:
                 enemy.take_damage(self.player.attack_damage)
+                self.hit_sound.play(self.window.volume/2)
             if self.player.attack_hitbox and len(collision_list) > 0:
                 self.player.attack_hitbox.kill()
                 self.player.attack_hitbox = None
                 self.hit_box_list.clear()
-
+            elif len(collision_list) == 0 and not self.missed:
+                self.missed = True
+                self.sword_miss_sound.play(self.window.volume/2)
+                
     def on_key_press(self, key, modifiers):
         """ Chamado sempre que uma tecla é pressionada. """
         if key == arcade.key.W or key == arcade.key.UP:
@@ -169,6 +178,7 @@ class GameView(arcade.View):
     def on_mouse_press(self, x, y, button, modifiers):
         if button == arcade.MOUSE_BUTTON_LEFT:
             if self.player.equipped_weapon:
+                self.missed = False
                 self.player.attack()
     
     def add_hitbox(self, hitbox):
