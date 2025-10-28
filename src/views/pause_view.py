@@ -84,6 +84,7 @@ class PauseView(arcade.View):
             if self.developer_mode:
                 self.window.close()
                 return
+            self.window.game_view.save_game()
             arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.window.show_view(self.window.menu_view)
 
