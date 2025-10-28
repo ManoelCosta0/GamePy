@@ -146,10 +146,15 @@ class Enemy(Entity):
             random.uniform(self.patrol_point[1]-self.area, self.patrol_point[1]+self.area)
         )
     
+    def distance_to_player(self) -> float:
+        """ Retorna a distância entre o inimigo e o jogador. """
+        return math.hypot(self.center_x - self.player.center_x, self.center_y - self.player.center_y)
+    
     def chase_player(self):
         """ Move o inimigo em direção ao jogador. """
         if not self.player.is_alive(): return
-        if self.is_player_in_range(self.attack_range*0.65): # Está em range de ataque
+        distance = self.distance_to_player()
+        if distance < self.attack_range*0.65 or (self.direction == "down" and distance < self.attack_range*0.8): # Está em range de ataque
             self.state = "attack"
             self.timers["between_attacks"] = self.state_cooldowns["between_attacks"]
             self.animation_state = 1
@@ -200,7 +205,6 @@ class Enemy(Entity):
     #----------------------
     
     def respawn(self, delta_time):
-        print(f"Respawning enemy")
         self.current_hp = self.max_hp
         self.center_x, self.center_y = self.spawn
         arcade.get_window().game_view.scene["enemies"].append(self)
@@ -216,7 +220,6 @@ class Enemy(Entity):
                 self.player.inventory.add_item(item)
 
     def on_die(self):
-        print(f"Enemy died")   
         self.remove_from_sprite_lists()
         self.player.increase_experience(self.exp_reward)
         self.give_drop()
@@ -233,9 +236,3 @@ class Enemy(Entity):
             for direction in ("left", "right", "up", "down"):
                 base_path = f"assets/sprites/enemies/{self.name.lower()}/{state}/{direction}_"
                 self.textures[state][direction] = [arcade.load_texture(f"{base_path}{i+1}.png") for i in range(length)]
-
-'''
-Objetivo: Otimizar o código ao máximo possível, mantendo a legibilidade e funcionalidade.
-Fps: max=47 min=38 med=42
-
-'''
