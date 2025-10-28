@@ -35,13 +35,3 @@ class MyGame(arcade.Window):
 if __name__ == "__main__":
     window = MyGame()
     arcade.run()
-    
-    
-    '''
-Nova realease:
-- Developer mode desligado
-- Classes View devidamente configurada com load game
-- Valores da base de dados do inimigo ajustados
-- Configurações desativadas para o usuário final
-- Executar teste final de release
-'''
