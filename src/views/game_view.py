@@ -162,7 +162,7 @@ class GameView(arcade.View):
             self.window.log_box.add_message(f"Posição do jogador: {position}")
             print(f"Posição do jogador: {position}")
         elif key == arcade.key.LSHIFT:
-            self.player.speed += 2
+            self.player.speed *= 1.5
 
     def on_key_release(self, key, modifiers):
         """ Chamado quando uma tecla é liberada. """
@@ -173,7 +173,7 @@ class GameView(arcade.View):
             self.player.move_state_x = 0
             self.player.animation_state = 0
         elif key == arcade.key.LSHIFT:
-            self.player.speed -= 2
+            self.player.speed /= 1.5
             
     def on_mouse_press(self, x, y, button, modifiers):
         if button == arcade.MOUSE_BUTTON_LEFT:
@@ -212,9 +212,7 @@ class GameView(arcade.View):
         }
         with open("saves/save.json", "w") as file:
             json.dump(save, file, indent=4)
-        
-        self.window.log_box.add_message("Jogo salvo com sucesso!")
-    
+            
     def load_game(self):
         for enemy, data in spawns["enemies"].items():
             for x, y in data:
