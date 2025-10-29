@@ -128,14 +128,14 @@
                 3125,
                 1680
             ],
-            "level_required": 2
+            "level_required": 3
         },
         "5720, 1000": {
             "position": [
                 5720,
                 1160
             ],
-            "level_required": 4
+            "level_required": 5
         }
     }
 }
