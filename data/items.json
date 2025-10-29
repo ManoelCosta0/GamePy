@@ -33,7 +33,7 @@
     "sprite_path": "assets/sprites/items/slime_ore.png",
     "scale": 0.2,
     "stackable": true,
-    "drop_chance": 1
+    "drop_chance": 0.2
   },
   "Magma Cristalizado": {
     "description": "Um minério quente e brilhante. Parece instável.",
