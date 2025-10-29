@@ -77,6 +77,7 @@ class Campfire(arcade.Sprite):
             self.animation_state = 0
             self.player.spawn_point = self.spawn_point
             self.campfire_activated = True
+            self.player.maximize_health()
             return True
         else:
             arcade.get_window().log_box.add_message(f"Nível {self.level_required} necessário")
