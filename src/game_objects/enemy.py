@@ -154,7 +154,7 @@ class Enemy(Entity):
         """ Move o inimigo em direção ao jogador. """
         if not self.player.is_alive(): return
         distance = self.distance_to_player()
-        if distance < self.attack_range*0.65 or (self.direction == "down" and distance < self.attack_range*0.8): # Está em range de ataque
+        if distance < self.attack_range*0.65 or (self.direction in ("down", "up") and distance < self.attack_range*0.80): # Está em range de ataque
             self.state = "attack"
             self.timers["between_attacks"] = self.state_cooldowns["between_attacks"]
             self.animation_state = 1
@@ -208,7 +208,6 @@ class Enemy(Entity):
         self.current_hp = self.max_hp
         self.center_x, self.center_y = self.spawn
         arcade.get_window().game_view.scene["enemies"].append(self)
-        self.health_bar.add_to_sprite_list()
         self.state = "idle"
         self.animation_state = 0
         arcade.unschedule(self.respawn)
@@ -223,7 +222,7 @@ class Enemy(Entity):
         self.remove_from_sprite_lists()
         self.player.increase_experience(self.exp_reward)
         self.give_drop()
-        self.health_bar.remove_from_sprite_lists()
+        self.health_bar.toggle_visibility()
         self.color = (255, 255, 255, 255)
         arcade.schedule(self.respawn, 15.0)
     
