@@ -23,6 +23,7 @@ class Player(Entity):
         self.spwan_point = (0, 0)
         self.equipped_weapon = None
         self.inventory = Inventory()
+        self.invincibility = True
         
         # Estados de animação e movimento
         self.state = "idle"
@@ -36,7 +37,7 @@ class Player(Entity):
         self.load_animations()
         
         self.timers = {"attack": 0.0, "animation": 0.0, "heal": 0.0, "without_take_damage": 0.0}
-        self.cooldowns = {"attack": 0.3, "walk": 0.3, "idle": 0,"between_attack": 10, "heal": 4.0}
+        self.cooldowns = {"attack": 0.3, "walk": 0.3, "idle": 0,"between_attack": 10, "heal": 4.0, "invencibility": 3.0}
 
         self.attack_hitbox = None
         self.health_bar = None
@@ -129,12 +130,10 @@ class Player(Entity):
 
     def attack(self):
         if self.equipped_weapon and self.timers["attack"] >= self.cooldowns["between_attack"]:
-            #self.timers["attack"] = 0.0
             self.state = "attack"
             self.animation_state = 0
             self.set_hitbox()
-            self.timers["attack"] = 0.0
-            
+            self.timers["attack"] = 0.0            
             
     def auto_heal(self, delta_time):
         """ Cura automática do jogador ao longo do tempo. """
@@ -165,18 +164,21 @@ class Player(Entity):
             arcade.unschedule(self._fade_in_respawn)
             self.alpha = 255
             self.health_bar.add_to_sprite_list()
-            self.current_hp = self.max_hp
+            self.maximize_health()
+            self.level_text.visible = True
+            arcade.schedule(self.toggle_invincibility, self.cooldowns["invencibility"])
         
     def respawn(self, delta_time):
         """Reaparece o jogador no ponto de spawn após morrer."""
         arcade.unschedule(self.respawn)
-        self.color = (255, 255, 255)
-        self.alpha = 0
+        self.color = (255, 255, 255, 0)
         arcade.schedule(self._fade_in_respawn, 0.05)
     
     def on_die(self):
         self.health_bar.remove_from_sprite_lists()
+        self.level_text.visible = False
         self.position = self.spawn_point
+        self.toggle_invincibility()
         arcade.schedule(self.respawn, 1.0)
 
     def get_items(self):
@@ -207,7 +209,7 @@ class Player(Entity):
         self.level = data["level"]
         self.experience = data["experience"]
 
-        self.health_bar = HealthBar(self, self.window.game_view.hud_sprite_list, self.max_hp, height=32)
+        self.health_bar = HealthBar(self, self.window.game_view.hud_sprite_list, self.max_hp, height=32, visible=True)
         self.window.inventory_view.initialize_inventory(self.inventory.load_inventory(data["inventory"]), self.class_, self.speed, equipped, 0)
         
         self.hud = self.window.game_view.hud
@@ -216,6 +218,7 @@ class Player(Entity):
         self.set_level_text()
 
         self.old_health = self.max_hp
+        arcade.schedule(self.toggle_invincibility, self.cooldowns["invencibility"])
 
     def increase_experience(self, amount):
         self.experience += amount
@@ -227,6 +230,8 @@ class Player(Entity):
             next_level_exp = self.get_max_experience()
             self.hud.set_level(self.level)
             self.level_text.text = f"Lv. {self.level}"
+            self.max_hp = int(self.max_hp * 1.15)
+            self.maximize_health()
         
         self.hud.set_xp(self.experience, next_level_exp)
     
@@ -250,4 +255,10 @@ class Player(Entity):
                 anchor_x="right",
                 anchor_y="top"
         )
-        
+
+    def toggle_invincibility(self, delta_time=1/60):
+        self.invincibility = not self.invincibility
+        arcade.unschedule(self.toggle_invincibility)
+
+    def is_alive(self):
+        return self.current_hp > 0 and not self.invincibility
