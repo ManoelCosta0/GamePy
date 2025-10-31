@@ -47,6 +47,8 @@ class Player(Entity):
         self.hud = None
         
         self.old_health = None
+        
+        self.level_up_sound = arcade.load_sound("assets/sounds/game/level_up.wav")
 
     def update(self, delta_time: float = 1/60):
         """ Atualiza a lógica do jogador. """
@@ -232,6 +234,8 @@ class Player(Entity):
             self.level_text.text = f"Lv. {self.level}"
             self.max_hp = int(self.max_hp * 1.15)
             self.maximize_health()
+            arcade.play_sound(self.level_up_sound, volume=self.window.volume)
+            
         
         self.hud.set_xp(self.experience, next_level_exp)
     
