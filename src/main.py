@@ -24,7 +24,7 @@ class MyGame(arcade.Window):
         self.game_view = None 
         self.pause_view = PauseView()
         self.inventory_view = InventoryView()
-        self.log_box = LogBox(x=10, y=160, width=300, height=150)
+        self.log_box = LogBox(x=10, y=150, width=300, height=140)
 
         # Carrega os sons
         self.click_sound = arcade.load_sound("assets/sounds/ui/on_click_1.wav")

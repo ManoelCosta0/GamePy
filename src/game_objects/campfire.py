@@ -80,7 +80,7 @@ class Campfire(arcade.Sprite):
             self.player.maximize_health()
             return True
         else:
-            arcade.get_window().log_box.add_message(f"Nível {self.level_required} necessário")
+            arcade.get_window().log_box.add_message(f"Level {self.level_required} required")
             # Tela de aviso de nível necessário aqui
             return False
 
