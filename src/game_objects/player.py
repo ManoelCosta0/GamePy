@@ -209,7 +209,7 @@ class Player(Entity):
         self.level = data["level"]
         self.experience = data["experience"]
 
-        self.health_bar = HealthBar(self, self.window.game_view.hud_sprite_list, self.max_hp, height=32, visible=True)
+        self.health_bar = HealthBar(self, self.window.game_view.hud_sprite_list, height=32, visible=True)
         self.window.inventory_view.initialize_inventory(self.inventory.load_inventory(data["inventory"]), self.class_, self.speed, equipped, 0)
         
         self.hud = self.window.game_view.hud
@@ -262,3 +262,6 @@ class Player(Entity):
 
     def is_alive(self):
         return self.current_hp > 0 and not self.invincibility
+    
+    def maximize_health(self):
+        self.current_hp = self.max_hp

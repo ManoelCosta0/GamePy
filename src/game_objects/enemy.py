@@ -52,7 +52,7 @@ class Enemy(Entity):
         
         # Carregar barra de vida
         window = arcade.get_window()
-        self.health_bar = HealthBar(self, window.game_view.hud_sprite_list, self.max_hp, height=data["lifebar_height"])
+        self.health_bar = HealthBar(self, window.game_view.hud_sprite_list, height=data["lifebar_height"])
         
         # Carregar variáveis de pathfinding
         self.player = window.game_view.player
