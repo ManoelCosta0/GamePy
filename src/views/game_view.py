@@ -6,6 +6,7 @@ from src.game_objects.player import Player
 from src.game_objects.item import Item
 from src.ui.hud import HUD as hud
 from src.game_objects.campfire import Campfire
+from src.game_objects.anvil import Anvil
 
 spawns = {}
 with open("data/spawns_set.json") as f:
@@ -32,7 +33,6 @@ class GameView(arcade.View):
         self.hud_sprite_list = arcade.SpriteList()
         self.hud_manager = arcade.gui.UIManager()
         self.hit_box_list = arcade.SpriteList()
-        self.campfires_list = arcade.SpriteList()
 
         self.sword_miss_sound = arcade.load_sound("assets/sounds/game/sword_miss_1.wav")
         self.hit_sound = arcade.load_sound("assets/sounds/game/hit_2.wav")
@@ -82,7 +82,6 @@ class GameView(arcade.View):
             self.scene.draw(pixelated=True)
             self.hit_box_list.draw(pixelated=True)
             self.hud_sprite_list.draw(pixelated=True)
-            self.campfires_list.draw(pixelated=True)
             if self.player.level_text:
                 self.player.level_text.draw()
         self.hud_manager.draw(pixelated=True)
@@ -102,7 +101,6 @@ class GameView(arcade.View):
         self.physics_engine.update()
         self.player.update()
         self.hit_box_list.update()
-        self.campfires_list.update()
         self.hud_sprite_list.update()
         self.center_camera_to_player()
         
@@ -137,18 +135,9 @@ class GameView(arcade.View):
         elif key == arcade.key.E:
             collision_list = arcade.check_for_collision_with_list(self.player, self.scene["interactive_area"])
             if collision_list:
-                x = self.scene["interactive_area"].index(collision_list[0]) - 1
-                campfire = self.scene["interactive_obj"][x]
-                if self.campfire != campfire and not campfire.campfire_activated:
-                    self.campfire.desactivate_campfire()
-                    self.campfire = campfire
-                    if self.campfire.activate_campfire():
-                        self.window.log_box.add_message("Ponto de spawn atualizado!")
-                        self.save_game()
-                elif self.campfire == campfire and not campfire.campfire_activated:
-                    self.campfire.activate_campfire()
-                elif self.campfire == campfire and campfire.campfire_activated:
-                    self.campfire.desactivate_campfire()
+                area = collision_list[0]
+                obj = arcade.check_for_collision_with_list(area, self.scene["interactive_obj"])[0]
+                obj.on_interact(self, obj)
         elif key == arcade.key.ESCAPE:
             arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.window.show_view(self.window.pause_view)
@@ -224,3 +213,5 @@ class GameView(arcade.View):
             if spawn == tuple(self.player.spawn_point):
                 campfire.activate_campfire()
                 self.campfire = campfire
+
+        bigorna = Anvil((6432, 1243), self.player, self.scene)

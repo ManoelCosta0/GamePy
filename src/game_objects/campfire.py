@@ -89,5 +89,17 @@ class Campfire(arcade.Sprite):
         self.texture = self.campfire
         self.animation_state = 0
         self.campfire_activated = False
-        
+    
+    def on_interact(self, game_view, campfire):
+        """ Método chamado quando o jogador interage com o campfire. """
+        if game_view.campfire != campfire and not campfire.campfire_activated:
+            game_view.campfire.desactivate_campfire()
+            game_view.campfire = campfire
+            if game_view.campfire.activate_campfire():
+                game_view.window.log_box.add_message("Ponto de spawn atualizado!")
+                game_view.save_game()
+        elif game_view.campfire == campfire and not campfire.campfire_activated:
+            game_view.campfire.activate_campfire()
+        elif game_view.campfire == campfire and campfire.campfire_activated:
+            game_view.campfire.desactivate_campfire()
         
