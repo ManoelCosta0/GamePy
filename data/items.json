@@ -29,7 +29,7 @@
   },
   "Slime Cristalizado": {
     "description": "Um minério com propriedades desconhecidas. Pode ser valioso.",
-    "type": "Material",
+    "type": "Crystal",
     "sprite_path": "assets/sprites/items/slime_ore.png",
     "scale": 0.2,
     "stackable": true,
@@ -37,7 +37,7 @@
   },
   "Magma Cristalizado": {
     "description": "Um minério quente e brilhante. Parece instável.",
-    "type": "Material",
+    "type": "Crystal",
     "sprite_path": "assets/sprites/items/magma_ore.png",
     "scale": 0.2,
     "stackable": true,
