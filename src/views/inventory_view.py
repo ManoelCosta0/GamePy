@@ -209,6 +209,9 @@ class InventoryView(arcade.View):
     def equip_item(self, item: Item):
         """Equipa um item no slot de arma."""
         # Desequipa o item atual, se houver
+        if not item.type in ["Sword", "Dagger"]:
+            self.window.log_box.add_message("Este item não pode ser equipado como arma!")
+            return
         self.unequip_item()
         
         # Remove o item do inventário
@@ -241,9 +244,8 @@ class InventoryView(arcade.View):
             width=200, spacing=15, font_size=12,
             texts=[
                 f"Name: {item.name}",
-                f"Amount: {item.amount}",
-                f"Damage: {item.get_damage()}",
-                f"Description: {item.description}"
+                f"Type: {item.type}",
+                f"Amount: {item.amount}"
             ]
         )
         
