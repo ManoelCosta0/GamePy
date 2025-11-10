@@ -1,21 +1,8 @@
 # Visão Geral
 Projeto de criação de um RPG em python
 
-[Brainstorm do projeto no canva](https://www.canva.com/design/DAGzPbYH7wQ/J6XXYxe3BEQWRxS2OEKW9g/edit?utm_content=DAGzPbYH7wQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
-
 - Gênero: RPG Clássico
 - Tema: Fantasia
-- Loop de Gameplay: explorar o mapa -> lutar com inimigos -> coletar itens -> evoluir o personagem
-- Ambientação: [Floresta corrompida](./pre-production/images/ambiente_1.png)
-- Sistema de luta de acordo com as classes:
-	- Guerreiro: Espada
-	- Assassino: Adaga
-- Itens coletáveis: 
-	- Moeda (drop) (sem utilidade inicialmente)
-	- Minério (drop) (para construção de armas)
-- Evolução do personagem:
-	- 5 Níveis
-	- Itens melhores são craftáveis com os drops
 
 # Instalação e Execução
 
@@ -58,27 +45,47 @@ python -m src.main
 
 - [ESC] Pause
 - [I] Inventário
+- [E] Interagir com objetos e estruturas
 - [W], [S], [A], [D] movimentação do personagem
+- 🖱️ Botão esquerdo: golpe com a espada (se equipada)
+
+ # Funcionalidades
+ **Atenção! O que está a seguir é uma descrição das funcionalidades do jogo. Para uma experiência mais completa sugiro jogar antes de ler.**
+ 
+ ## Classes
+ Ao iniciar um novo jogo, é possível escolher entre duas classes, sendo elas guerreiro e assassino, cada uma com suas características individuais:
+ - Guerreiro: Tem um dano maior e mais vida, porém menos velocidade de caminhar de ataque. Arma inicial: Espada Velha
+ - Assassino: Tem maior velocidade de ataque e de caminhar, porém menos vida e menos dano. Arma inicial: Adaga Velha
+  
+## Progressão
+1. Logo no começo do jogo, ao selecionar a classe, o jogador nasce ao lado de uma fogueira.
+    1. Ao interagir com uma fogueira apagada (tecla "E") é possível acende-la e alterar o local de nascimento do jogador
+	2. Cada fogueira disposta no mapa tem um nível mínimo para ser acesa
+    3. Para saber o nível necessário de uma fogueira ative a opção "Logbox" nas configurações
+       
+3. A cada inimigo derrotado uma determinada quantidade de experiência será ganha
+   
+4. Ao chegar no limite de exp (experiência) do nível o jogador evolui para o próximo nível
+    1. A cada nível a vida máxima do jogador aumenta em 20%
+       
+5. Alguns inimigos dão itens (drops) ao jogador ao serem derrotados. Esses iten podem ser: 
+   1. Um cristal (drop dos slimes, ainda sem utilidade)
+   2. Uma Espada (drop de um dos orcs) (chance de drop: 5%)
 
 # GitFlow
-
-Para melhor organização do projeto, será utilizado o seguinte GitFlow:
-
-![Diagrama do Fluxo de Trabalho GitFlow](./pre-production/docs/GitFlow_v3.jpg)
+Para melhor organização do projeto, é utilizado o seguinte GitFlow:
 
 ## Main
-- A main será a branch em que estará a versão mais estável da fase de desenvolvimento atual (pre-alpha)
+- A main é a branch em que estará a versão mais estável do jogo em sua fase de desenvolvimento atual
 
 ## Develop 
-- A develop é a branch em que estará a versão mais estável da próxima fase de desenvolvimento (alpha)
+- A develop é a branch base para desenvolvimento de novas funcionalidades e também é onde a integração delas acontece.
 
 ## Feature
-- São criadas para o desenvolvimento das tarefas do projeto.
-- Padrão lexico: versao_alterada/tipo_de_mudança/[nome_da_mudança]
-- Ex.: pre-alpha/refact/tela_inicial ou alpha/feature/HUD
+- Branches temporárias para desenvolvimento de funcionalidades novas.
+- Seu padrão léxico é: feature/{fase_atual}/{nome_feature} (Ex.: feature/alpha/tela_de_aviso)
 
 # Padrões de Uso do GitHub
-
 Para melhor organização e estética do GitHub, será utilizado o seguinte padrão de uso:
 
 ## Commit
@@ -89,7 +96,6 @@ Para melhor organização e estética do GitHub, será utilizado o seguinte padr
 	- :bug: fix: bug corrigido
 
 ## Versionamento
-
 - O incremento de versões do projeto na main segue o seguinte padrão: (Para o exemplo v0.0.1)
 	- O primeiro número indica que o sistema tem mudanças que o torna incompatível com versões anteriores.
 	- O segundo número indica que o sistema tem mudanças compatíveis com versões anteriores, dentro do primeiro número.
