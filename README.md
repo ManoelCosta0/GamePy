@@ -43,25 +43,47 @@ python src/main.py
 
 - [ESC] Pause
 - [I] Inventário
+- [E] Interagir com objetos e estruturas
 - [W], [S], [A], [D] movimentação do personagem
 - 🖱️ Botão esquerdo: golpe com a espada (se equipada)
 
-# GitFlow
+ # Funcionalidades
+ **Atenção! O que está a seguir é uma descrição das funcionalidades do jogo. Para uma experiência mais completa sugiro jogar antes de ler.**
+ 
+ ## Classes
+ Ao iniciar um novo jogo, é possível escolher entre duas classes, sendo elas guerreiro e assassino, cada uma com suas características individuais:
+ - Guerreiro: Tem um dano maior e mais vida, porém menos velocidade de caminhar de ataque. Arma inicial: Espada Velha
+ - Assassino: Tem maior velocidade de ataque e de caminhar, porém menos vida e menos dano. Arma inicial: Adaga Velha
+  
+## Progressão
+1. Logo no começo do jogo, ao selecionar a classe, o jogador nasce ao lado de uma fogueira.
+    1. Ao interagir com uma fogueira apagada (tecla "E") é possível acende-la e alterar o local de nascimento do jogador
+	2. Cada fogueira disposta no mapa tem um nível mínimo para ser acesa
+    3. Para saber o nível necessário de uma fogueira ative a opção "Logbox" nas configurações
+       
+3. A cada inimigo derrotado uma determinada quantidade de experiência será ganha
+   
+4. Ao chegar no limite de exp (experiência) do nível o jogador evolui para o próximo nível
+    1. A cada nível a vida máxima do jogador aumenta em 20%
+       
+5. Alguns inimigos dão itens (drops) ao jogador ao serem derrotados. Esses iten podem ser: 
+   1. Um cristal (drop dos slimes, ainda sem utilidade)
+   2. Uma Espada (drop de um dos orcs) (chance de drop: 5%)
 
-Para melhor organização do projeto, será utilizado o seguinte GitFlow:
+# GitFlow
+Para melhor organização do projeto, é utilizado o seguinte GitFlow:
 
 ## Main
-- A main será a branch em que estará a versão mais estável do jogo em sua fase de desenvolvimento atual
+- A main é a branch em que estará a versão mais estável do jogo em sua fase de desenvolvimento atual
 
 ## Develop 
-- A develop é a branch base para desenvolvimento de novas funcionalidades e também é onde a integração vai delas acontecer.
+- A develop é a branch base para desenvolvimento de novas funcionalidades e também é onde a integração delas acontece.
 
 ## Feature
 - Branches temporárias para desenvolvimento de funcionalidades novas.
 - Seu padrão léxico é: feature/{fase_atual}/{nome_feature} (Ex.: feature/alpha/tela_de_aviso)
 
 # Padrões de Uso do GitHub
-
 Para melhor organização e estética do GitHub, será utilizado o seguinte padrão de uso:
 
 ## Commit
@@ -72,7 +94,6 @@ Para melhor organização e estética do GitHub, será utilizado o seguinte padr
 	- :bug: fix: bug corrigido
 
 ## Versionamento
-
 - O incremento de versões do projeto na main segue o seguinte padrão: (Para o exemplo v0.0.1)
 	- O primeiro número indica que o sistema tem mudanças que o torna incompatível com versões anteriores.
 	- O segundo número indica que o sistema tem mudanças compatíveis com versões anteriores, dentro do primeiro número.
