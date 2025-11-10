@@ -1,21 +1,8 @@
 # Visão Geral
 Projeto de criação de um RPG em python
 
-[Brainstorm do projeto no canva](https://www.canva.com/design/DAGzPbYH7wQ/J6XXYxe3BEQWRxS2OEKW9g/edit?utm_content=DAGzPbYH7wQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
-
 - Gênero: RPG Clássico
 - Tema: Fantasia
-- Loop de Gameplay: explorar o mapa -> lutar com inimigos -> coletar itens -> evoluir o personagem
-- Ambientação: [Floresta corrompida](./pre-production/images/ambiente_1.png)
-- Sistema de luta de acordo com as classes:
-	- Guerreiro: Espada
-	- Assassino: Adaga
-- Itens coletáveis: 
-	- Moeda (drop) (sem utilidade inicialmente)
-	- Minério (drop) (para construção de armas)
-- Evolução do personagem:
-	- 5 Níveis
-	- Itens melhores são craftáveis com os drops
 
 # Instalação e Execução
 
@@ -56,25 +43,22 @@ python src/main.py
 
 - [ESC] Pause
 - [I] Inventário
-- [TAB] Abrir logbox
 - [W], [S], [A], [D] movimentação do personagem
+- 🖱️ Botão esquerdo: golpe com a espada (se equipada)
 
 # GitFlow
 
 Para melhor organização do projeto, será utilizado o seguinte GitFlow:
 
-![Diagrama do Fluxo de Trabalho GitFlow](./pre-production/docs/GitFlow_v3.jpg)
-
 ## Main
-- A main será a branch em que estará a versão mais estável da fase de desenvolvimento atual (pre-alpha)
+- A main será a branch em que estará a versão mais estável do jogo em sua fase de desenvolvimento atual
 
 ## Develop 
-- A develop é a branch em que estará a versão mais estável da próxima fase de desenvolvimento (alpha)
+- A develop é a branch base para desenvolvimento de novas funcionalidades e também é onde a integração vai delas acontecer.
 
 ## Feature
-- São criadas para o desenvolvimento das tarefas do projeto.
-- Padrão lexico: versao_alterada/tipo_de_mudança/[nome_da_mudança]
-- Ex.: pre-alpha/refact/tela_inicial ou alpha/feature/HUD
+- Branches temporárias para desenvolvimento de funcionalidades novas.
+- Seu padrão léxico é: feature/{fase_atual}/{nome_feature} (Ex.: feature/alpha/tela_de_aviso)
 
 # Padrões de Uso do GitHub
 
