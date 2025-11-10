@@ -4,15 +4,43 @@
     "type": "Sword",
     "sprite_path": "assets/sprites/items/sword.png",
     "scale": 0.2,
-    "stack_limit": 1,
-    "damage": 5
+    "stackable": false,
+    "damage": 10,
+    "attack_speed": 0.9
   },
-  "Minerio Estranho": {
+  "Adaga Velha": {
+    "description": "Uma adaga pequena e enferrujada. Boa para ataques rápidos.",
+    "type": "Dagger",
+    "sprite_path": "assets/sprites/items/dagger.png",
+    "scale": 0.2,
+    "stackable": false,
+    "damage": 6,
+    "attack_speed": 0.5
+  },
+  "Falchion Antigo": {
+    "description": "Uma espada curva antiga, usada por guerreiros lendários.",
+    "type": "Sword",
+    "sprite_path": "assets/sprites/items/falchion.png",
+    "scale": 0.2,
+    "stackable": false,
+    "damage": 20,
+    "drop_chance": 0.05,
+    "attack_speed": 1.2
+  },
+  "Slime Cristalizado": {
     "description": "Um minério com propriedades desconhecidas. Pode ser valioso.",
-    "type": "Material",
-    "sprite_path": "assets/sprites/items/strange_ore.png",
-    "scale": 0.08,
-    "stack_limit": 20,
-    "drop_chance": 1
+    "type": "Crystal",
+    "sprite_path": "assets/sprites/items/slime_ore.png",
+    "scale": 0.2,
+    "stackable": true,
+    "drop_chance": 0.2
+  },
+  "Magma Cristalizado": {
+    "description": "Um minério quente e brilhante. Parece instável.",
+    "type": "Crystal",
+    "sprite_path": "assets/sprites/items/magma_ore.png",
+    "scale": 0.2,
+    "stackable": true,
+    "drop_chance": 0.1
   }
 }

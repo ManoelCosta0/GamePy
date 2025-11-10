@@ -6,7 +6,7 @@ class LogBox:
     """
     Classe para log de mensagens do jogo. (Modo desenvolvedor)
     """
-    def __init__(self, x: float, y: float, width: int, height: int, max_lines: int = 7):
+    def __init__(self, x: float, y: float, width: int, height: int, max_lines: int = 4):
         self.x = x
         self.y = y
         self.width = width

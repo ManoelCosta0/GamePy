@@ -13,7 +13,7 @@ class PauseView(arcade.View):
         self.ui_manager = UIManager()
         self.sprite_list = arcade.SpriteList()
         
-        self.developer_mode = False
+        self.developer_mode = self.window.developer_mode
         if self.developer_mode: print("Developer mode is ON in PauseView")
         
         self.background = arcade.Sprite(const.BACKGROUND_IMAGE, center_x=self.window.width / 2, center_y=self.window.height / 2)
@@ -70,12 +70,12 @@ class PauseView(arcade.View):
         
         @self.resume_button.event("on_click")
         def on_click_resume(event):
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.window.show_view(self.window.game_view)
 
         @self.inventory_button.event("on_click")
         def on_click_inventory(event):
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.window.show_view(self.window.inventory_view)
             self.window.inventory_view.origin = self
 
@@ -84,12 +84,13 @@ class PauseView(arcade.View):
             if self.developer_mode:
                 self.window.close()
                 return
-            arcade.play_sound(self.window.click_sound)
+            self.window.game_view.save_game()
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.window.show_view(self.window.menu_view)
 
         @self.controls_button.event("on_click")
         def on_click_controls(event):
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.window.show_view(ControlsView())
 
     def on_hide_view(self):
@@ -98,5 +99,5 @@ class PauseView(arcade.View):
         
     def on_key_press(self, key, modifiers):
         if key == arcade.key.ESCAPE:
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.window.show_view(self.window.game_view)

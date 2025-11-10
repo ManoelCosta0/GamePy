@@ -14,7 +14,7 @@ echo ===========================================
 echo Configuracao concluida!
 echo Agora voce pode executar o jogo com:
 echo.
-echo python src/main.py
+echo python -m src.main
 echo ===========================================
 
 pause

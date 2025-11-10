@@ -48,17 +48,17 @@ class ClassesView(arcade.View):
         
         @self.return_button.event("on_click")
         def on_click_return_button(event):
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.window.show_view(self.window.menu_view)
             
         @self.select_warrior_button.event("on_click")
         def on_click_warrior_button(event):
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.create_save_file("Warrior")
         
         @self.select_assassin_button.event("on_click")
         def on_click_assassin_button(event):
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.create_save_file("Assassin")
             
     def on_draw(self):
@@ -79,29 +79,28 @@ class ClassesView(arcade.View):
             "equipped_weapon": self.new_game_configs[class_]["equipped_weapon"],
             "max_hp": self.new_game_configs[class_]["max_hp"],
             "speed": self.new_game_configs[class_]["speed"],
-            "attack_cooldown": self.new_game_configs[class_]["attack_cooldown"],
             "level": 1,
-            "current_xp": 0,
-            "position": (600, 1500)
+            "experience": 0,
+            "spawn_point": (430, 2670)
         }
         with open("saves/save.json", "w") as save_file:
             json.dump(save_data, save_file, indent=4)
 
         self.window.game_view = GameView()
         self.window.game_view.player.load_player(save_data)
+        
+        self.window.game_view.load_game()
         self.window.show_view(self.window.game_view)
 
     new_game_configs = {
         "Warrior": {
-            "max_hp": 150,
-            "speed": 4,
-            "attack_cooldown": 0.08,
+            "max_hp": 100,
+            "speed": 1.5,
             "equipped_weapon": "Espada Velha"
         },
         "Assassin": {
-            "max_hp": 80,
-            "speed": 7,
-            "attack_cooldown": 0.05,
-            "equipped_weapon": "Espada Velha" # Temporário
+            "max_hp": 70,
+            "speed": 2,
+            "equipped_weapon": "Adaga Velha"
         }
     }

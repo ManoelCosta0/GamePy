@@ -5,6 +5,12 @@ from src.game_objects.enemy import Enemy
 from src.game_objects.player import Player
 from src.game_objects.item import Item
 from src.ui.hud import HUD as hud
+from src.game_objects.campfire import Campfire
+from src.game_objects.anvil import Anvil
+
+spawns = {}
+with open("data/spawns_set.json") as f:
+    spawns = json.load(f)
 
 class GameView(arcade.View):
     """
@@ -13,101 +19,161 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
         
-        self.developer_mode = False
+        #Settings
+        self.configs = {
+            "fps": False,
+            "fullscreen": True,
+            "logbox": False,
+            "perf_graph": False
+        }
+        self.timers = {"fps": 0.0}
+        self.fps = 0
         
-        self.sprite_list = arcade.SpriteList()
+        self.enemies_list = arcade.SpriteList()
         self.hud_sprite_list = arcade.SpriteList()
         self.hud_manager = arcade.gui.UIManager()
         self.hit_box_list = arcade.SpriteList()
-        self.tile_map = arcade.load_tilemap("assets/maps/map.tmx", scaling=4)
+
+        self.sword_miss_sound = arcade.load_sound("assets/sounds/game/sword_miss_1.wav")
+        self.hit_sound = arcade.load_sound("assets/sounds/game/hit_2.wav")
+
+        self.campfire = None
+        
+        self.perf_graph_list = arcade.SpriteList()
+        graph = arcade.PerfGraph(200, 120, graph_data="FPS")
+        graph.position = (self.window.width - 230, self.window.height - 75)
+        self.perf_graph_list.append(graph)
+        arcade.enable_timings()
+
+        layer_options = {
+            "walls": {"use_spatial_hash": True},
+            "collide": {"use_spatial_hash": True},
+            "interactive_obj": {"use_spatial_hash": True},
+            "interactive_area": {"use_spatial_hash": True},
+        }
+        
+        self.tile_map = arcade.load_tilemap("assets/maps/map.tmx", scaling=3, layer_options=layer_options)
         
         self.player = Player()
-        self.enemy = Enemy("Slime", 1000, 1500)
         self.camera = arcade.Camera2D()
         
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
-        self.sprite_list.append(self.player)
-        self.sprite_list.append(self.enemy)
+        self.scene.add_sprite("player", self.player)
+
+        # Adcionar "walls" como paredes e "collide" como colisões
+        self.physics_engine = arcade.PhysicsEngineSimple(self.player, [self.scene["walls"], self.scene["collide"], self.scene["interactive_obj"], self.scene["enemies"]])
+
+        self.hud = hud(self.hud_manager)
         
-        hud(self.hud_manager)
+        self.missed = None
 
     def on_show_view(self):
         self.hud_manager.enable()
+        if not arcade.timings_enabled():
+            arcade.enable_timings()
 
     def on_hide_view(self):
         self.hud_manager.disable()
+        arcade.disable_timings()
 
     def on_draw(self):
         self.clear()
         with self.camera.activate():
             self.scene.draw(pixelated=True)
-            self.sprite_list.draw(pixelated=True)
-            self.hud_sprite_list.draw(pixelated=True)
-            self.hud_manager.draw(pixelated=True)
             self.hit_box_list.draw(pixelated=True)
-        if self.developer_mode:
+            self.hud_sprite_list.draw(pixelated=True)
+            if self.player.level_text:
+                self.player.level_text.draw()
+        self.hud_manager.draw(pixelated=True)
+        
+        if self.configs["perf_graph"]:
+            self.perf_graph_list.draw()
+        if self.configs["logbox"]:
             self.window.log_box.on_draw()
+        if self.configs["fps"]:
+            arcade.draw_text(
+            f"FPS: {self.fps:.1f}", self.window.width - 80, self.window.height - 25,
+            arcade.color.WHITE, 14)
     
     def on_update(self, delta_time):
         """ Lógica de atualização da View. """
-        self.sprite_list.update()
-        self.hud_sprite_list.update()
+        self.scene.update(delta_time=delta_time)
+        self.physics_engine.update()
+        self.player.update()
         self.hit_box_list.update()
+        self.hud_sprite_list.update()
         self.center_camera_to_player()
+        
+        self.timers["fps"] += delta_time
+        if self.configs["fps"] and self.timers["fps"] >= 0.2:
+            self.timers["fps"] = 0.0
+            self.fps = arcade.get_fps()
 
-        if self.player.animation_state < 0 and self.player.attack_hitbox:
-            is_colliding = self.player.attack_hitbox.collides_with_sprite(self.enemy)
-            if is_colliding:
-                print("Hit") # Lógica de dano aqui
+        if self.player.attack_hitbox:
+            collision_list = arcade.check_for_collision_with_list(self.player.attack_hitbox, self.scene["enemies"])
+            for enemy in collision_list:
+                enemy.take_damage(self.player.attack_damage)
+                self.hit_sound.play(self.window.volume/2)
+            if self.player.attack_hitbox and len(collision_list) > 0:
                 self.player.attack_hitbox.kill()
                 self.player.attack_hitbox = None
                 self.hit_box_list.clear()
-
+            elif len(collision_list) == 0 and not self.missed:
+                self.missed = True
+                self.sword_miss_sound.play(self.window.volume/2)
+                
     def on_key_press(self, key, modifiers):
         """ Chamado sempre que uma tecla é pressionada. """
-        if key == arcade.key.W:
+        if key == arcade.key.W or key == arcade.key.UP:
             self.player.move_state_y = 1
-        elif key == arcade.key.S:
+        elif key == arcade.key.S or key == arcade.key.DOWN:
             self.player.move_state_y = -1
-        elif key == arcade.key.A:
+        elif key == arcade.key.A or key == arcade.key.LEFT:
             self.player.move_state_x = -1
-        elif key == arcade.key.D:
+        elif key == arcade.key.D or key == arcade.key.RIGHT:
             self.player.move_state_x = 1
         elif key == arcade.key.E:
-            item = Item("Espada Velha")
-            self.player.inventory.add_item(item)
-            #self.player.equip_weapon(item)
-            self.window.log_box.add_message(f"Você equipou {item.name}.")
+            collision_list = arcade.check_for_collision_with_list(self.player, self.scene["interactive_area"])
+            if collision_list:
+                area = collision_list[0]
+                obj = arcade.check_for_collision_with_list(area, self.scene["interactive_obj"])[0]
+                obj.on_interact(self, obj)
         elif key == arcade.key.ESCAPE:
-            arcade.play_sound(self.window.click_sound)
+            arcade.play_sound(self.window.click_sound, volume=self.window.volume)
             self.window.show_view(self.window.pause_view)
         elif key == arcade.key.I:
             self.window.show_view(self.window.inventory_view)
-            self.window.inventory_view.origin = self
-        elif key == arcade.key.TAB:
-            self.developer_mode = not self.developer_mode
         elif key == arcade.key.F1:
             self.save_game()
         elif key == arcade.key.K:
-            self.enemy.move_to(self.player.center_x, self.player.center_y)
+            x, y = self.player.position
+            position = (int(x), int(y))
+            self.window.log_box.add_message(f"Posição do jogador: {position}")
+            print(f"Posição do jogador: {position}")
+        elif key == arcade.key.LSHIFT:
+            self.player.speed *= 1.5
 
     def on_key_release(self, key, modifiers):
         """ Chamado quando uma tecla é liberada. """
-        if key == arcade.key.W or key == arcade.key.S:
+        if key == arcade.key.W or key == arcade.key.S or key == arcade.key.UP or key == arcade.key.DOWN:
             self.player.move_state_y = 0
             self.player.animation_state = 0
-        elif key == arcade.key.A or key == arcade.key.D:
+        elif key == arcade.key.A or key == arcade.key.D or key == arcade.key.LEFT or key == arcade.key.RIGHT:
             self.player.move_state_x = 0
             self.player.animation_state = 0
-
+        elif key == arcade.key.LSHIFT:
+            self.player.speed /= 1.5
+            
     def on_mouse_press(self, x, y, button, modifiers):
         if button == arcade.MOUSE_BUTTON_LEFT:
             if self.player.equipped_weapon:
-                self.player.set_hitbox()
-                self.hit_box_list.clear()
-                self.hit_box_list.append(self.player.attack_hitbox)
+                self.missed = False
                 self.player.attack()
-                
+    
+    def add_hitbox(self, hitbox):
+        self.hit_box_list.clear()
+        self.hit_box_list.append(hitbox)
+    
     def center_camera_to_player(self):
         screen_center_x, screen_center_y = self.player.position
         if screen_center_x < self.camera.viewport_width/2:
@@ -129,10 +195,23 @@ class GameView(arcade.View):
             "equipped_weapon": self.player.equipped_weapon.name if self.player.equipped_weapon else None,
             "max_hp": self.player.max_hp,
             "speed": self.player.speed,
-            "attack_cooldown": self.player.attack_cooldown,
-            "position": (self.player.center_x, self.player.center_y),
+            "spawn_point": self.player.spawn_point,
+            "level": self.player.level,
+            "experience": self.player.experience
         }
         with open("saves/save.json", "w") as file:
             json.dump(save, file, indent=4)
-        
-        self.window.log_box.add_message("Jogo salvo com sucesso!")
+            
+    def load_game(self):
+        for enemy, data in spawns["enemies"].items():
+            for x, y in data:
+                new_enemy = Enemy(enemy, x, y)
+                self.scene["enemies"].append(new_enemy)
+        for spawn, data in spawns["campfires"].items():
+            spawn = tuple(map(int, spawn.split(',')))
+            campfire = Campfire(data, self.player, self.scene, spawn)            
+            if spawn == tuple(self.player.spawn_point):
+                campfire.activate_campfire()
+                self.campfire = campfire
+
+        bigorna = Anvil((6432, 1243), self.player, self.scene)
