@@ -14,7 +14,7 @@
     "sprite_path": "assets/sprites/items/dagger.png",
     "scale": 0.2,
     "stackable": false,
-    "damage": 5,
+    "damage": 6,
     "attack_speed": 0.5
   },
   "Falchion Antigo": {
@@ -23,7 +23,7 @@
     "sprite_path": "assets/sprites/items/falchion.png",
     "scale": 0.2,
     "stackable": false,
-    "damage": 15,
+    "damage": 20,
     "drop_chance": 0.05,
     "attack_speed": 1.2
   },
