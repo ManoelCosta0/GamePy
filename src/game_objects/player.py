@@ -232,7 +232,7 @@ class Player(Entity):
             next_level_exp = self.get_max_experience()
             self.hud.set_level(self.level)
             self.level_text.text = f"Lv. {self.level}"
-            self.max_hp = int(self.max_hp * 1.15)
+            self.max_hp = int(self.max_hp * 1.2)
             self.maximize_health()
             arcade.play_sound(self.level_up_sound, volume=self.window.volume)
             self.window.log_box.add_message(f"Level Up! You reached level {self.level}!")
